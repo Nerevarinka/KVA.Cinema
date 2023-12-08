@@ -2,13 +2,15 @@
 {
     using KVA.Cinema.Exceptions;
     using KVA.Cinema.Models;
+    using KVA.Cinema.Models.Director;
+    using KVA.Cinema.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    class DirectorService : IService<DirectorNecessaryData, DirectorDisplayedData>
+    internal class DirectorService : IService<DirectorCreateViewModel, DirectorDisplayViewModel>
     {
-        public void Create(DirectorNecessaryData directorData)
+        public void Create(DirectorCreateViewModel directorData)
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(directorData.Name))
             {
@@ -57,7 +59,7 @@
             }
         }
 
-        public IEnumerable<DirectorDisplayedData> ReadAll()
+        public IEnumerable<DirectorDisplayViewModel> ReadAll()
         {
             List<Director> directors;
 
@@ -66,10 +68,10 @@
                 directors = db.Directors.ToList();
             }
 
-            return directors.Select(x => new DirectorDisplayedData(x.Id, x.Name));
+            return directors.Select(x => new DirectorDisplayViewModel(x.Id, x.Name));
         }
 
-        public void Update(Guid directorId, DirectorNecessaryData directorNewData)
+        public void Update(Guid directorId, DirectorCreateViewModel directorNewData)
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(directorId, directorNewData.Name))
             {

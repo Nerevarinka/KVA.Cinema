@@ -8,7 +8,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    class CountryService : IService<CountryCreateViewModel, CountryViewModel>
+    internal class CountryService : IService<CountryCreateViewModel, CountryDisplayViewModel>
     {
         public void Create(CountryCreateViewModel countryData)
         {
@@ -59,7 +59,7 @@
             }
         }
 
-        public IEnumerable<CountryViewModel> ReadAll()
+        public IEnumerable<CountryDisplayViewModel> ReadAll()
         {
             List<Country> countries;
 

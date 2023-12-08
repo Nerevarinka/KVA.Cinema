@@ -2,7 +2,7 @@
 {
     using System;
 
-    internal struct CountryCreateViewModel
+    internal class CountryCreateViewModel
     {
         public Guid Id { get; set; }
 

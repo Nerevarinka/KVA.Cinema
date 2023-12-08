@@ -2,7 +2,7 @@
 {
     using System;
 
-    internal struct DirectorCreateViewModel
+    internal class DirectorCreateViewModel
     {
         public string Name { get; }
 

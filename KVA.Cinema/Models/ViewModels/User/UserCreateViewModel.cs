@@ -5,7 +5,7 @@
     /// <summary>
     /// Essential data to create person (written by user)
     /// </summary>
-    internal struct UserCreateViewModel
+    internal class UserCreateViewModel
     {
         public string LastName { get; }
 

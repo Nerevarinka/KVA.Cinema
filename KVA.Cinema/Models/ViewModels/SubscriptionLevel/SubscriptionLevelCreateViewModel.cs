@@ -2,7 +2,7 @@
 {
     using System;
 
-    internal struct SubscriptionLevelCreateViewModel
+    internal class SubscriptionLevelCreateViewModel
     {
         public string Title { get; }
 

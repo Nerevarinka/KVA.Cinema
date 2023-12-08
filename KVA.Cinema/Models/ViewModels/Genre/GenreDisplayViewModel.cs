@@ -2,7 +2,7 @@
 {
     using System;
 
-    internal struct GenreDisplayViewModel
+    internal class GenreDisplayViewModel
     {
         public Guid Id { get; set; }
 

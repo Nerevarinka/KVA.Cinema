@@ -3,11 +3,12 @@
     using KVA.Cinema.Exceptions;
     using KVA.Cinema.Models;
     using KVA.Cinema.Models.UserSubscription;
+    using KVA.Cinema.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    class UserSubscriptionService : IService<UserSubscriptionCreateViewModel, UserSubscriptionViewModel>
+    internal class UserSubscriptionService : IService<UserSubscriptionCreateViewModel, UserSubscriptionDisplayViewModel>
     {
         public void Create(UserSubscriptionCreateViewModel userSubscriptionData) // после окончания подписки должна быть возможность добавить такую же опять
         {
@@ -65,7 +66,7 @@
             }
         }
 
-        public IEnumerable<UserSubscriptionViewModel> ReadAll()
+        public IEnumerable<UserSubscriptionDisplayViewModel> ReadAll()
         {
             List<UserSubscription> userSubscriptions;
 
@@ -74,7 +75,7 @@
                 userSubscriptions = db.UserSubscriptions.ToList();
             }
 
-            return userSubscriptions.Select(x => new UserSubscriptionDisplayedData(x.Id,
+            return userSubscriptions.Select(x => new UserSubscriptionCreateViewModel(x.Id,
                                                                                    x.SubscriptionId,
                                                                                    x.UserId,
                                                                                    x.ActivatedOn,

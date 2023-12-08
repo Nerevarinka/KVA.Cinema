@@ -3,15 +3,15 @@
     using System;
     using System.Collections.Generic;
 
-    public interface IService<TEntityNecessaryData, TEntityDisplayedData>
-        where TEntityNecessaryData : struct
-        where TEntityDisplayedData : struct
+    internal interface IService<TEntityCreateViewModel, TEntityDisplayViewModel>
+        where TEntityCreateViewModel : class
+        where TEntityDisplayViewModel : class
     {
-        IEnumerable<TEntityDisplayedData> ReadAll();
+        IEnumerable<TEntityDisplayViewModel> ReadAll();
 
-        void Create(TEntityNecessaryData entityData);
+        void Create(TEntityCreateViewModel entityData);
 
-        void Update(Guid id, TEntityNecessaryData newEntityData);
+        void Update(Guid id, TEntityCreateViewModel newEntityData);
 
         void Delete(Guid id);
 

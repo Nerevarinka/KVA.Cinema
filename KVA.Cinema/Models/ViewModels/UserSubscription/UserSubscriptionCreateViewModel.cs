@@ -2,7 +2,7 @@
 {
     using System;
 
-    internal struct UserSubscriptionCreateViewModel
+    internal class UserSubscriptionCreateViewModel
     {
         public Guid Id { get; set; }
 

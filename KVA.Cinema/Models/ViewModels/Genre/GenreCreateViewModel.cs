@@ -2,7 +2,7 @@
 {
     using System;
 
-    internal struct GenreCreateViewModel
+    internal class GenreCreateViewModel
     {
         public string Title { get; }
 

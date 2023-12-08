@@ -2,16 +2,18 @@
 {
     using KVA.Cinema.Exceptions;
     using KVA.Cinema.Models;
+    using KVA.Cinema.Models.Subscription;
+    using KVA.Cinema.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    class SubscriptionService : IService<SubscriptionNecessaryData, SubscriptionDisplayedData>
+    internal class SubscriptionService : IService<SubscriptionCreateViewModel, SubscriptionDisplayViewModel>
     {
         private const int MIN_DURATION_DAYS = 1;
         private const int MAX_DURATION_DAYS = 365;
 
-        public void Create(SubscriptionNecessaryData subscriptionData)
+        public void Create(SubscriptionCreateViewModel subscriptionData)
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(subscriptionData.Title,
                                                         subscriptionData.Description,
@@ -86,16 +88,16 @@
             }
         }
 
-        public IEnumerable<SubscriptionDisplayedData> ReadAll()
+        public IEnumerable<SubscriptionDisplayViewModel> ReadAll()
         {
-            IEnumerable<SubscriptionDisplayedData> subscriptions;
+            IEnumerable<SubscriptionDisplayViewModel> subscriptions;
 
             using (CinemaEntities db = new CinemaEntities())
             {
                 subscriptions = db.Subscriptions   // подумать, как переделать чудовище
                     .ToList()
                     .Select(x =>
-                        new SubscriptionDisplayedData(
+                        new SubscriptionDisplayViewModel(
                             x.Id,
                             x.Title,
                             x.Description,
@@ -113,7 +115,7 @@
             return subscriptions;
         }
 
-        public void Update(Guid subscriptionId, SubscriptionNecessaryData subscriptionNewData)
+        public void Update(Guid subscriptionId, SubscriptionCreateViewModel subscriptionNewData)
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(subscriptionId,
                                                         subscriptionNewData.Title,

@@ -2,13 +2,14 @@
 {
     using KVA.Cinema.Exceptions;
     using KVA.Cinema.Models.SubscriptionLevel;
+    using KVA.Cinema.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
 
-    class SubscriptionLevelService : IService<SubscriptionLevelCreateViewModel, SubscriptionLevelViewModel>
+    internal class SubscriptionLevelService : IService<SubscriptionLevelCreateViewModel, SubscriptionLevelDisplayViewModel>
     {
         public void Create(SubscriptionLevelCreateViewModel subscriptionLevelData)
         {
@@ -59,7 +60,7 @@
             }
         }
 
-        public IEnumerable<SubscriptionLevelViewModel> ReadAll()
+        public IEnumerable<SubscriptionLevelDisplayViewModel> ReadAll()
         {
             List<Level> subscriptionLevels;
 
@@ -68,7 +69,7 @@
                 subscriptionLevels = db.Levels.ToList();
             }
 
-            return subscriptionLevels.Select(x => new SubscriptionLevelDisplayedData(x.Id, x.Title));
+            return subscriptionLevels.Select(x => new SubscriptionLevelDisplayViewModel(x.Id, x.Title));
         }
 
         public void Update(Guid subscriptionLevelId, SubscriptionLevelCreateViewModel subscriptionLevelNewData)

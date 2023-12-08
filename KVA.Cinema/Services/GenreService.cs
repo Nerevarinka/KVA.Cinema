@@ -2,13 +2,15 @@
 {
     using KVA.Cinema.Exceptions;
     using KVA.Cinema.Models;
+    using KVA.Cinema.Models.Genre;
+    using KVA.Cinema.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    public class GenreService : IService<GenreNecessaryData, GenreDisplayedData>
+    internal class GenreService : IService<GenreCreateViewModel, GenreDisplayViewModel>
     {
-        public void Create(GenreNecessaryData genreData)
+        public void Create(GenreCreateViewModel genreData)
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(genreData.Title))
             {
@@ -57,7 +59,7 @@
             }
         }
 
-        public IEnumerable<GenreDisplayedData> ReadAll()
+        public IEnumerable<GenreDisplayViewModel> ReadAll()
         {
             List<Genre> genres;
 
@@ -66,10 +68,10 @@
                 genres = db.Genres.ToList();
             }
 
-            return genres.Select(x => new GenreDisplayedData(x.Id, x.Title));
+            return genres.Select(x => new GenreDisplayViewModel(x.Id, x.Title));
         }
 
-        public void Update(Guid genreId, GenreNecessaryData genreNewData)
+        public void Update(Guid genreId, GenreCreateViewModel genreNewData)
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(genreId, genreNewData.Title))
             {

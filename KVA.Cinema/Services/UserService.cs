@@ -2,15 +2,18 @@
 {
     using KVA.Cinema.Exceptions;
     using KVA.Cinema.Models;
+    using KVA.Cinema.Models.User;
+    using KVA.Cinema.Models.UserSubscription;
+    using KVA.Cinema.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    public class UserService : IService<UserNecessaryData, UserDisplayedData>
+    internal class UserService : IService<UserCreateViewModel, UserDisplayViewModel>
     {
         private const int MIN_AGE = 14;
 
-        public IEnumerable<UserDisplayedData> ReadAll()
+        public IEnumerable<UserDisplayViewModel> ReadAll()
         {
             List<User> users;
 
@@ -19,7 +22,7 @@
                 users = db.Users.ToList();
             }
 
-            return users.Select(x => new UserDisplayedData(x.Id,
+            return users.Select(x => new UserDisplayViewModel(x.Id,
                                                            x.FirstName,
                                                            x.LastName,
                                                            x.Nickname,
@@ -27,7 +30,7 @@
                                                            x.Email));
         }
 
-        public void Create(UserNecessaryData userData)
+        public void Create(UserCreateViewModel userData)
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(userData.FirstName,
                                                         userData.LastName,
@@ -75,7 +78,7 @@
             }
         }
 
-        public void Update(Guid userId, UserNecessaryData userNewData)
+        public void Update(Guid userId, UserCreateViewModel userNewData)
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(userId,
                                                         userNewData.LastName,
@@ -172,7 +175,7 @@
                 throw new EntityNotFoundException($"Subscription with Id \"{subscriptionId}\" not found");
             }
 
-            new UserSubscriptionController().Create(new UserSubscriptionNecessaryData(Guid.NewGuid(),
+            new UserSubscriptionService().Create(new UserSubscriptionCreateViewModel(Guid.NewGuid(),
                                                                                       subscriptionId,
                                                                                       userId,
                                                                                       DateTime.Now,
@@ -200,7 +203,7 @@
                 userSubscription = db.UserSubscriptions.FirstOrDefault(x => x.SubscriptionId == subscriptionId);
             }
 
-            new UserSubscriptionController().Delete(userSubscription.Id);
+            new UserSubscriptionService().Delete(userSubscription.Id);
         }
 
         public bool IsEntityExist(string nickname)
