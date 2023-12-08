@@ -2,13 +2,13 @@
 {
     using System;
 
-    internal struct SubscriptionLevelViewModel
+    internal class SubscriptionLevelDisplayViewModel
     {
         public Guid Id { get; set; }
 
         public string Title { get; }
 
-        public SubscriptionLevelViewModel(Guid id, string title)
+        public SubscriptionLevelDisplayViewModel(Guid id, string title)
         {
             Id = id;
             Title = title;

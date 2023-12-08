@@ -5,7 +5,7 @@
     /// <summary>
     /// Person's data to display on console
     /// </summary>
-    internal struct UserViewModel
+    internal class UserDisplayViewModel
     {
         public Guid Id { get; set; }
 
@@ -19,7 +19,7 @@
 
         public string Email { get; }
 
-        public UserViewModel(Guid id, string lastName, string firstName, string nickname, DateTime birthDate, string email)
+        public UserDisplayViewModel(Guid id, string lastName, string firstName, string nickname, DateTime birthDate, string email)
         {
             Id = id;
             FirstName = firstName;

@@ -2,13 +2,13 @@
 {
     using System;
 
-    internal struct DirectorViewModel
+    internal class DirectorDisplayViewModel
     {
         public Guid Id { get; set; }
 
         public string Name { get; }
 
-        public DirectorViewModel(Guid id, string name)
+        public DirectorDisplayViewModel(Guid id, string name)
         {
             Id = id;
             Name = name;

@@ -2,7 +2,7 @@
 {
     using System;
 
-    internal struct UserSubscriptionViewModel
+    internal class UserSubscriptionDisplayViewModel
     {
         public Guid Id { get; set; }
 
@@ -14,7 +14,7 @@
 
         public DateTime LastUntil { get; set; }
 
-        public UserSubscriptionViewModel(Guid id, Guid subscriptionId, Guid userId, DateTime activatedOn, DateTime lastUntil)
+        public UserSubscriptionDisplayViewModel(Guid id, Guid subscriptionId, Guid userId, DateTime activatedOn, DateTime lastUntil)
         {
             Id = id;
             SubscriptionId = subscriptionId;

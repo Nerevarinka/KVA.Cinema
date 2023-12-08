@@ -2,13 +2,13 @@
 {
     using System;
 
-    internal struct CountryViewModel
+    internal class CountryDisplayViewModel
     {
         public Guid Id { get; set; }
 
         public string Name { get; }
 
-        public CountryViewModel(Guid id, string name)
+        public CountryDisplayViewModel(Guid id, string name)
         {
             Id = id;
             Name = name;
