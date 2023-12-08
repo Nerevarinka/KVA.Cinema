@@ -3,10 +3,12 @@
     using System;
 
     /// <summary>
-    /// Essential data to create person (written by user)
+    /// Person's data to display on console
     /// </summary>
-    internal struct UserNecessaryData
+    internal struct UserViewModel
     {
+        public Guid Id { get; set; }
+
         public string LastName { get; }
 
         public string FirstName { get; }
@@ -17,8 +19,9 @@
 
         public string Email { get; }
 
-        public UserNecessaryData(string lastName, string firstName, string nickname, DateTime birthDate, string email)
+        public UserViewModel(Guid id, string lastName, string firstName, string nickname, DateTime birthDate, string email)
         {
+            Id = id;
             FirstName = firstName;
             LastName = lastName;
             Nickname = nickname;

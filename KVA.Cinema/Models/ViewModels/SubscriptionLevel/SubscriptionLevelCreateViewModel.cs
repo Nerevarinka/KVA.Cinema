@@ -2,11 +2,11 @@
 {
     using System;
 
-    internal struct SubscriptionLevelNecessaryData
+    internal struct SubscriptionLevelCreateViewModel
     {
         public string Title { get; }
 
-        public SubscriptionLevelNecessaryData(string title)
+        public SubscriptionLevelCreateViewModel(string title)
         {
             Title = title;
         }

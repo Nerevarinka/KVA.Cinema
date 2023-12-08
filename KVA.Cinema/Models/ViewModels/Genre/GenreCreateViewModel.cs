@@ -2,11 +2,11 @@
 {
     using System;
 
-    internal struct GenreNecessaryData
+    internal struct GenreCreateViewModel
     {
         public string Title { get; }
 
-        public GenreNecessaryData(string title)
+        public GenreCreateViewModel(string title)
         {
             Title = title;
         }

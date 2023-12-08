@@ -2,13 +2,13 @@
 {
     using System;
 
-    internal struct GenreDisplayedData
+    internal struct GenreDisplayViewModel
     {
         public Guid Id { get; set; }
 
         public string Title { get; }
 
-        public GenreDisplayedData(Guid id, string title)
+        public GenreDisplayViewModel(Guid id, string title)
         {
             Id = id;
             Title = title;

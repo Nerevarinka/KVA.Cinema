@@ -2,7 +2,7 @@
 {
     using System;
 
-    internal struct SubscriptionDisplayedData
+    internal struct SubscriptionViewModel
     {
         public Guid Id { get; set; }
 
@@ -20,7 +20,7 @@
 
         public DateTime AvailableUntil { get; set; }
 
-        public SubscriptionDisplayedData(Guid id, string title, string description, decimal cost, string level, DateTime releasedIn, int duration, DateTime availableUntil)
+        public SubscriptionViewModel(Guid id, string title, string description, decimal cost, string level, DateTime releasedIn, int duration, DateTime availableUntil)
         {
             Id = id;
             Title = title;

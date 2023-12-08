@@ -1,14 +1,14 @@
-﻿namespace KVA.Cinema.Models.Director
+﻿namespace KVA.Cinema.Models.Country
 {
     using System;
 
-    internal struct DirectorDisplayedData
+    internal struct CountryCreateViewModel
     {
         public Guid Id { get; set; }
 
         public string Name { get; }
 
-        public DirectorDisplayedData(Guid id, string name)
+        public CountryCreateViewModel(Guid id, string name)
         {
             Id = id;
             Name = name;

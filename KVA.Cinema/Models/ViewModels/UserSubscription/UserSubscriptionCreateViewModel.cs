@@ -2,7 +2,7 @@
 {
     using System;
 
-    internal struct UserSubscriptionNecessaryData
+    internal struct UserSubscriptionCreateViewModel
     {
         public Guid Id { get; set; }
 
@@ -14,7 +14,7 @@
 
         public DateTime LastUntil { get; set; }
 
-        public UserSubscriptionNecessaryData(Guid id, Guid subscriptionId, Guid userId, DateTime activatedOn, DateTime lastUntil)
+        public UserSubscriptionCreateViewModel(Guid id, Guid subscriptionId, Guid userId, DateTime activatedOn, DateTime lastUntil)
         {
             Id = id;
             SubscriptionId = subscriptionId;

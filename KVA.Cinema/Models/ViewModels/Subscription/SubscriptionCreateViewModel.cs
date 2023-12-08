@@ -2,7 +2,7 @@
 {
     using System;
 
-    internal struct SubscriptionNecessaryData
+    internal struct SubscriptionCreateViewModel
     {
         public string Title { get; set; }
 
@@ -18,7 +18,7 @@
 
         public DateTime AvailableUntil { get; set; }
 
-        public SubscriptionNecessaryData(string title, string description, decimal cost, string level, DateTime releasedIn, int duration, DateTime availableUntil)
+        public SubscriptionCreateViewModel(string title, string description, decimal cost, string level, DateTime releasedIn, int duration, DateTime availableUntil)
         {
             Title = title;
             Description = description;

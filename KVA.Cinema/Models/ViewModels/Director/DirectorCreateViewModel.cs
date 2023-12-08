@@ -2,11 +2,11 @@
 {
     using System;
 
-    internal struct DirectorNecessaryData
+    internal struct DirectorCreateViewModel
     {
         public string Name { get; }
 
-        public DirectorNecessaryData(string name)
+        public DirectorCreateViewModel(string name)
         {
             Name = name;
         }
