@@ -2,6 +2,7 @@
 {
     using KVA.Cinema.Exceptions;
     using KVA.Cinema.Models;
+    using KVA.Cinema.Models.Entities;
     using KVA.Cinema.Models.Subscription;
     using KVA.Cinema.Utilities;
     using System;
@@ -31,16 +32,16 @@
                 throw new ArgumentException($"Duration can be in range {MIN_DURATION_DAYS}-{MAX_DURATION_DAYS} days");
             }
 
-            Level subscriptionLevel;
+            SubscriptionLevel subscriptionLevel;
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 if (db.Subscriptions.FirstOrDefault(x => x.Title == subscriptionData.Title) != default)
                 {
                     throw new DuplicatedEntityException($"Subscription with title \"{subscriptionData.Title}\" is already exist");
                 }
 
-                subscriptionLevel = db.Levels.FirstOrDefault(x => x.Title == subscriptionData.Level);
+                subscriptionLevel = db.SubscriptionLevels.FirstOrDefault(x => x.Title == subscriptionData.Level);
             }
 
             if (subscriptionLevel == default)
@@ -60,7 +61,7 @@
                 AvailableUntil = subscriptionData.AvailableUntil
             };
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 db.Subscriptions.Add(newSubscription);
                 db.SaveChanges();
@@ -74,7 +75,7 @@
                 throw new ArgumentNullException("Id has no value");
             }
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 Subscription subscription = db.Subscriptions.FirstOrDefault(x => x.Id == subscriptionId);
 
@@ -92,7 +93,7 @@
         {
             IEnumerable<SubscriptionDisplayViewModel> subscriptions;
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 subscriptions = db.Subscriptions   // подумать, как переделать чудовище
                     .ToList()
@@ -136,9 +137,9 @@
             }
 
             Subscription subscription;
-            Level subscriptionLevel;
+            SubscriptionLevel subscriptionLevel;
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 subscription = db.Subscriptions.FirstOrDefault(x => x.Id == subscriptionId);
 
@@ -152,7 +153,7 @@
                     throw new DuplicatedEntityException($"Subscription with title \"{subscriptionNewData.Title}\" is already exist");
                 }
 
-                subscriptionLevel = db.Levels.FirstOrDefault(x => x.Title == subscriptionNewData.Level);
+                subscriptionLevel = db.SubscriptionLevels.FirstOrDefault(x => x.Title == subscriptionNewData.Level);
             }
 
             if (subscriptionLevel == default)
@@ -168,7 +169,7 @@
             subscription.Duration = subscriptionNewData.Duration;
             subscription.AvailableUntil = subscriptionNewData.AvailableUntil;
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
                 db.SaveChanges();
         }
 
@@ -179,7 +180,7 @@
                 return false;
             }
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 Subscription subscription = db.Subscriptions.FirstOrDefault(x => x.Title == subscriptionTitle);
 

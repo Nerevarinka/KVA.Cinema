@@ -2,6 +2,7 @@
 {
     using KVA.Cinema.Exceptions;
     using KVA.Cinema.Models;
+    using KVA.Cinema.Models.Entities;
     using KVA.Cinema.Models.UserSubscription;
     using KVA.Cinema.Utilities;
     using System;
@@ -30,7 +31,7 @@
                 LastUntil = userSubscriptionData.LastUntil
             };
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 UserSubscription subscription = db.UserSubscriptions.FirstOrDefault(x => x.SubscriptionId == userSubscriptionData.SubscriptionId
                                                                                     && x.UserId == userSubscriptionData.UserId);
@@ -52,7 +53,7 @@
                 throw new ArgumentNullException("Id has no value");
             }
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 UserSubscription userSubscription = db.UserSubscriptions.FirstOrDefault(x => x.Id == userSubscriptionId);
 
@@ -70,12 +71,12 @@
         {
             List<UserSubscription> userSubscriptions;
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 userSubscriptions = db.UserSubscriptions.ToList();
             }
 
-            return userSubscriptions.Select(x => new UserSubscriptionCreateViewModel(x.Id,
+            return (IEnumerable<UserSubscriptionDisplayViewModel>)userSubscriptions.Select(x => new UserSubscriptionCreateViewModel(x.Id,
                                                                                    x.SubscriptionId,
                                                                                    x.UserId,
                                                                                    x.ActivatedOn,
