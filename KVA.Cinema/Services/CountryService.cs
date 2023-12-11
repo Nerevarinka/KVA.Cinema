@@ -3,6 +3,7 @@
     using KVA.Cinema.Exceptions;
     using KVA.Cinema.Models;
     using KVA.Cinema.Models.Country;
+    using KVA.Cinema.Models.Entities;
     using KVA.Cinema.Utilities;
     using System;
     using System.Collections.Generic;
@@ -17,7 +18,7 @@
                 throw new ArgumentNullException("Name has no value");
             }
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 if (db.Countries.FirstOrDefault(x => x.Name == countryData.Name) != default)
                 {
@@ -31,7 +32,7 @@
                 Name = countryData.Name
             };
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 db.Countries.Add(newCountry);
                 db.SaveChanges();
@@ -45,7 +46,7 @@
                 throw new ArgumentNullException("Country Id has no value");
             }
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 Country country = db.Countries.FirstOrDefault(x => x.Id == countryId);
 
@@ -63,12 +64,12 @@
         {
             List<Country> countries;
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 countries = db.Countries.ToList();
             }
 
-            return countries.Select(x => new CountryDisplayedData(x.Id, x.Name));
+            return countries.Select(x => new CountryDisplayViewModel(x.Id, x.Name));
         }
 
         public void Update(Guid countryId, CountryCreateViewModel countryNewData)
@@ -78,7 +79,7 @@
                 throw new ArgumentNullException("Country name or id has no value");
             }
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 Country country = db.Countries.FirstOrDefault(x => x.Id == countryId);
 
@@ -105,7 +106,7 @@
                 return false;
             }
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 Country country = db.Countries.FirstOrDefault(x => x.Name == countryName);
 

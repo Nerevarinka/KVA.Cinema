@@ -1,6 +1,8 @@
 ﻿namespace KVA.Cinema.Services
 {
     using KVA.Cinema.Exceptions;
+    using KVA.Cinema.Models;
+    using KVA.Cinema.Models.Entities;
     using KVA.Cinema.Models.SubscriptionLevel;
     using KVA.Cinema.Utilities;
     using System;
@@ -18,23 +20,23 @@
                 throw new ArgumentNullException("Title has no value");
             }
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
-                if (db.Levels.FirstOrDefault(x => x.Title == subscriptionLevelData.Title) != default)
+                if (db.SubscriptionLevels.FirstOrDefault(x => x.Title == subscriptionLevelData.Title) != default)
                 {
                     throw new DuplicatedEntityException($"Subscription level with title \"{subscriptionLevelData.Title}\" is already exist");
                 }
             }
 
-            Level newSubscriptionLevel = new Level()
+            SubscriptionLevel newSubscriptionLevel = new SubscriptionLevel()
             {
                 Id = Guid.NewGuid(),
                 Title = subscriptionLevelData.Title
             };
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
-                db.Levels.Add(newSubscriptionLevel);
+                db.SubscriptionLevels.Add(newSubscriptionLevel);
                 db.SaveChanges();
             }
         }
@@ -46,27 +48,27 @@
                 throw new ArgumentNullException("Id has no value");
             }
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
-                Level subscriptionLevel = db.Levels.FirstOrDefault(x => x.Id == subscriptionLevelId);
+                SubscriptionLevel subscriptionLevel = db.SubscriptionLevels.FirstOrDefault(x => x.Id == subscriptionLevelId);
 
                 if (subscriptionLevel == default)
                 {
                     throw new EntityNotFoundException($"Level with Id \"{subscriptionLevelId}\" not found");
                 }
 
-                db.Levels.Remove(subscriptionLevel);
+                db.SubscriptionLevels.Remove(subscriptionLevel);
                 db.SaveChanges();
             }
         }
 
         public IEnumerable<SubscriptionLevelDisplayViewModel> ReadAll()
         {
-            List<Level> subscriptionLevels;
+            List<SubscriptionLevel> subscriptionLevels;
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
-                subscriptionLevels = db.Levels.ToList();
+                subscriptionLevels = db.SubscriptionLevels.ToList();
             }
 
             return subscriptionLevels.Select(x => new SubscriptionLevelDisplayViewModel(x.Id, x.Title));
@@ -79,18 +81,18 @@
                 throw new ArgumentNullException("One or more parameters have no value");
             }
 
-            Level subscriptionLevel;
+            SubscriptionLevel subscriptionLevel;
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
-                subscriptionLevel = db.Levels.FirstOrDefault(x => x.Id == subscriptionLevelId);
+                subscriptionLevel = db.SubscriptionLevels.FirstOrDefault(x => x.Id == subscriptionLevelId);
 
                 if (subscriptionLevelId == default)
                 {
                     throw new EntityNotFoundException($"Subscription level with id \"{subscriptionLevelId}\" not found");
                 }
 
-                if (db.Levels.FirstOrDefault(x => x.Title == subscriptionLevelNewData.Title) != default)
+                if (db.SubscriptionLevels.FirstOrDefault(x => x.Title == subscriptionLevelNewData.Title) != default)
                 {
                     throw new DuplicatedEntityException($"Subscription level with title \"{subscriptionLevelNewData.Title}\" is already exist");
                 }
@@ -98,7 +100,7 @@
 
             subscriptionLevel.Title = subscriptionLevelNewData.Title;
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
                 db.SaveChanges();
         }
 
@@ -109,9 +111,9 @@
                 return false;
             }
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
-                Level subscriptionLevel = db.Levels.FirstOrDefault(x => x.Title == subscriptionLevelTitle);
+                SubscriptionLevel subscriptionLevel = db.SubscriptionLevels.FirstOrDefault(x => x.Title == subscriptionLevelTitle);
 
                 return subscriptionLevel != default;
             }

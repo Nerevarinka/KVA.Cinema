@@ -2,6 +2,7 @@
 {
     using KVA.Cinema.Exceptions;
     using KVA.Cinema.Models;
+    using KVA.Cinema.Models.Entities;
     using KVA.Cinema.Models.User;
     using KVA.Cinema.Models.UserSubscription;
     using KVA.Cinema.Utilities;
@@ -17,7 +18,7 @@
         {
             List<User> users;
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 users = db.Users.ToList();
             }
@@ -46,7 +47,7 @@
                 throw new ArgumentException($"Age must not be less than {MIN_AGE}");
             }
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 if (db.Users.FirstOrDefault(x => x.Nickname == userData.Nickname) != default)
                 {
@@ -71,7 +72,7 @@
                 IsActive = true
             };
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 db.Users.Add(newUser);
                 db.SaveChanges();
@@ -97,7 +98,7 @@
 
             User user;
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 user = db.Users.FirstOrDefault(x => x.Id == userId);
 
@@ -124,7 +125,7 @@
             user.Email = userNewData.Email;
 
             // ASS TO THINK: А если мы ввели те же самые данные пользователя - то имеет ли тут смысл вызывать сохранение бд?
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
                 db.SaveChanges();
         }
 
@@ -135,7 +136,7 @@
                 throw new ArgumentNullException("User Id has no value");
             }
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 User user = db.Users.FirstOrDefault(x => x.Id == userId);
 
@@ -158,7 +159,7 @@
 
             Subscription subscription;
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 User user = db.Users.FirstOrDefault(x => x.Id == userId);
 
@@ -191,7 +192,7 @@
 
             UserSubscription userSubscription;
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 User user = db.Users.FirstOrDefault(x => x.Id == userId);
 
@@ -213,7 +214,7 @@
                 return false;
             }
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 User user = db.Users.FirstOrDefault(x => x.Nickname == nickname);
 

@@ -3,6 +3,7 @@
     using KVA.Cinema.Exceptions;
     using KVA.Cinema.Models;
     using KVA.Cinema.Models.Director;
+    using KVA.Cinema.Models.Entities;
     using KVA.Cinema.Utilities;
     using System;
     using System.Collections.Generic;
@@ -17,7 +18,7 @@
                 throw new ArgumentNullException("Name has no value");
             }
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 if (db.Directors.FirstOrDefault(x => x.Name == directorData.Name) != default)
                 {
@@ -31,7 +32,7 @@
                 Name = directorData.Name
             };
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 db.Directors.Add(newDirector);
                 db.SaveChanges();
@@ -45,7 +46,7 @@
                 throw new ArgumentNullException("Director Id has no value");
             }
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 Director director = db.Directors.FirstOrDefault(x => x.Id == directorId);
 
@@ -63,7 +64,7 @@
         {
             List<Director> directors;
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 directors = db.Directors.ToList();
             }
@@ -78,7 +79,7 @@
                 throw new ArgumentNullException("Director name or id has no value");
             }
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 Director director = db.Directors.FirstOrDefault(x => x.Id == directorId);
 
@@ -105,7 +106,7 @@
                 return false;
             }
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 Director director = db.Directors.FirstOrDefault(x => x.Name == directorName);
 

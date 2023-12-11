@@ -2,6 +2,7 @@
 {
     using KVA.Cinema.Exceptions;
     using KVA.Cinema.Models;
+    using KVA.Cinema.Models.Entities;
     using KVA.Cinema.Models.Genre;
     using KVA.Cinema.Utilities;
     using System;
@@ -17,7 +18,7 @@
                 throw new ArgumentNullException("Title has no value");
             }
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 if (db.Genres.FirstOrDefault(x => x.Title == genreData.Title) != default)
                 {
@@ -31,7 +32,7 @@
                 Title = genreData.Title
             };
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 db.Genres.Add(newGenre);
                 db.SaveChanges();
@@ -45,7 +46,7 @@
                 throw new ArgumentNullException("Genre Id has no value");
             }
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 Genre genre = db.Genres.FirstOrDefault(x => x.Id == genreId);
 
@@ -63,7 +64,7 @@
         {
             List<Genre> genres;
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 genres = db.Genres.ToList();
             }
@@ -78,7 +79,7 @@
                 throw new ArgumentNullException("Genre title or id has no value");
             }
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 Genre genre = db.Genres.FirstOrDefault(x => x.Id == genreId);
 
@@ -105,7 +106,7 @@
                 return false;
             }
 
-            using (CinemaEntities db = new CinemaEntities())
+            using (CinemaContext db = new CinemaContext())
             {
                 Genre genre = db.Genres.FirstOrDefault(x => x.Title == genreTitle);
 
