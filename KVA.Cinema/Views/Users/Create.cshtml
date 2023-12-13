@@ -1,4 +1,4 @@
-﻿@model KVA.Cinema.Models.Entities.User
+﻿@model KVA.Cinema.Models.User.UserCreateViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -28,30 +28,16 @@
                 <input asp-for="Nickname" class="form-control" />
                 <span asp-validation-for="Nickname" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="RegisteredOn" class="control-label"></label>
-                <input asp-for="RegisteredOn" class="form-control" />
-                <span asp-validation-for="RegisteredOn" class="text-danger"></span>
-            </div>
+
             <div class="form-group">
                 <label asp-for="BirthDate" class="control-label"></label>
                 <input asp-for="BirthDate" class="form-control" />
                 <span asp-validation-for="BirthDate" class="text-danger"></span>
             </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsActive" /> @Html.DisplayNameFor(model => model.IsActive)
-                </label>
-            </div>
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LastVisit" class="control-label"></label>
-                <input asp-for="LastVisit" class="form-control" />
-                <span asp-validation-for="LastVisit" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
@@ -63,6 +49,40 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+
+<!DOCTYPE html>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>User</legend>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.FirstName, "First Name")
+            @Html.EditorFor(model => model.FirstName, additionalViewData: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.FirstName)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.LastName, "Last Name")
+            @Html.EditorFor(model => model.LastName, additionalViewData: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.LastName)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Email, "Email")
+            @Html.EditorFor(model => model.Email, additionalViewData: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Email)
+        </div>
+
+        <p>
+            <input type="submit" value="Create" />
+        </p>
+    </fieldset>
+
+    @Html.ActionLink("Back to List", "Index")
+}
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

@@ -54,7 +54,7 @@ namespace KVA.Cinema.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Nickname,RegisteredOn,BirthDate,IsActive,Email,LastVisit")] User user)
+        public async Task<IActionResult> Create(User user)
         {
             if (ModelState.IsValid)
             {
@@ -87,7 +87,7 @@ namespace KVA.Cinema.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,FirstName,LastName,Nickname,RegisteredOn,BirthDate,IsActive,Email,LastVisit")] User user)
+        public async Task<IActionResult> Edit(Guid id, User user)
         {
             if (id != user.Id)
             {

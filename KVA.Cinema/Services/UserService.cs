@@ -69,6 +69,8 @@
                 Nickname = userData.Nickname,
                 BirthDate = userData.BirthDate,
                 Email = userData.Email,
+                RegisteredOn = DateTime.Now,
+                LastVisit = DateTime.Now,
                 IsActive = true
             };
 

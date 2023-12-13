@@ -1,6 +1,7 @@
 ﻿namespace KVA.Cinema.Models.User
 {
     using System;
+    using System.ComponentModel.DataAnnotations;
 
     /// <summary>
     /// Person's data to display on console
@@ -15,6 +16,7 @@
 
         public string Nickname { get; }
 
+        [DataType(DataType.Date)]
         public DateTime BirthDate { get; }
 
         public string Email { get; }
