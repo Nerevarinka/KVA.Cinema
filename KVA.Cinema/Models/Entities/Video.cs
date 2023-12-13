@@ -27,7 +27,9 @@
 
         public Guid DirectorId { get; set; }
 
-        public Guid? NextPartId { get; set; }
+        //public Guid? NextPartId { get; set; }
+
+        //public Guid? PreviousPartId { get; set; }
 
         public virtual ICollection<Comment> Comments { get; set; }
 
@@ -47,9 +49,11 @@
 
         public virtual ICollection<Subtitle> Subtitles { get; set; }
 
-        public virtual ICollection<Video> Video1 { get; set; }
+        //public virtual ICollection<Video> Video1 { get; set; } //следующие видео
 
-        public virtual Video NextVideo { get; set; } //а на предыдущее не надо ссылки?
+        //public virtual Video NextPart { get; set; }
+
+        //public virtual Video PreviousPart { get; set; }
 
         public virtual ICollection<VideoGenre> VideoGenres { get; set; }
 
@@ -64,7 +68,7 @@
             ObjectsTags = new HashSet<ObjectsTag>();
             Reviews = new HashSet<Review>();
             Subtitles = new HashSet<Subtitle>();
-            Video1 = new HashSet<Video>();
+            //Video1 = new HashSet<Video>();
             VideoGenres = new HashSet<VideoGenre>();
             VideoInSubscriptions = new HashSet<VideoInSubscription>();
             VideoRates = new HashSet<VideoRate>();

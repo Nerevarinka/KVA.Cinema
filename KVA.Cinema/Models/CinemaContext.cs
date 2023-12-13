@@ -45,9 +45,31 @@
 
         public virtual DbSet<VideoRate> VideoRates { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder
+                .Entity<Subtitle>() //каждый субтитр относится к одному конкретному видео
+                .HasOne(e => e.Video) //связь один к одному субтитра с видео
+                .WithMany(e => e.Subtitles) //у видео же может быть много субтитров (связь один ко многим)
+                .OnDelete(DeleteBehavior.NoAction); //при удалении записи ничего не делать
+
+            modelBuilder
+                .Entity<CommentMark>()
+                .HasOne(e => e.Comment)
+                .WithMany(e => e.CommentMarks)
+                .OnDelete(DeleteBehavior.NoAction);
+        }
+
+        public CinemaContext(DbContextOptions<CinemaContext> options)
+            : base(options)
+        {
+            Database.EnsureCreated();
+        }
+
         public CinemaContext()
             : base()
         {
+            Database.EnsureCreated();
         }
     }
 }

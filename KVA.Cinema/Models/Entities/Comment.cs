@@ -9,9 +9,9 @@
 
         public string Text { get; set; }
 
-        public DateTime PublishedIn { get; set; }
+        public DateTime PublishedOn { get; set; }
 
-        public Guid? ParentId { get; set; }
+        //public Guid? ParentCommentId { get; set; }
 
         public Guid VideoId { get; set; }
 
@@ -19,7 +19,7 @@
 
         //public virtual ICollection<Comment> Comment1 { get; set; } дочерние комменты
 
-        public virtual Comment ParentComment2 { get; set; }
+        //public virtual Comment ParentComment { get; set; }
 
         public virtual User User { get; set; }
 
