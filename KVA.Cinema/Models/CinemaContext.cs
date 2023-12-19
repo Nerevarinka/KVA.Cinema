@@ -1,9 +1,14 @@
-﻿namespace KVA.Cinema.Models
+﻿// Ignore Spelling: Pegis KVA
+
+namespace KVA.Cinema.Models
 {
     using KVA.Cinema.Models.Entities;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
+    using System;
 
-    public class CinemaContext : DbContext
+    public class CinemaContext : IdentityDbContext<Entities.User, IdentityRole<Guid>, Guid>
     {
         public virtual DbSet<Comment> Comments { get; set; }
 
@@ -33,7 +38,7 @@
 
         public virtual DbSet<Tag> Tags { get; set; }
 
-        public virtual DbSet<Entities.User> Users { get; set; }
+        //public override DbSet<Entities.User> Users { get; set; }
 
         public virtual DbSet<Entities.UserSubscription> UserSubscriptions { get; set; }
 
@@ -47,6 +52,8 @@
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder
                 .Entity<Subtitle>() //каждый субтитр относится к одному конкретному видео
                 .HasOne(e => e.Video) //связь один к одному субтитра с видео
@@ -58,6 +65,9 @@
                 .HasOne(e => e.Comment)
                 .WithMany(e => e.CommentMarks)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<IdentityUser>()
+                        .ToTable("Users", "dbo");
         }
 
         public CinemaContext(DbContextOptions<CinemaContext> options)
@@ -66,6 +76,7 @@
             Database.EnsureCreated();
         }
 
+        [Obsolete]
         public CinemaContext()
             : base()
         {

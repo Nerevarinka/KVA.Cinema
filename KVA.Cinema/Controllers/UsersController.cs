@@ -7,22 +7,27 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using KVA.Cinema.Models;
 using KVA.Cinema.Models.Entities;
+using KVA.Cinema.Models.User;
+using KVA.Cinema.Services;
+using KVA.Cinema.Exceptions;
+using Microsoft.AspNetCore.Identity;
 
 namespace KVA.Cinema.Controllers
 {
     public class UsersController : Controller
     {
-        private readonly CinemaContext _context;
+        private UserService UserService { get; }
 
-        public UsersController(CinemaContext context)
+        public UsersController(UserService userService)
         {
-            _context = context;
+            UserService = userService;
         }
 
         // GET: Users
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Users.ToListAsync());
+            var data = await UserService.Context.Users.ToListAsync();
+            return View(data);
         }
 
         // GET: Users/Details/5
@@ -33,7 +38,7 @@ namespace KVA.Cinema.Controllers
                 return NotFound();
             }
 
-            var user = await _context.Users
+            var user = await UserService.Context.Users
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (user == null)
             {
@@ -44,6 +49,7 @@ namespace KVA.Cinema.Controllers
         }
 
         // GET: Users/Create
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
@@ -54,14 +60,42 @@ namespace KVA.Cinema.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(User user)
+        public async Task<IActionResult> Create(UserCreateViewModel user)
         {
             if (ModelState.IsValid)
             {
-                user.Id = Guid.NewGuid();
-                _context.Add(user);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    await UserService.CreateAsync(user);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (ArgumentNullException ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
+                catch (EntityNotFoundException ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
+                catch (DuplicatedEntityException ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
+                catch (ArgumentException ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
+                catch (FailedToCreateEntityException ex)
+                {
+                    foreach (var error in ex.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, (error as IdentityError).Description);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
             }
             return View(user);
         }
@@ -74,7 +108,7 @@ namespace KVA.Cinema.Controllers
                 return NotFound();
             }
 
-            var user = await _context.Users.FindAsync(id);
+            var user = await UserService.Context.Users.FindAsync(id);
             if (user == null)
             {
                 return NotFound();
@@ -98,8 +132,8 @@ namespace KVA.Cinema.Controllers
             {
                 try
                 {
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
+                    UserService.Context.Update(user);
+                    await UserService.Context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -125,7 +159,7 @@ namespace KVA.Cinema.Controllers
                 return NotFound();
             }
 
-            var user = await _context.Users
+            var user = await UserService.Context.Users
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (user == null)
             {
@@ -140,15 +174,15 @@ namespace KVA.Cinema.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var user = await _context.Users.FindAsync(id);
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
+            var user = await UserService.Context.Users.FindAsync(id);
+            UserService.Context.Users.Remove(user);
+            await UserService.Context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool UserExists(Guid id)
         {
-            return _context.Users.Any(e => e.Id == id);
+            return UserService.Context.Users.Any(e => e.Id == id);
         }
     }
 }

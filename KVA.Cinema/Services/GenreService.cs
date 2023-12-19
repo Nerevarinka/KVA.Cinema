@@ -11,7 +11,7 @@
 
     internal class GenreService : IService<GenreCreateViewModel, GenreDisplayViewModel>
     {
-        public void Create(GenreCreateViewModel genreData)
+        public void CreateAsync(GenreCreateViewModel genreData)
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(genreData.Title))
             {

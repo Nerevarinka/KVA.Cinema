@@ -14,7 +14,7 @@
         private const int MIN_DURATION_DAYS = 1;
         private const int MAX_DURATION_DAYS = 365;
 
-        public void Create(SubscriptionCreateViewModel subscriptionData)
+        public void CreateAsync(SubscriptionCreateViewModel subscriptionData)
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(subscriptionData.Title,
                                                         subscriptionData.Description,

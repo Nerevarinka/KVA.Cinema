@@ -12,6 +12,9 @@ namespace KVA.Cinema
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using KVA.Cinema.Models.Entities;
+    using Microsoft.AspNetCore.Identity;
+    using KVA.Cinema.Services;
 
     public class Startup
     {
@@ -25,9 +28,31 @@ namespace KVA.Cinema
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<CinemaContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddIdentity<User, IdentityRole<Guid>>(options =>
+            {
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequiredLength = 8;
+                options.Password.RequireDigit = false;
+                options.Password.RequiredUniqueChars = 0;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+            })
+                .AddEntityFrameworkStores<CinemaContext>();
+
             string connection = Configuration.GetConnectionString("DefaultConnection");
 
             services.AddDbContext<CinemaContext>(options => options.UseLazyLoadingProxies().UseSqlServer(connection));
+
+            services.AddTransient<UserService>();
+            services.AddTransient<CountryService>();
+            services.AddTransient<DirectorService>();
+            services.AddTransient<GenreService>();
+            services.AddTransient<SubscriptionLevelService>();
+            services.AddTransient<SubscriptionService>();
+            services.AddTransient<UserSubscriptionService>();
 
             services.AddControllersWithViews();
         }

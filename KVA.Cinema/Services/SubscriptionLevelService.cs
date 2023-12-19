@@ -13,7 +13,7 @@
 
     internal class SubscriptionLevelService : IService<SubscriptionLevelCreateViewModel, SubscriptionLevelDisplayViewModel>
     {
-        public void Create(SubscriptionLevelCreateViewModel subscriptionLevelData)
+        public void CreateAsync(SubscriptionLevelCreateViewModel subscriptionLevelData)
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(subscriptionLevelData.Title))
             {

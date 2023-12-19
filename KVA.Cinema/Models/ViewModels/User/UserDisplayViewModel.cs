@@ -6,7 +6,7 @@
     /// <summary>
     /// Person's data to display on console
     /// </summary>
-    internal class UserDisplayViewModel
+    public class UserDisplayViewModel
     {
         public Guid Id { get; set; }
 

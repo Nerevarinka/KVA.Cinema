@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
 
     internal interface IService<TEntityCreateViewModel, TEntityDisplayViewModel>
         where TEntityCreateViewModel : class
@@ -9,7 +10,7 @@
     {
         IEnumerable<TEntityDisplayViewModel> ReadAll();
 
-        void Create(TEntityCreateViewModel entityData);
+        void CreateAsync(TEntityCreateViewModel entityData);
 
         void Update(Guid id, TEntityCreateViewModel newEntityData);
 

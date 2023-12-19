@@ -11,7 +11,7 @@
 
     internal class DirectorService : IService<DirectorCreateViewModel, DirectorDisplayViewModel>
     {
-        public void Create(DirectorCreateViewModel directorData)
+        public void CreateAsync(DirectorCreateViewModel directorData)
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(directorData.Name))
             {

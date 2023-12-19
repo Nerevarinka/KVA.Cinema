@@ -11,7 +11,7 @@
 
     internal class UserSubscriptionService : IService<UserSubscriptionCreateViewModel, UserSubscriptionDisplayViewModel>
     {
-        public void Create(UserSubscriptionCreateViewModel userSubscriptionData) // после окончания подписки должна быть возможность добавить такую же опять
+        public void CreateAsync(UserSubscriptionCreateViewModel userSubscriptionData) // после окончания подписки должна быть возможность добавить такую же опять
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(userSubscriptionData.Id,
                                                         userSubscriptionData.SubscriptionId,
