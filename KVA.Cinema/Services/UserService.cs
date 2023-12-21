@@ -18,12 +18,12 @@
         /// <summary>
         /// Minimum age allowed to use app
         /// </summary>
-        private const int MIN_AGE = 14;
+        private const int AGE_MIN = 14;
 
         /// <summary>
         /// Maximum age allowed to use app
         /// </summary>
-        private const int MAX_AGE = 120;
+        private const int AGE_MAX = 120;
 
         /// <summary>
         /// Pattern to check email
@@ -33,22 +33,22 @@
         /// <summary>
         /// Minimum length allowed for Last Name, First Name and Nickname
         /// </summary>
-        private const int MIN_NAME_LENGHT = 2;
+        private const int NAME_LENGHT_MIN = 2;
 
         /// <summary>
         /// Maximum length allowed for Last Name, First Name and Nickname
         /// </summary>
-        private const int MAX_NAME_LENGHT = 20;
+        private const int NAME_LENGHT_MAX = 20;
 
         /// <summary>
         /// Minimum password length
         /// </summary>
-        private const int MIN_PASSWORD_LENGHT = 8;
+        private const int PASSWORD_LENGHT_MIN = 8;
 
         /// <summary>
         /// Maximum password length
         /// </summary>
-        private const int MAX_PASSWORD_LENGHT = 120;
+        private const int PASSWORD_LENGHT_MAX = 120;
 
         /// <summary>
         /// Last Name, First Name and Nickname
@@ -65,7 +65,7 @@
         /// </summary>
         public SignInManager<User> SignInManager { get; }
 
-        public CinemaContext Context { get; set; }
+        public CinemaContext Context { get; }
 
         public IEnumerable<UserDisplayViewModel> ReadAll()
         {
@@ -92,9 +92,9 @@
                 throw new ArgumentNullException("One or more required fields have no value");
             }
 
-            if (userData.BirthDate > DateTime.Now.AddYears(-MIN_AGE) || userData.BirthDate < DateTime.Now.AddYears(-MAX_AGE))
+            if (userData.BirthDate > DateTime.Now.AddYears(-AGE_MIN) || userData.BirthDate < DateTime.Now.AddYears(-AGE_MAX))
             {
-                throw new ArgumentException($"Age must be in {MIN_AGE}-{MAX_AGE}");
+                throw new ArgumentException($"Age must be in {AGE_MIN}-{AGE_MAX}");
             }
 
             if (!new Regex(EMAIL_PATTERN).IsMatch(userData.Email))
@@ -106,15 +106,15 @@
 
             foreach (var item in names)
             {
-                if (item.Length is < MIN_NAME_LENGHT or > MAX_NAME_LENGHT)
+                if (item.Length is < NAME_LENGHT_MIN or > NAME_LENGHT_MAX)
                 {
-                    throw new ArgumentException($"Length must be in {MIN_NAME_LENGHT}-{MAX_NAME_LENGHT} symbols");
+                    throw new ArgumentException($"Length must be in {NAME_LENGHT_MIN}-{NAME_LENGHT_MAX} symbols");
                 }
             }
 
-            if (userData.Password.Length is < MIN_PASSWORD_LENGHT or > MAX_PASSWORD_LENGHT)
+            if (userData.Password.Length is < PASSWORD_LENGHT_MIN or > PASSWORD_LENGHT_MAX)
             {
-                throw new ArgumentException($"Password length must be in {MIN_PASSWORD_LENGHT}-{MAX_PASSWORD_LENGHT} symbols");
+                throw new ArgumentException($"Password length must be in {PASSWORD_LENGHT_MIN}-{PASSWORD_LENGHT_MAX} symbols");
             }
 
             if (userData.Password != userData.PasswordConfirm)
@@ -170,9 +170,9 @@
                 throw new ArgumentNullException("One or more user's parameters have no value");
             }
 
-            if (userNewData.BirthDate > DateTime.Now.AddYears(-MIN_AGE))
+            if (userNewData.BirthDate > DateTime.Now.AddYears(-AGE_MIN))
             {
-                throw new ArgumentException($"Age must not be less than {MIN_AGE}");
+                throw new ArgumentException($"Age must not be less than {AGE_MIN}");
             }
 
             User user = Context.Users.FirstOrDefault(x => x.Id == userId);
@@ -241,7 +241,7 @@
                 throw new EntityNotFoundException($"Subscription with Id \"{subscriptionId}\" not found");
             }
 
-            new UserSubscriptionService().CreateAsync(new UserSubscriptionCreateViewModel(Guid.NewGuid(),
+            new UserSubscriptionService(Context).CreateAsync(new UserSubscriptionCreateViewModel(Guid.NewGuid(),
                                                                                       subscriptionId,
                                                                                       userId,
                                                                                       DateTime.Now,
@@ -264,7 +264,7 @@
 
             UserSubscription userSubscription = Context.UserSubscriptions.FirstOrDefault(x => x.SubscriptionId == subscriptionId);
 
-            new UserSubscriptionService().Delete(userSubscription.Id);
+            new UserSubscriptionService(Context).Delete(userSubscription.Id);
         }
 
         public bool IsEntityExist(string nickname)

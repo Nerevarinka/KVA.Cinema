@@ -11,6 +11,7 @@ using KVA.Cinema.Models.User;
 using KVA.Cinema.Services;
 using KVA.Cinema.Exceptions;
 using Microsoft.AspNetCore.Identity;
+using KVA.Cinema.Models.ViewModels.User;
 
 namespace KVA.Cinema.Controllers
 {
@@ -178,6 +179,50 @@ namespace KVA.Cinema.Controllers
             UserService.Context.Users.Remove(user);
             await UserService.Context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public IActionResult Login(string returnUrl = null)
+        {
+            return View(new LoginViewModel { /*ReturnUrl = returnUrl*/ });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result =
+                    await UserService.SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+
+                if (result.Succeeded)
+                {
+                    // проверяем, принадлежит ли URL приложению
+                    //if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+                    //{
+                    //    return Redirect(model.ReturnUrl);
+                    //}
+                    //else
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Incorrect login or/and password");
+                }
+            }
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            // удаляем аутентификационные куки
+            await UserService.SignInManager.SignOutAsync();
+            return RedirectToAction("Index", "Home");
         }
 
         private bool UserExists(Guid id)
