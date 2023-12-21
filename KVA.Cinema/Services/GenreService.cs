@@ -11,6 +11,8 @@
 
     internal class GenreService : IService<GenreCreateViewModel, GenreDisplayViewModel>
     {
+        public CinemaContext Context { get; set; }
+
         public void CreateAsync(GenreCreateViewModel genreData)
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(genreData.Title))
@@ -18,12 +20,9 @@
                 throw new ArgumentNullException("Title has no value");
             }
 
-            using (CinemaContext db = new CinemaContext())
+            if (Context.Genres.FirstOrDefault(x => x.Title == genreData.Title) != default)
             {
-                if (db.Genres.FirstOrDefault(x => x.Title == genreData.Title) != default)
-                {
-                    throw new DuplicatedEntityException($"Genre with title \"{genreData.Title}\" is already exist");
-                }
+                throw new DuplicatedEntityException($"Genre with title \"{genreData.Title}\" is already exist");
             }
 
             Genre newGenre = new Genre()
@@ -32,11 +31,8 @@
                 Title = genreData.Title
             };
 
-            using (CinemaContext db = new CinemaContext())
-            {
-                db.Genres.Add(newGenre);
-                db.SaveChanges();
-            }
+            Context.Genres.Add(newGenre);
+            Context.SaveChanges();
         }
 
         public void Delete(Guid genreId)
@@ -46,28 +42,20 @@
                 throw new ArgumentNullException("Genre Id has no value");
             }
 
-            using (CinemaContext db = new CinemaContext())
+            Genre genre = Context.Genres.FirstOrDefault(x => x.Id == genreId);
+
+            if (genre == default)
             {
-                Genre genre = db.Genres.FirstOrDefault(x => x.Id == genreId);
-
-                if (genre == default)
-                {
-                    throw new EntityNotFoundException($"Genre with Id \"{genreId}\" not found");
-                }
-
-                db.Genres.Remove(genre);
-                db.SaveChanges();
+                throw new EntityNotFoundException($"Genre with Id \"{genreId}\" not found");
             }
+
+            Context.Genres.Remove(genre);
+            Context.SaveChanges();
         }
 
         public IEnumerable<GenreDisplayViewModel> ReadAll()
         {
-            List<Genre> genres;
-
-            using (CinemaContext db = new CinemaContext())
-            {
-                genres = db.Genres.ToList();
-            }
+            List<Genre> genres = Context.Genres.ToList();
 
             return genres.Select(x => new GenreDisplayViewModel(x.Id, x.Title));
         }
@@ -79,24 +67,21 @@
                 throw new ArgumentNullException("Genre title or id has no value");
             }
 
-            using (CinemaContext db = new CinemaContext())
+            Genre genre = Context.Genres.FirstOrDefault(x => x.Id == genreId);
+
+            if (genreId == default)
             {
-                Genre genre = db.Genres.FirstOrDefault(x => x.Id == genreId);
-
-                if (genreId == default)
-                {
-                    throw new EntityNotFoundException($"Genre with id \"{genreId}\" not found");
-                }
-
-                if (db.Genres.FirstOrDefault(x => x.Title == genreNewData.Title) != default)
-                {
-                    throw new DuplicatedEntityException($"Genre with title \"{genreNewData.Title}\" is already exist");
-                }
-
-                genre.Title = genreNewData.Title;
-
-                db.SaveChanges();
+                throw new EntityNotFoundException($"Genre with id \"{genreId}\" not found");
             }
+
+            if (Context.Genres.FirstOrDefault(x => x.Title == genreNewData.Title) != default)
+            {
+                throw new DuplicatedEntityException($"Genre with title \"{genreNewData.Title}\" is already exist");
+            }
+
+            genre.Title = genreNewData.Title;
+
+            Context.SaveChanges();
         }
 
         public bool IsEntityExist(string genreTitle)
@@ -106,12 +91,14 @@
                 return false;
             }
 
-            using (CinemaContext db = new CinemaContext())
-            {
-                Genre genre = db.Genres.FirstOrDefault(x => x.Title == genreTitle);
+            Genre genre = Context.Genres.FirstOrDefault(x => x.Title == genreTitle);
 
-                return genre != default;
-            }
+            return genre != default;
+        }
+
+        public GenreService(CinemaContext db)
+        {
+            Context = db;
         }
     }
 }

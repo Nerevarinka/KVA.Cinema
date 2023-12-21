@@ -11,6 +11,8 @@
 
     internal class DirectorService : IService<DirectorCreateViewModel, DirectorDisplayViewModel>
     {
+        public CinemaContext Context { get; set; }
+
         public void CreateAsync(DirectorCreateViewModel directorData)
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(directorData.Name))
@@ -18,12 +20,9 @@
                 throw new ArgumentNullException("Name has no value");
             }
 
-            using (CinemaContext db = new CinemaContext())
+            if (Context.Directors.FirstOrDefault(x => x.Name == directorData.Name) != default)
             {
-                if (db.Directors.FirstOrDefault(x => x.Name == directorData.Name) != default)
-                {
-                    throw new DuplicatedEntityException($"Director with name \"{directorData.Name}\" is already exist");
-                }
+                throw new DuplicatedEntityException($"Director with name \"{directorData.Name}\" is already exist");
             }
 
             Director newDirector = new Director()
@@ -32,11 +31,8 @@
                 Name = directorData.Name
             };
 
-            using (CinemaContext db = new CinemaContext())
-            {
-                db.Directors.Add(newDirector);
-                db.SaveChanges();
-            }
+            Context.Directors.Add(newDirector);
+            Context.SaveChanges();
         }
 
         public void Delete(Guid directorId)
@@ -46,28 +42,22 @@
                 throw new ArgumentNullException("Director Id has no value");
             }
 
-            using (CinemaContext db = new CinemaContext())
+            Director director = Context.Directors.FirstOrDefault(x => x.Id == directorId);
+
+            if (director == default)
             {
-                Director director = db.Directors.FirstOrDefault(x => x.Id == directorId);
-
-                if (director == default)
-                {
-                    throw new EntityNotFoundException($"Director with Id \"{directorId}\" not found");
-                }
-
-                db.Directors.Remove(director);
-                db.SaveChanges();
+                throw new EntityNotFoundException($"Director with Id \"{directorId}\" not found");
             }
+
+            Context.Directors.Remove(director);
+            Context.SaveChanges();
         }
 
         public IEnumerable<DirectorDisplayViewModel> ReadAll()
         {
             List<Director> directors;
 
-            using (CinemaContext db = new CinemaContext())
-            {
-                directors = db.Directors.ToList();
-            }
+            directors = Context.Directors.ToList();
 
             return directors.Select(x => new DirectorDisplayViewModel(x.Id, x.Name));
         }
@@ -79,24 +69,21 @@
                 throw new ArgumentNullException("Director name or id has no value");
             }
 
-            using (CinemaContext db = new CinemaContext())
+            Director director = Context.Directors.FirstOrDefault(x => x.Id == directorId);
+
+            if (directorId == default)
             {
-                Director director = db.Directors.FirstOrDefault(x => x.Id == directorId);
-
-                if (directorId == default)
-                {
-                    throw new EntityNotFoundException($"Director with id \"{directorId}\" not found");
-                }
-
-                if (db.Directors.FirstOrDefault(x => x.Name == directorNewData.Name) != default)
-                {
-                    throw new DuplicatedEntityException($"Director with name \"{directorNewData.Name}\" is already exist");
-                }
-
-                director.Name = directorNewData.Name;
-
-                db.SaveChanges();
+                throw new EntityNotFoundException($"Director with id \"{directorId}\" not found");
             }
+
+            if (Context.Directors.FirstOrDefault(x => x.Name == directorNewData.Name) != default)
+            {
+                throw new DuplicatedEntityException($"Director with name \"{directorNewData.Name}\" is already exist");
+            }
+
+            director.Name = directorNewData.Name;
+
+            Context.SaveChanges();
         }
 
         public bool IsEntityExist(string directorName)
@@ -106,12 +93,14 @@
                 return false;
             }
 
-            using (CinemaContext db = new CinemaContext())
-            {
-                Director director = db.Directors.FirstOrDefault(x => x.Name == directorName);
+            Director director = Context.Directors.FirstOrDefault(x => x.Name == directorName);
 
-                return director != default;
-            }
+            return director != default;
+        }
+
+        public DirectorService(CinemaContext db)
+        {
+            Context = db;
         }
     }
 }

@@ -11,6 +11,8 @@
 
     internal class UserSubscriptionService : IService<UserSubscriptionCreateViewModel, UserSubscriptionDisplayViewModel>
     {
+        public CinemaContext Context { get; set; }
+
         public void CreateAsync(UserSubscriptionCreateViewModel userSubscriptionData) // после окончания подписки должна быть возможность добавить такую же опять
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(userSubscriptionData.Id,
@@ -31,19 +33,16 @@
                 LastUntil = userSubscriptionData.LastUntil
             };
 
-            using (CinemaContext db = new CinemaContext())
+            UserSubscription subscription = Context.UserSubscriptions.FirstOrDefault(x => x.SubscriptionId == userSubscriptionData.SubscriptionId
+                                                                                && x.UserId == userSubscriptionData.UserId);
+
+            if (subscription != default)
             {
-                UserSubscription subscription = db.UserSubscriptions.FirstOrDefault(x => x.SubscriptionId == userSubscriptionData.SubscriptionId
-                                                                                    && x.UserId == userSubscriptionData.UserId);
-
-                if (subscription != default)
-                {
-                    throw new DuplicatedEntityException($"Subscription with id \"{userSubscriptionData.SubscriptionId}\" is already exist for this user");
-                }
-
-                db.UserSubscriptions.Add(newUserSubscription);
-                db.SaveChanges();
+                throw new DuplicatedEntityException($"Subscription with id \"{userSubscriptionData.SubscriptionId}\" is already exist for this user");
             }
+
+            Context.UserSubscriptions.Add(newUserSubscription);
+            Context.SaveChanges();
         }
 
         public void Delete(Guid userSubscriptionId)
@@ -53,28 +52,22 @@
                 throw new ArgumentNullException("Id has no value");
             }
 
-            using (CinemaContext db = new CinemaContext())
+            UserSubscription userSubscription = Context.UserSubscriptions.FirstOrDefault(x => x.Id == userSubscriptionId);
+
+            if (userSubscription == default)
             {
-                UserSubscription userSubscription = db.UserSubscriptions.FirstOrDefault(x => x.Id == userSubscriptionId);
-
-                if (userSubscription == default)
-                {
-                    throw new EntityNotFoundException($"User's subscription with Id \"{userSubscriptionId}\" not found");
-                }
-
-                db.UserSubscriptions.Remove(userSubscription);
-                db.SaveChanges();
+                throw new EntityNotFoundException($"User's subscription with Id \"{userSubscriptionId}\" not found");
             }
+
+            Context.UserSubscriptions.Remove(userSubscription);
+            Context.SaveChanges();
         }
 
         public IEnumerable<UserSubscriptionDisplayViewModel> ReadAll()
         {
             List<UserSubscription> userSubscriptions;
 
-            using (CinemaContext db = new CinemaContext())
-            {
-                userSubscriptions = db.UserSubscriptions.ToList();
-            }
+            userSubscriptions = Context.UserSubscriptions.ToList();
 
             return (IEnumerable<UserSubscriptionDisplayViewModel>)userSubscriptions.Select(x => new UserSubscriptionCreateViewModel(x.Id,
                                                                                    x.SubscriptionId,
@@ -136,6 +129,11 @@
 
             //    return subscription != default;
             //}
+        }
+
+        public UserSubscriptionService(CinemaContext db)
+        {
+            Context = db;
         }
     }
 }

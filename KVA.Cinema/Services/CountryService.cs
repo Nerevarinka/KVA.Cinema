@@ -21,10 +21,10 @@
                 throw new ArgumentNullException("Name has no value");
             }
 
-                if (Context.Countries.FirstOrDefault(x => x.Name == countryData.Name) != default)
-                {
-                    throw new DuplicatedEntityException($"Country with name \"{countryData.Name}\" is already exist");
-                }
+            if (Context.Countries.FirstOrDefault(x => x.Name == countryData.Name) != default)
+            {
+                throw new DuplicatedEntityException($"Country with name \"{countryData.Name}\" is already exist");
+            }
 
             Country newCountry = new Country()
             {
@@ -32,8 +32,8 @@
                 Name = countryData.Name
             };
 
-                Context.Countries.Add(newCountry);
-                Context.SaveChanges();
+            Context.Countries.Add(newCountry);
+            Context.SaveChanges();
         }
 
         public void Delete(Guid countryId)
@@ -43,15 +43,15 @@
                 throw new ArgumentNullException("Country Id has no value");
             }
 
-                Country country = Context.Countries.FirstOrDefault(x => x.Id == countryId);
+            Country country = Context.Countries.FirstOrDefault(x => x.Id == countryId);
 
-                if (country == default)
-                {
-                    throw new EntityNotFoundException($"Country with Id \"{countryId}\" not found");
-                }
+            if (country == default)
+            {
+                throw new EntityNotFoundException($"Country with Id \"{countryId}\" not found");
+            }
 
-                Context.Countries.Remove(country);
-                Context.SaveChanges();
+            Context.Countries.Remove(country);
+            Context.SaveChanges();
         }
 
         public IEnumerable<CountryDisplayViewModel> ReadAll()

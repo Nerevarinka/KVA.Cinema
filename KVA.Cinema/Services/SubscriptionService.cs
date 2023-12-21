@@ -11,8 +11,10 @@
 
     internal class SubscriptionService : IService<SubscriptionCreateViewModel, SubscriptionDisplayViewModel>
     {
-        private const int MIN_DURATION_DAYS = 1;
-        private const int MAX_DURATION_DAYS = 365;
+        private const int DURATION_DAYS_MIN = 1;
+        private const int DURATION_DAYS_MAX = 365;
+
+        public CinemaContext Context { get; set; }
 
         public void CreateAsync(SubscriptionCreateViewModel subscriptionData)
         {
@@ -27,22 +29,19 @@
                 throw new ArgumentNullException("One or more parameters have no value");
             }
 
-            if (subscriptionData.Duration < MIN_DURATION_DAYS || subscriptionData.Duration > MAX_DURATION_DAYS)
+            if (subscriptionData.Duration < DURATION_DAYS_MIN || subscriptionData.Duration > DURATION_DAYS_MAX)
             {
-                throw new ArgumentException($"Duration can be in range {MIN_DURATION_DAYS}-{MAX_DURATION_DAYS} days");
+                throw new ArgumentException($"Duration can be in range {DURATION_DAYS_MIN}-{DURATION_DAYS_MAX} days");
             }
 
             SubscriptionLevel subscriptionLevel;
 
-            using (CinemaContext db = new CinemaContext())
+            if (Context.Subscriptions.FirstOrDefault(x => x.Title == subscriptionData.Title) != default)
             {
-                if (db.Subscriptions.FirstOrDefault(x => x.Title == subscriptionData.Title) != default)
-                {
-                    throw new DuplicatedEntityException($"Subscription with title \"{subscriptionData.Title}\" is already exist");
-                }
-
-                subscriptionLevel = db.SubscriptionLevels.FirstOrDefault(x => x.Title == subscriptionData.Level);
+                throw new DuplicatedEntityException($"Subscription with title \"{subscriptionData.Title}\" is already exist");
             }
+
+            subscriptionLevel = Context.SubscriptionLevels.FirstOrDefault(x => x.Title == subscriptionData.Level);
 
             if (subscriptionLevel == default)
             {
@@ -61,11 +60,8 @@
                 AvailableUntil = subscriptionData.AvailableUntil
             };
 
-            using (CinemaContext db = new CinemaContext())
-            {
-                db.Subscriptions.Add(newSubscription);
-                db.SaveChanges();
-            }
+            Context.Subscriptions.Add(newSubscription);
+            Context.SaveChanges();
         }
 
         public void Delete(Guid subscriptionId)
@@ -75,44 +71,38 @@
                 throw new ArgumentNullException("Id has no value");
             }
 
-            using (CinemaContext db = new CinemaContext())
+            Subscription subscription = Context.Subscriptions.FirstOrDefault(x => x.Id == subscriptionId);
+
+            if (subscription == default)
             {
-                Subscription subscription = db.Subscriptions.FirstOrDefault(x => x.Id == subscriptionId);
-
-                if (subscription == default)
-                {
-                    throw new EntityNotFoundException($"Subscription with Id \"{subscriptionId}\" not found");
-                }
-
-                db.Subscriptions.Remove(subscription);
-                db.SaveChanges();
+                throw new EntityNotFoundException($"Subscription with Id \"{subscriptionId}\" not found");
             }
+
+            Context.Subscriptions.Remove(subscription);
+            Context.SaveChanges();
         }
 
         public IEnumerable<SubscriptionDisplayViewModel> ReadAll()
         {
             IEnumerable<SubscriptionDisplayViewModel> subscriptions;
 
-            using (CinemaContext db = new CinemaContext())
-            {
-                subscriptions = db.Subscriptions   // подумать, как переделать чудовище
-                    .ToList()
-                    .Select(x =>
-                        new SubscriptionDisplayViewModel(
-                            x.Id,
-                            x.Title,
-                            x.Description,
-                            x.Cost,
-                            x.Level.Title,
-                            x.ReleasedIn,
-                            x.Duration,
-                            x.AvailableUntil
-                        )
+            subscriptions = Context.Subscriptions   // подумать, как переделать чудовище - AutoMapper
+                .ToList()
+                .Select(x =>
+                    new SubscriptionDisplayViewModel(
+                        x.Id,
+                        x.Title,
+                        x.Description,
+                        x.Cost,
+                        x.Level.Title,
+                        x.ReleasedIn,
+                        x.Duration,
+                        x.AvailableUntil
                     )
-                    .ToList()
-                    ;
+                )
+                .ToList()
+                ;
 
-            }
             return subscriptions;
         }
 
@@ -131,30 +121,27 @@
                 throw new ArgumentNullException("One or more parameters have no value");
             }
 
-            if (subscriptionNewData.Duration < MIN_DURATION_DAYS || subscriptionNewData.Duration > MAX_DURATION_DAYS)
+            if (subscriptionNewData.Duration < DURATION_DAYS_MIN || subscriptionNewData.Duration > DURATION_DAYS_MAX)
             {
-                throw new ArgumentException($"Duration can be in range {MIN_DURATION_DAYS}-{MAX_DURATION_DAYS} days");
+                throw new ArgumentException($"Duration can be in range {DURATION_DAYS_MIN}-{DURATION_DAYS_MAX} days");
             }
 
             Subscription subscription;
             SubscriptionLevel subscriptionLevel;
 
-            using (CinemaContext db = new CinemaContext())
+            subscription = Context.Subscriptions.FirstOrDefault(x => x.Id == subscriptionId);
+
+            if (subscription == default)
             {
-                subscription = db.Subscriptions.FirstOrDefault(x => x.Id == subscriptionId);
-
-                if (subscription == default)
-                {
-                    throw new EntityNotFoundException($"Subscription with id \"{subscriptionId}\" not found");
-                }
-
-                if (db.Subscriptions.FirstOrDefault(x => x.Title == subscriptionNewData.Title) != default)
-                {
-                    throw new DuplicatedEntityException($"Subscription with title \"{subscriptionNewData.Title}\" is already exist");
-                }
-
-                subscriptionLevel = db.SubscriptionLevels.FirstOrDefault(x => x.Title == subscriptionNewData.Level);
+                throw new EntityNotFoundException($"Subscription with id \"{subscriptionId}\" not found");
             }
+
+            if (Context.Subscriptions.FirstOrDefault(x => x.Title == subscriptionNewData.Title) != default)
+            {
+                throw new DuplicatedEntityException($"Subscription with title \"{subscriptionNewData.Title}\" is already exist");
+            }
+
+            subscriptionLevel = Context.SubscriptionLevels.FirstOrDefault(x => x.Title == subscriptionNewData.Level);
 
             if (subscriptionLevel == default)
             {
@@ -169,8 +156,7 @@
             subscription.Duration = subscriptionNewData.Duration;
             subscription.AvailableUntil = subscriptionNewData.AvailableUntil;
 
-            using (CinemaContext db = new CinemaContext())
-                db.SaveChanges();
+            Context.SaveChanges();
         }
 
         public bool IsEntityExist(string subscriptionTitle)
@@ -180,12 +166,14 @@
                 return false;
             }
 
-            using (CinemaContext db = new CinemaContext())
-            {
-                Subscription subscription = db.Subscriptions.FirstOrDefault(x => x.Title == subscriptionTitle);
+            Subscription subscription = Context.Subscriptions.FirstOrDefault(x => x.Title == subscriptionTitle);
 
-                return subscription != default;
-            }
+            return subscription != default;
+        }
+
+        public SubscriptionService(CinemaContext db)
+        {
+            Context = db;
         }
     }
 }
