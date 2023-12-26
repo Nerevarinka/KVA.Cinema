@@ -16,6 +16,11 @@
 
         public CinemaContext Context { get; set; }
 
+        public SubscriptionService(CinemaContext db)
+        {
+            Context = db;
+        }
+
         public void CreateAsync(SubscriptionCreateViewModel subscriptionData)
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(subscriptionData.Title,
@@ -159,21 +164,21 @@
             Context.SaveChanges();
         }
 
-        public bool IsEntityExist(string subscriptionTitle)
+        public bool IsEntityExist(Guid subscriptionId)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(subscriptionTitle))
+            if (CheckUtilities.ContainsNullOrEmptyValue(subscriptionId))
             {
                 return false;
             }
 
-            Subscription subscription = Context.Subscriptions.FirstOrDefault(x => x.Title == subscriptionTitle);
+            Subscription subscription = Context.Subscriptions.FirstOrDefault(x => x.Id == subscriptionId);
 
             return subscription != default;
         }
 
-        public SubscriptionService(CinemaContext db)
+        public IEnumerable<SubscriptionCreateViewModel> Read()
         {
-            Context = db;
+            throw new NotImplementedException();
         }
     }
 }

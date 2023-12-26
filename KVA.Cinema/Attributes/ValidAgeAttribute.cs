@@ -6,6 +6,9 @@
     using System.Linq;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// Specifies the minimum and maximum age that is allowed in a data field
+    /// </summary>
     public class ValidAgeAttribute : ValidationAttribute
     {
         /// <summary>

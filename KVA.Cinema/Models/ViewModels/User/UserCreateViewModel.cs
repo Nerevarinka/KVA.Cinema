@@ -9,6 +9,8 @@
     /// </summary>
     public class UserCreateViewModel
     {
+        public Guid Id { get; set; }
+
         [Required(ErrorMessage = "Required field")]
         [StringLength(20, MinimumLength = 2, ErrorMessage = "Last name length must be in 2-20 symbols")]
         [Display(Name = "Last name")]

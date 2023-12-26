@@ -8,6 +8,8 @@
         where TEntityCreateViewModel : class
         where TEntityDisplayViewModel : class
     {
+        IEnumerable<TEntityCreateViewModel> Read();
+
         IEnumerable<TEntityDisplayViewModel> ReadAll();
 
         void CreateAsync(TEntityCreateViewModel entityData);
@@ -16,6 +18,6 @@
 
         void Delete(Guid id);
 
-        bool IsEntityExist(string name);
+        bool IsEntityExist(Guid id);
     }
 }

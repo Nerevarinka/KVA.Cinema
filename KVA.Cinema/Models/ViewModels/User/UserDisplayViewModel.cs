@@ -10,25 +10,15 @@
     {
         public Guid Id { get; set; }
 
-        public string LastName { get; }
+        public string LastName { get; set; }
 
-        public string FirstName { get; }
+        public string FirstName { get; set; }
 
-        public string Nickname { get; }
+        public string Nickname { get; set; }
 
         [DataType(DataType.Date)]
-        public DateTime BirthDate { get; }
+        public DateTime BirthDate { get; set; }
 
-        public string Email { get; }
-
-        public UserDisplayViewModel(Guid id, string lastName, string firstName, string nickname, DateTime birthDate, string email)
-        {
-            Id = id;
-            FirstName = firstName;
-            LastName = lastName;
-            Nickname = nickname;
-            BirthDate = birthDate;
-            Email = email;
-        }
+        public string Email { get; set; }
     }
 }

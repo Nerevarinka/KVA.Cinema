@@ -13,7 +13,7 @@ using KVA.Cinema.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using KVA.Cinema.Models.ViewModels.User;
 
-namespace KVA.Cinema.Controllers
+namespace KVA.Cinema.Controllers    //TODO: replace NotFound()
 {
     public class UsersController : Controller
     {
@@ -25,22 +25,23 @@ namespace KVA.Cinema.Controllers
         }
 
         // GET: Users
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var data = await UserService.Context.Users.ToListAsync();
+            var data = UserService.ReadAll();
             return View(data);
         }
 
         // GET: Users/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        public IActionResult Details(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var user = await UserService.Context.Users
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var user = UserService.ReadAll()
+                .FirstOrDefault(m => m.Id == id);
+
             if (user == null)
             {
                 return NotFound();
@@ -61,30 +62,14 @@ namespace KVA.Cinema.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(UserCreateViewModel user)
+        public async Task<IActionResult> Create(UserCreateViewModel userData)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    await UserService.CreateAsync(user);
+                    await UserService.CreateAsync(userData);
                     return RedirectToAction(nameof(Index));
-                }
-                catch (ArgumentNullException ex)
-                {
-                    ModelState.AddModelError(string.Empty, ex.Message);
-                }
-                catch (EntityNotFoundException ex)
-                {
-                    ModelState.AddModelError(string.Empty, ex.Message);
-                }
-                catch (DuplicatedEntityException ex)
-                {
-                    ModelState.AddModelError(string.Empty, ex.Message);
-                }
-                catch (ArgumentException ex)
-                {
-                    ModelState.AddModelError(string.Empty, ex.Message);
                 }
                 catch (FailedToCreateEntityException ex)
                 {
@@ -98,23 +83,39 @@ namespace KVA.Cinema.Controllers
                     ModelState.AddModelError(string.Empty, ex.Message);
                 }
             }
-            return View(user);
+            return View(userData);
         }
 
         // GET: Users/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        [HttpGet]
+        public IActionResult Edit(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var user = await UserService.Context.Users.FindAsync(id);
+            var user = UserService.Read()
+                .FirstOrDefault(m => m.Id == id);
+
             if (user == null)
             {
                 return NotFound();
             }
-            return View(user);
+
+            var userCreateModel = new UserCreateViewModel()
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Nickname=user.Nickname,
+                BirthDate = user.BirthDate,
+                Email = user.Email
+            };
+
+            //ViewBag.Id = user.Id;
+
+            return View(userCreateModel);
         }
 
         // POST: Users/Edit/5
@@ -122,9 +123,9 @@ namespace KVA.Cinema.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, User user)
+        public IActionResult Edit(Guid id, UserCreateViewModel userNewData)
         {
-            if (id != user.Id)
+            if (id != ViewBag.Id)
             {
                 return NotFound();
             }
@@ -133,35 +134,28 @@ namespace KVA.Cinema.Controllers
             {
                 try
                 {
-                    UserService.Context.Update(user);
-                    await UserService.Context.SaveChangesAsync();
+                    UserService.Update(id, userNewData);
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    if (!UserExists(user.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError(string.Empty, ex.Message);
                 }
-                return RedirectToAction(nameof(Index));
             }
-            return View(user);
+            return View(userNewData);
         }
 
         // GET: Users/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+        public IActionResult Delete(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var user = await UserService.Context.Users
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var user = UserService.ReadAll()
+                .FirstOrDefault(m => m.Id == id);
+
             if (user == null)
             {
                 return NotFound();
@@ -173,11 +167,12 @@ namespace KVA.Cinema.Controllers
         // POST: Users/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public IActionResult DeleteConfirmed(Guid id)
         {
-            var user = await UserService.Context.Users.FindAsync(id);
-            UserService.Context.Users.Remove(user);
-            await UserService.Context.SaveChangesAsync();
+            var user = UserService.ReadAll()
+                .FirstOrDefault(m => m.Id == id);
+            UserService.Delete(user.Id);
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -227,7 +222,7 @@ namespace KVA.Cinema.Controllers
 
         private bool UserExists(Guid id)
         {
-            return UserService.Context.Users.Any(e => e.Id == id);
+            return UserService.IsEntityExist(id);
         }
     }
 }

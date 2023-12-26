@@ -13,6 +13,11 @@
     {
         public CinemaContext Context { get; set; }
 
+        public UserSubscriptionService(CinemaContext db)
+        {
+            Context = db;
+        }
+
         public void CreateAsync(UserSubscriptionCreateViewModel userSubscriptionData) // после окончания подписки должна быть возможность добавить такую же опять
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(userSubscriptionData.Id,
@@ -65,9 +70,7 @@
 
         public IEnumerable<UserSubscriptionDisplayViewModel> ReadAll()
         {
-            List<UserSubscription> userSubscriptions;
-
-            userSubscriptions = Context.UserSubscriptions.ToList();
+            List<UserSubscription> userSubscriptions = Context.UserSubscriptions.ToList();
 
             return (IEnumerable<UserSubscriptionDisplayViewModel>)userSubscriptions.Select(x => new UserSubscriptionCreateViewModel(x.Id,
                                                                                    x.SubscriptionId,
@@ -114,26 +117,38 @@
             //}
         }
 
-        public bool IsEntityExist(string subscriptionTitle) // принимает член Subscription, а не UserSubscription
+        ///*        public bool IsEntityExist(string subscriptionTitle)*/ // принимает член Subscription, а не UserSubscription
+        //        //{
+        //        //    throw new NotImplementedException();
+
+        //            //if (CheckUtilities.ContainsNullOrEmptyValue(subscriptionTitle))
+        //            //{
+        //            //    return false;
+        //            //}
+
+        //            //using (CinemaEntities db = new CinemaEntities())
+        //            //{
+        //            //    Subscription subscription = db.Subscriptions.FirstOrDefault(x => x.Title == subscriptionTitle);
+
+        //            //    return subscription != default;
+        //            //}
+        //        }
+
+        public bool IsEntityExist(Guid subscriptionId) // принимает член Subscription, а не UserSubscription
         {
-            throw new NotImplementedException();
+            if (CheckUtilities.ContainsNullOrEmptyValue(subscriptionId))
+            {
+                return false;
+            }
 
-            //if (CheckUtilities.ContainsNullOrEmptyValue(subscriptionTitle))
-            //{
-            //    return false;
-            //}
+            Subscription subscription = Context.Subscriptions.FirstOrDefault(x => x.Id == subscriptionId);
 
-            //using (CinemaEntities db = new CinemaEntities())
-            //{
-            //    Subscription subscription = db.Subscriptions.FirstOrDefault(x => x.Title == subscriptionTitle);
-
-            //    return subscription != default;
-            //}
+            return subscription != default;
         }
 
-        public UserSubscriptionService(CinemaContext db)
+        public IEnumerable<UserSubscriptionCreateViewModel> Read()
         {
-            Context = db;
+            throw new NotImplementedException();
         }
     }
 }

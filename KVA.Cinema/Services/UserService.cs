@@ -65,20 +65,52 @@
         /// </summary>
         public SignInManager<User> SignInManager { get; }
 
-        public CinemaContext Context { get; }
+        private CinemaContext Context { get; }
+
+        public UserService(CinemaContext db, UserManager<User> userManager, SignInManager<User> signInManager)
+        {
+            Context = db;
+            UserManager = userManager;
+            SignInManager = signInManager;
+        }
+
+        public IEnumerable<UserCreateViewModel> Read()
+        {
+            List<User> users = Context.Users.ToList();
+
+            return users.Select(x => new UserCreateViewModel()
+            {
+                Id=x.Id,
+                FirstName = x.FirstName,
+                LastName = x.LastName,
+                Nickname = x.Nickname,
+                BirthDate = x.BirthDate,
+                Email = x.Email
+            });
+        }
 
         public IEnumerable<UserDisplayViewModel> ReadAll()
         {
             List<User> users = Context.Users.ToList();
 
-            return users.Select(x => new UserDisplayViewModel(x.Id,
-                                                           x.FirstName,
-                                                           x.LastName,
-                                                           x.Nickname,
-                                                           x.BirthDate,
-                                                           x.Email));
+            return users.Select(x => new UserDisplayViewModel()
+            {
+                Id = x.Id,
+                FirstName = x.FirstName,
+                LastName = x.LastName,
+                Nickname = x.Nickname,
+                BirthDate = x.BirthDate,
+                Email = x.Email
+            });
         }
 
+        /// <summary>
+        /// Creates new user
+        /// </summary>
+        /// <param name="userData"></param>
+        /// <exception cref="DuplicatedEntityException">Nickname is not unique</exception>
+        /// <exception cref="FailedToCreateEntityException">Failed to create user</exception>
+        /// <returns></returns>
         public async Task CreateAsync(UserCreateViewModel userData)
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(userData.FirstName,
@@ -156,6 +188,11 @@
             {
                 throw new FailedToCreateEntityException(result.Errors);
             }
+        }
+
+        void IService<UserCreateViewModel, UserDisplayViewModel>.CreateAsync(UserCreateViewModel entityData)
+        {
+            throw new NotImplementedException();
         }
 
         public void Update(Guid userId, UserCreateViewModel userNewData)
@@ -267,28 +304,16 @@
             new UserSubscriptionService(Context).Delete(userSubscription.Id);
         }
 
-        public bool IsEntityExist(string nickname)
+        public bool IsEntityExist(Guid userId)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(nickname))
+            if (CheckUtilities.ContainsNullOrEmptyValue(userId))
             {
                 return false;
             }
 
-            User user = Context.Users.FirstOrDefault(x => x.Nickname == nickname);
+            User user = Context.Users.FirstOrDefault(x => x.Id == userId);
 
             return user != default;
-        }
-
-        void IService<UserCreateViewModel, UserDisplayViewModel>.CreateAsync(UserCreateViewModel entityData)
-        {
-            throw new NotImplementedException();
-        }
-
-        public UserService(CinemaContext db, UserManager<User> userManager, SignInManager<User> signInManager)
-        {
-            Context = db;
-            UserManager = userManager;
-            SignInManager = signInManager;
         }
     }
 }
