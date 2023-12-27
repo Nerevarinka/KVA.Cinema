@@ -2,16 +2,10 @@
 {
     using System;
 
-    internal class CountryCreateViewModel
+    public class CountryCreateViewModel
     {
         public Guid Id { get; set; }
 
-        public string Name { get; }
-
-        public CountryCreateViewModel(Guid id, string name)
-        {
-            Id = id;
-            Name = name;
-        }
+        public string Name { get; set; }
     }
 }

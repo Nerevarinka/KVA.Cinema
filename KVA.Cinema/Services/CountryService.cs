@@ -4,15 +4,43 @@
     using KVA.Cinema.Models;
     using KVA.Cinema.Models.Country;
     using KVA.Cinema.Models.Entities;
+    using KVA.Cinema.Models.ViewModels.Country;
     using KVA.Cinema.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
 
-    internal class CountryService : IService<CountryCreateViewModel, CountryDisplayViewModel>
+    public class CountryService : IService<CountryCreateViewModel, CountryDisplayViewModel, CountryEditViewModel>
     {
-        public CinemaContext Context { get; set; }
+        private CinemaContext Context { get; set; }
+
+        public CountryService(CinemaContext db)
+        {
+            Context = db;
+        }
+
+        public IEnumerable<CountryCreateViewModel> Read()
+        {
+            List<Country> countries = Context.Countries.ToList(); //TODO: перенести ToList в return
+
+            return countries.Select(x => new CountryCreateViewModel()
+            {
+                Id = x.Id,
+                Name = x.Name
+            });
+        }
+
+        public IEnumerable<CountryDisplayViewModel> ReadAll()
+        {
+            List<Country> countries = Context.Countries.ToList(); //TODO: перенести ToList в return
+
+            return countries.Select(x => new CountryDisplayViewModel()
+            {
+                Id = x.Id,
+                Name = x.Name
+            });
+        }
 
         public void CreateAsync(CountryCreateViewModel countryData)
         {
@@ -36,81 +64,58 @@
             Context.SaveChanges();
         }
 
-        public void Delete(Guid countryId)
+        public void Delete(Guid id)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(countryId))
+            if (CheckUtilities.ContainsNullOrEmptyValue(id))
             {
                 throw new ArgumentNullException("Country Id has no value");
             }
 
-            Country country = Context.Countries.FirstOrDefault(x => x.Id == countryId);
+            Country country = Context.Countries.FirstOrDefault(x => x.Id == id);
 
             if (country == default)
             {
-                throw new EntityNotFoundException($"Country with Id \"{countryId}\" not found");
+                throw new EntityNotFoundException($"Country with Id \"{id}\" not found");
             }
 
             Context.Countries.Remove(country);
             Context.SaveChanges();
         }
 
-        public IEnumerable<CountryDisplayViewModel> ReadAll()
+        public void Update(Guid id, CountryEditViewModel countryNewData)
         {
-            List<Country> countries;
-
-            using (CinemaContext db = new CinemaContext())
-            {
-                countries = db.Countries.ToList();
-            }
-
-            return countries.Select(x => new CountryDisplayViewModel(x.Id, x.Name));
-        }
-
-        public void Update(Guid countryId, CountryCreateViewModel countryNewData)
-        {
-            if (CheckUtilities.ContainsNullOrEmptyValue(countryId, countryNewData.Name))
+            if (CheckUtilities.ContainsNullOrEmptyValue(id, countryNewData.Name))
             {
                 throw new ArgumentNullException("Country name or id has no value");
             }
 
-            using (CinemaContext db = new CinemaContext())
+            Country country = Context.Countries.FirstOrDefault(x => x.Id == id);
+
+            if (id == default)
             {
-                Country country = db.Countries.FirstOrDefault(x => x.Id == countryId);
-
-                if (countryId == default)
-                {
-                    throw new EntityNotFoundException($"Country with id \"{countryId}\" not found");
-                }
-
-                if (db.Countries.FirstOrDefault(x => x.Name == countryNewData.Name) != default)
-                {
-                    throw new DuplicatedEntityException($"Country with name \"{countryNewData.Name}\" is already exist");
-                }
-
-                country.Name = countryNewData.Name;
-
-                db.SaveChanges();
+                throw new EntityNotFoundException($"Country with id \"{id}\" not found");
             }
+
+            if (Context.Countries.FirstOrDefault(x => x.Name == countryNewData.Name) != default)
+            {
+                throw new DuplicatedEntityException($"Country with name \"{countryNewData.Name}\" is already exist");
+            }
+
+            country.Name = countryNewData.Name;
+
+            Context.SaveChanges();
         }
 
-        public bool IsEntityExist(string countryName)
+        public bool IsEntityExist(Guid id)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(countryName))
+            if (CheckUtilities.ContainsNullOrEmptyValue(id))
             {
                 return false;
             }
 
-            using (CinemaContext db = new CinemaContext())
-            {
-                Country country = db.Countries.FirstOrDefault(x => x.Name == countryName);
+            Country country = Context.Countries.FirstOrDefault(x => x.Id == id);
 
-                return country != default;
-            }
-        }
-
-        public CountryService(CinemaContext db)
-        {
-            Context = db;
+            return country != default;
         }
     }
 }
