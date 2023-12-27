@@ -2,13 +2,10 @@
 {
     using System;
 
-    internal class DirectorCreateViewModel
+    public class DirectorCreateViewModel
     {
-        public string Name { get; }
+        public Guid Id { get; set; }
 
-        public DirectorCreateViewModel(string name)
-        {
-            Name = name;
-        }
+        public string Name { get; set; }
     }
 }

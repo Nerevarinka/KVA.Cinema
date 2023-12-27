@@ -2,16 +2,10 @@
 {
     using System;
 
-    internal class DirectorDisplayViewModel
+    public class DirectorDisplayViewModel
     {
         public Guid Id { get; set; }
 
-        public string Name { get; }
-
-        public DirectorDisplayViewModel(Guid id, string name)
-        {
-            Id = id;
-            Name = name;
-        }
+        public string Name { get; set; }
     }
 }

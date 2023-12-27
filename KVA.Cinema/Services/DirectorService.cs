@@ -9,9 +9,30 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    internal class DirectorService : IService<DirectorCreateViewModel, DirectorDisplayViewModel>
+    internal class DirectorService : IService<DirectorCreateViewModel, DirectorDisplayViewModel, DirectorEditViewModel>
     {
         public CinemaContext Context { get; set; }
+
+        public DirectorService(CinemaContext db)
+        {
+            Context = db;
+        }
+
+        public IEnumerable<DirectorCreateViewModel> Read()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<DirectorDisplayViewModel> ReadAll()
+        {
+            List<Director> directors = Context.Directors.ToList();
+
+            return directors.Select(x => new DirectorDisplayViewModel()
+            {
+                Id = x.Id,
+                Name = x.Name
+            });
+        }
 
         public void CreateAsync(DirectorCreateViewModel directorData)
         {
@@ -53,16 +74,7 @@
             Context.SaveChanges();
         }
 
-        public IEnumerable<DirectorDisplayViewModel> ReadAll()
-        {
-            List<Director> directors;
-
-            directors = Context.Directors.ToList();
-
-            return directors.Select(x => new DirectorDisplayViewModel(x.Id, x.Name));
-        }
-
-        public void Update(Guid directorId, DirectorCreateViewModel directorNewData)
+        public void Update(Guid directorId, DirectorEditViewModel directorNewData)
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(directorId, directorNewData.Name))
             {
@@ -86,21 +98,16 @@
             Context.SaveChanges();
         }
 
-        public bool IsEntityExist(string directorName)
+        public bool IsEntityExist(Guid directorId)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(directorName))
+            if (CheckUtilities.ContainsNullOrEmptyValue(directorId))
             {
                 return false;
             }
 
-            Director director = Context.Directors.FirstOrDefault(x => x.Name == directorName);
+            Director director = Context.Directors.FirstOrDefault(x => x.Id == directorId);
 
             return director != default;
-        }
-
-        public DirectorService(CinemaContext db)
-        {
-            Context = db;
         }
     }
 }
