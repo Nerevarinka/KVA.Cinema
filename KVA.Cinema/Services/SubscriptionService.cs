@@ -4,12 +4,13 @@
     using KVA.Cinema.Models;
     using KVA.Cinema.Models.Entities;
     using KVA.Cinema.Models.Subscription;
+    using KVA.Cinema.Models.ViewModels.Subscription;
     using KVA.Cinema.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    internal class SubscriptionService : IService<SubscriptionCreateViewModel, SubscriptionDisplayViewModel>
+    internal class SubscriptionService : IService<SubscriptionCreateViewModel, SubscriptionDisplayViewModel, SubscriptionEditViewModel>
     {
         private const int DURATION_DAYS_MIN = 1;
         private const int DURATION_DAYS_MAX = 365;
@@ -19,6 +20,47 @@
         public SubscriptionService(CinemaContext db)
         {
             Context = db;
+        }
+
+        public IEnumerable<SubscriptionCreateViewModel> Read()
+        {
+            List<Subscription> subscriptions = Context.Subscriptions.ToList(); //TODO: перенести ToList в return
+
+            return subscriptions.Select(x => new SubscriptionCreateViewModel()
+            {
+                Id = x.Id,
+                Title = x.Title,
+                Description = x.Description,
+                Cost = x.Cost,
+                Level = x.Level,
+                ReleasedIn = x.ReleasedIn,
+                Duration = x.Duration,
+                AvailableUntil = x.AvailableUntil
+            });
+        }
+        public IEnumerable<SubscriptionDisplayViewModel> ReadAll()
+        {
+            IEnumerable<SubscriptionDisplayViewModel> subscriptions;
+
+            subscriptions = Context.Subscriptions   // подумать, как переделать чудовище - AutoMapper
+                .ToList()
+                .Select(x =>
+                    new SubscriptionDisplayViewModel()
+                    {
+                        Id = x.Id,
+                        Title = x.Title,
+                        Description = x.Description,
+                        Cost = x.Cost,
+                        Level = x.Level,
+                        ReleasedIn = x.ReleasedIn,
+                        Duration = x.Duration,
+                        AvailableUntil = x.AvailableUntil
+                    }
+                )
+                .ToList()
+                ;
+
+            return subscriptions;
         }
 
         public void CreateAsync(SubscriptionCreateViewModel subscriptionData)
@@ -46,7 +88,7 @@
                 throw new DuplicatedEntityException($"Subscription with title \"{subscriptionData.Title}\" is already exist");
             }
 
-            subscriptionLevel = Context.SubscriptionLevels.FirstOrDefault(x => x.Title == subscriptionData.Level);
+            subscriptionLevel = Context.SubscriptionLevels.FirstOrDefault(x => x.Title == subscriptionData.Level.Title);
 
             if (subscriptionLevel == default)
             {
@@ -87,31 +129,7 @@
             Context.SaveChanges();
         }
 
-        public IEnumerable<SubscriptionDisplayViewModel> ReadAll()
-        {
-            IEnumerable<SubscriptionDisplayViewModel> subscriptions;
-
-            subscriptions = Context.Subscriptions   // подумать, как переделать чудовище - AutoMapper
-                .ToList()
-                .Select(x =>
-                    new SubscriptionDisplayViewModel(
-                        x.Id,
-                        x.Title,
-                        x.Description,
-                        x.Cost,
-                        x.Level.Title,
-                        x.ReleasedIn,
-                        x.Duration,
-                        x.AvailableUntil
-                    )
-                )
-                .ToList()
-                ;
-
-            return subscriptions;
-        }
-
-        public void Update(Guid subscriptionId, SubscriptionCreateViewModel subscriptionNewData)
+        public void Update(Guid subscriptionId, SubscriptionEditViewModel subscriptionNewData)
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(subscriptionId,
                                                         subscriptionNewData.Title,
@@ -126,7 +144,7 @@
                 throw new ArgumentNullException("One or more parameters have no value");
             }
 
-            if (subscriptionNewData.Duration < DURATION_DAYS_MIN || subscriptionNewData.Duration > DURATION_DAYS_MAX)
+            if (subscriptionNewData.Duration is < DURATION_DAYS_MIN or > DURATION_DAYS_MAX)
             {
                 throw new ArgumentException($"Duration can be in range {DURATION_DAYS_MIN}-{DURATION_DAYS_MAX} days");
             }
@@ -146,7 +164,7 @@
                 throw new DuplicatedEntityException($"Subscription with title \"{subscriptionNewData.Title}\" is already exist");
             }
 
-            subscriptionLevel = Context.SubscriptionLevels.FirstOrDefault(x => x.Title == subscriptionNewData.Level);
+            subscriptionLevel = Context.SubscriptionLevels.FirstOrDefault(x => x.Title == subscriptionNewData.Level.Title);
 
             if (subscriptionLevel == default)
             {
@@ -174,11 +192,6 @@
             Subscription subscription = Context.Subscriptions.FirstOrDefault(x => x.Id == subscriptionId);
 
             return subscription != default;
-        }
-
-        public IEnumerable<SubscriptionCreateViewModel> Read()
-        {
-            throw new NotImplementedException();
         }
     }
 }
