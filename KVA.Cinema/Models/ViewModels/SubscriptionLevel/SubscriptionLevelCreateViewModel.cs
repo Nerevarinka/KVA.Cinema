@@ -4,11 +4,8 @@
 
     internal class SubscriptionLevelCreateViewModel
     {
-        public string Title { get; }
+        public Guid Id { get; set; }
 
-        public SubscriptionLevelCreateViewModel(string title)
-        {
-            Title = title;
-        }
+        public string Title { get; set; }
     }
 }

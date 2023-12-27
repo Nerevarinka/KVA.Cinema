@@ -4,6 +4,7 @@
     using KVA.Cinema.Models;
     using KVA.Cinema.Models.Entities;
     using KVA.Cinema.Models.SubscriptionLevel;
+    using KVA.Cinema.Models.ViewModels.SubscriptionLevel;
     using KVA.Cinema.Utilities;
     using System;
     using System.Collections.Generic;
@@ -11,9 +12,36 @@
     using System.Text;
     using System.Threading.Tasks;
 
-    internal class SubscriptionLevelService : IService<SubscriptionLevelCreateViewModel, SubscriptionLevelDisplayViewModel>
+    internal class SubscriptionLevelService : IService<SubscriptionLevelCreateViewModel, SubscriptionLevelDisplayViewModel, SubscriptionLevelEditViewModel>
     {
         public CinemaContext Context { get; set; }
+
+        public SubscriptionLevelService(CinemaContext db)
+        {
+            Context = db;
+        }
+
+        public IEnumerable<SubscriptionLevelCreateViewModel> Read()
+        {
+            List<SubscriptionLevel> levels = Context.SubscriptionLevels.ToList(); //TODO: перенести ToList в return
+
+            return levels.Select(x => new SubscriptionLevelCreateViewModel()
+            {
+                Id = x.Id,
+                Title = x.Title
+            });
+        }
+
+        public IEnumerable<SubscriptionLevelDisplayViewModel> ReadAll()
+        {
+            List<SubscriptionLevel> subscriptionLevels = Context.SubscriptionLevels.ToList();
+
+            return subscriptionLevels.Select(x => new SubscriptionLevelDisplayViewModel()
+            {
+                Id = x.Id,
+                Title = x.Title
+            });
+        }
 
         public void CreateAsync(SubscriptionLevelCreateViewModel subscriptionLevelData)
         {
@@ -55,25 +83,14 @@
             Context.SaveChanges();
         }
 
-        public IEnumerable<SubscriptionLevelDisplayViewModel> ReadAll()
-        {
-            List<SubscriptionLevel> subscriptionLevels;
-
-            subscriptionLevels = Context.SubscriptionLevels.ToList();
-
-            return subscriptionLevels.Select(x => new SubscriptionLevelDisplayViewModel(x.Id, x.Title));
-        }
-
-        public void Update(Guid subscriptionLevelId, SubscriptionLevelCreateViewModel subscriptionLevelNewData)
+        public void Update(Guid subscriptionLevelId, SubscriptionLevelEditViewModel subscriptionLevelNewData)
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(subscriptionLevelId, subscriptionLevelNewData.Title))
             {
                 throw new ArgumentNullException("One or more parameters have no value");
             }
 
-            SubscriptionLevel subscriptionLevel;
-
-            subscriptionLevel = Context.SubscriptionLevels.FirstOrDefault(x => x.Id == subscriptionLevelId);
+            SubscriptionLevel subscriptionLevel = Context.SubscriptionLevels.FirstOrDefault(x => x.Id == subscriptionLevelId);
 
             if (subscriptionLevelId == default)
             {
@@ -90,21 +107,16 @@
             Context.SaveChanges();
         }
 
-        public bool IsEntityExist(string subscriptionLevelTitle)
+        public bool IsEntityExist(Guid subscriptionLevelId)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(subscriptionLevelTitle))
+            if (CheckUtilities.ContainsNullOrEmptyValue(subscriptionLevelId))
             {
                 return false;
             }
 
-            SubscriptionLevel subscriptionLevel = Context.SubscriptionLevels.FirstOrDefault(x => x.Title == subscriptionLevelTitle);
+            SubscriptionLevel subscriptionLevel = Context.SubscriptionLevels.FirstOrDefault(x => x.Id == subscriptionLevelId);
 
             return subscriptionLevel != default;
-        }
-
-        public SubscriptionLevelService(CinemaContext db)
-        {
-            Context = db;
         }
     }
 }
