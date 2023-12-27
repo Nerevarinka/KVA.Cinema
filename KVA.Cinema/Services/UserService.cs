@@ -5,6 +5,7 @@
     using KVA.Cinema.Models.Entities;
     using KVA.Cinema.Models.User;
     using KVA.Cinema.Models.UserSubscription;
+    using KVA.Cinema.Models.ViewModels.User;
     using KVA.Cinema.Utilities;
     using Microsoft.AspNetCore.Identity;
     using System;
@@ -13,7 +14,7 @@
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
 
-    public class UserService : IService<UserCreateViewModel, UserDisplayViewModel>
+    public class UserService : IService<UserCreateViewModel, UserDisplayViewModel, UserEditViewModel>
     {
         /// <summary>
         /// Minimum age allowed to use app
@@ -80,7 +81,7 @@
 
             return users.Select(x => new UserCreateViewModel()
             {
-                Id=x.Id,
+                Id = x.Id,
                 FirstName = x.FirstName,
                 LastName = x.LastName,
                 Nickname = x.Nickname,
@@ -190,12 +191,12 @@
             }
         }
 
-        void IService<UserCreateViewModel, UserDisplayViewModel>.CreateAsync(UserCreateViewModel entityData)
+        void IService<UserCreateViewModel, UserDisplayViewModel, UserEditViewModel>.CreateAsync(UserCreateViewModel entityData)
         {
             throw new NotImplementedException();
         }
 
-        public void Update(Guid userId, UserCreateViewModel userNewData)
+        public void Update(Guid userId, UserEditViewModel userNewData)
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(userId,
                                                         userNewData.LastName,
@@ -219,12 +220,12 @@
                 throw new EntityNotFoundException($"User with id \"{userId}\" not found");
             }
 
-            if (Context.Users.FirstOrDefault(x => x.Nickname == userNewData.Nickname) != default)
+            if (Context.Users.FirstOrDefault(x => x.Nickname == userNewData.Nickname && x.Id != userNewData.Id) != default)
             {
                 throw new DuplicatedEntityException($"User with nickname \"{userNewData.Nickname}\" is already exist");
             }
 
-            if (Context.Users.FirstOrDefault(x => x.Email == userNewData.Email) != default)
+            if (Context.Users.FirstOrDefault(x => x.Email == userNewData.Email && x.Id != userNewData.Id) != default)
             {
                 throw new DuplicatedEntityException($"User with email \"{userNewData.Email}\" is already exist");
             }
@@ -278,11 +279,14 @@
                 throw new EntityNotFoundException($"Subscription with Id \"{subscriptionId}\" not found");
             }
 
-            new UserSubscriptionService(Context).CreateAsync(new UserSubscriptionCreateViewModel(Guid.NewGuid(),
-                                                                                      subscriptionId,
-                                                                                      userId,
-                                                                                      DateTime.Now,
-                                                                                      DateTime.Now.AddYears(1)));
+            new UserSubscriptionService(Context).CreateAsync(new UserSubscriptionCreateViewModel()
+            {
+                Id = Guid.NewGuid(),
+                SubscriptionId = subscriptionId,
+                UserId = userId,
+                ActivatedOn = DateTime.Now,
+                LastUntil = DateTime.Now.AddYears(1)
+            });
         }
 
         public void RemoveSubscription(Guid userId, Guid subscriptionId)

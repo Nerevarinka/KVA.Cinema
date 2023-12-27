@@ -103,7 +103,7 @@ namespace KVA.Cinema.Controllers    //TODO: replace NotFound()
                 return NotFound();
             }
 
-            var userCreateModel = new UserCreateViewModel()
+            var userEditModel = new UserEditViewModel()
             {
                 Id = user.Id,
                 FirstName = user.FirstName,
@@ -113,9 +113,7 @@ namespace KVA.Cinema.Controllers    //TODO: replace NotFound()
                 Email = user.Email
             };
 
-            //ViewBag.Id = user.Id;
-
-            return View(userCreateModel);
+            return View(userEditModel);
         }
 
         // POST: Users/Edit/5
@@ -123,9 +121,9 @@ namespace KVA.Cinema.Controllers    //TODO: replace NotFound()
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Guid id, UserCreateViewModel userNewData)
+        public IActionResult Edit(Guid id, UserEditViewModel userNewData)
         {
-            if (id != ViewBag.Id)
+            if (id != userNewData.Id)
             {
                 return NotFound();
             }

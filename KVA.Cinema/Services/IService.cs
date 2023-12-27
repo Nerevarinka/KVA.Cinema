@@ -4,9 +4,10 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
-    internal interface IService<TEntityCreateViewModel, TEntityDisplayViewModel>
+    internal interface IService<TEntityCreateViewModel, TEntityDisplayViewModel, TEntityEditViewModel>
         where TEntityCreateViewModel : class
         where TEntityDisplayViewModel : class
+        where TEntityEditViewModel : class
     {
         IEnumerable<TEntityCreateViewModel> Read();
 
@@ -14,7 +15,7 @@
 
         void CreateAsync(TEntityCreateViewModel entityData);
 
-        void Update(Guid id, TEntityCreateViewModel newEntityData);
+        void Update(Guid id, TEntityEditViewModel newEntityData);
 
         void Delete(Guid id);
 
