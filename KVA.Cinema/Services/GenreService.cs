@@ -4,14 +4,35 @@
     using KVA.Cinema.Models;
     using KVA.Cinema.Models.Entities;
     using KVA.Cinema.Models.Genre;
+    using KVA.Cinema.Models.ViewModels.Genre;
     using KVA.Cinema.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    internal class GenreService : IService<GenreCreateViewModel, GenreDisplayViewModel>
+    public class GenreService : IService<GenreCreateViewModel, GenreDisplayViewModel, GenreEditViewModel>
     {
         public CinemaContext Context { get; set; }
+
+        public GenreService(CinemaContext db)
+        {
+            Context = db;
+        }
+        public IEnumerable<GenreCreateViewModel> Read()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<GenreDisplayViewModel> ReadAll()
+        {
+            List<Genre> genres = Context.Genres.ToList();
+
+            return genres.Select(x => new GenreDisplayViewModel()
+            {
+                Id = x.Id,
+                Title = x.Title
+            });
+        }
 
         public void CreateAsync(GenreCreateViewModel genreData)
         {
@@ -53,14 +74,7 @@
             Context.SaveChanges();
         }
 
-        public IEnumerable<GenreDisplayViewModel> ReadAll()
-        {
-            List<Genre> genres = Context.Genres.ToList();
-
-            return genres.Select(x => new GenreDisplayViewModel(x.Id, x.Title));
-        }
-
-        public void Update(Guid genreId, GenreCreateViewModel genreNewData)
+        public void Update(Guid genreId, GenreEditViewModel genreNewData)
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(genreId, genreNewData.Title))
             {
@@ -84,21 +98,16 @@
             Context.SaveChanges();
         }
 
-        public bool IsEntityExist(string genreTitle)
+        public bool IsEntityExist(Guid genreId)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(genreTitle))
+            if (CheckUtilities.ContainsNullOrEmptyValue(genreId))
             {
                 return false;
             }
 
-            Genre genre = Context.Genres.FirstOrDefault(x => x.Title == genreTitle);
+            Genre genre = Context.Genres.FirstOrDefault(x => x.Id == genreId);
 
             return genre != default;
-        }
-
-        public GenreService(CinemaContext db)
-        {
-            Context = db;
         }
     }
 }

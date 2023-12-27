@@ -1,14 +1,15 @@
 ﻿namespace KVA.Cinema.Models.Genre
 {
     using System;
+    using System.ComponentModel.DataAnnotations;
 
-    internal class GenreCreateViewModel
+    public class GenreCreateViewModel
     {
-        public string Title { get; }
+        public Guid Id { get; set; }
 
-        public GenreCreateViewModel(string title)
-        {
-            Title = title;
-        }
+        [Required(ErrorMessage = "Required field")]
+        [StringLength(20, MinimumLength = 2, ErrorMessage = "Title length must be in 2-20 symbols")]
+        [Display(Name = "Title")]
+        public string Title { get; set; }
     }
 }
