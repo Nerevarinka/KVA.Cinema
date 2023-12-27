@@ -13,14 +13,5 @@
         public DateTime ActivatedOn { get; set; }
 
         public DateTime LastUntil { get; set; }
-
-        public UserSubscriptionDisplayViewModel(Guid id, Guid subscriptionId, Guid userId, DateTime activatedOn, DateTime lastUntil)
-        {
-            Id = id;
-            SubscriptionId = subscriptionId;
-            UserId = userId;
-            ActivatedOn = activatedOn;
-            LastUntil = lastUntil;
-        }
     }
 }

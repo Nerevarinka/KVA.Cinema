@@ -1,8 +1,11 @@
-﻿namespace KVA.Cinema.Models.UserSubscription
+﻿namespace KVA.Cinema.Models.ViewModels.UserSubscription
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
 
-    internal class UserSubscriptionCreateViewModel
+    public class UserSubscriptionEditViewModel
     {
         public Guid Id { get; set; }
 

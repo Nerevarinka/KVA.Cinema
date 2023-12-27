@@ -4,18 +4,37 @@
     using KVA.Cinema.Models;
     using KVA.Cinema.Models.Entities;
     using KVA.Cinema.Models.UserSubscription;
+    using KVA.Cinema.Models.ViewModels.UserSubscription;
     using KVA.Cinema.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    internal class UserSubscriptionService : IService<UserSubscriptionCreateViewModel, UserSubscriptionDisplayViewModel>
+    internal class UserSubscriptionService : IService<UserSubscriptionCreateViewModel, UserSubscriptionDisplayViewModel, UserSubscriptionEditViewModel>
     {
         public CinemaContext Context { get; set; }
 
         public UserSubscriptionService(CinemaContext db)
         {
             Context = db;
+        }
+
+        public IEnumerable<UserSubscriptionCreateViewModel> Read()
+        {
+            throw new NotImplementedException();
+        }
+        public IEnumerable<UserSubscriptionDisplayViewModel> ReadAll()
+        {
+            List<UserSubscription> userSubscriptions = Context.UserSubscriptions.ToList();
+
+            return (IEnumerable<UserSubscriptionDisplayViewModel>)userSubscriptions.Select(x => new UserSubscriptionCreateViewModel()
+            {
+                Id = x.Id,
+                SubscriptionId = x.SubscriptionId,
+                UserId = x.UserId,
+                ActivatedOn = x.ActivatedOn,
+                LastUntil = x.LastUntil
+                });
         }
 
         public void CreateAsync(UserSubscriptionCreateViewModel userSubscriptionData) // после окончания подписки должна быть возможность добавить такую же опять
@@ -68,18 +87,7 @@
             Context.SaveChanges();
         }
 
-        public IEnumerable<UserSubscriptionDisplayViewModel> ReadAll()
-        {
-            List<UserSubscription> userSubscriptions = Context.UserSubscriptions.ToList();
-
-            return (IEnumerable<UserSubscriptionDisplayViewModel>)userSubscriptions.Select(x => new UserSubscriptionCreateViewModel(x.Id,
-                                                                                   x.SubscriptionId,
-                                                                                   x.UserId,
-                                                                                   x.ActivatedOn,
-                                                                                   x.LastUntil));
-        }
-
-        public void Update(Guid userSubscriptionId, UserSubscriptionCreateViewModel userSubscriptionNewData)
+        public void Update(Guid userSubscriptionId, UserSubscriptionEditViewModel userSubscriptionNewData)
         {
             throw new NotImplementedException();
 
@@ -144,11 +152,6 @@
             Subscription subscription = Context.Subscriptions.FirstOrDefault(x => x.Id == subscriptionId);
 
             return subscription != default;
-        }
-
-        public IEnumerable<UserSubscriptionCreateViewModel> Read()
-        {
-            throw new NotImplementedException();
         }
     }
 }
