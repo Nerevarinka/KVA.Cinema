@@ -13,6 +13,16 @@
 
     public class CountryService : IService<CountryCreateViewModel, CountryDisplayViewModel, CountryEditViewModel>
     {
+        /// <summary>
+        /// Minimum length allowed for Name
+        /// </summary>
+        private const int NAME_LENGHT_MIN = 2;
+
+        /// <summary>
+        /// Maximum length allowed for Name
+        /// </summary>
+        private const int NAME_LENGHT_MAX = 20;
+
         private CinemaContext Context { get; set; }
 
         public CountryService(CinemaContext db)
@@ -52,6 +62,16 @@
             if (Context.Countries.FirstOrDefault(x => x.Name == countryData.Name) != default)
             {
                 throw new DuplicatedEntityException($"Country with name \"{countryData.Name}\" is already exist");
+            }
+
+            if (countryData.Name.Length < NAME_LENGHT_MIN)
+            {
+                throw new ArgumentException($"Length cannot be less than {NAME_LENGHT_MIN} symbols");
+            }
+
+            if (countryData.Name.Length > NAME_LENGHT_MAX)
+            {
+                throw new ArgumentException($"Length cannot be more than {NAME_LENGHT_MAX} symbols");
             }
 
             Country newCountry = new Country()
