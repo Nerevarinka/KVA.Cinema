@@ -16,49 +16,48 @@
         <legend>User</legend>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.FirstName, "First Name")
+            @Html.LabelFor(model => model.FirstName)
             @Html.EditorFor(model => model.FirstName, additionalViewData: new { @class = "form-control" })
             @Html.ValidationMessageFor(model => model.FirstName)
         </div>
         <div class="form-group">
-            @Html.LabelFor(model => model.LastName, "Last Name")
+            @Html.LabelFor(model => model.LastName)
             @Html.EditorFor(model => model.LastName, additionalViewData: new { @class = "form-control" })
             @Html.ValidationMessageFor(model => model.LastName)
         </div>
         <div class="form-group">
-            @Html.LabelFor(model => model.Nickname, "Nickname")
+            @Html.LabelFor(model => model.Nickname)
             @Html.EditorFor(model => model.Nickname, additionalViewData: new { @class = "form-control" })
             @Html.ValidationMessageFor(model => model.Nickname)
         </div>
         <div class="form-group">
-            @Html.LabelFor(model => model.Email, "Email")
+            @Html.LabelFor(model => model.Email)
             @Html.EditorFor(model => model.Email, additionalViewData: new { @class = "form-control" })
             @Html.ValidationMessageFor(model => model.Email)
         </div>
         <div class="form-group">
-            @Html.LabelFor(model => model.BirthDate, "Birth date")
+            @Html.LabelFor(model => model.BirthDate)
             @Html.EditorFor(model => model.BirthDate, additionalViewData: new { @class = "form-control" })
             @Html.ValidationMessageFor(model => model.BirthDate)
         </div>
         <div class="form-group">
-            @Html.LabelFor(model => model.Password, "Password")
+            @Html.LabelFor(model => model.Password)
             @Html.EditorFor(model => model.Password, additionalViewData: new { @class = "form-control" })
             @Html.ValidationMessageFor(model => model.Password)
         </div>
         <div class="form-group">
-            @Html.LabelFor(model => model.PasswordConfirm, "Confirm password")
+            @Html.LabelFor(model => model.PasswordConfirm)
             @Html.EditorFor(model => model.PasswordConfirm, additionalViewData: new { @class = "form-control" })
             @Html.ValidationMessageFor(model => model.PasswordConfirm)
         </div>
-
-        <p>
-            <input type="submit" value="Create" />
-        </p>
     </fieldset>
 
-    @Html.ActionLink("Back to List", "Index")
+    <p>
+        <input type="submit" value="Create" /> | @Html.ActionLink("Back to List", "Index")
+    </p>
 }
 
-@section Scripts {
+@section Scripts 
+{
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

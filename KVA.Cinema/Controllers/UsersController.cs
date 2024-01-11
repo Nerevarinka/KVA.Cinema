@@ -175,14 +175,14 @@ namespace KVA.Cinema.Controllers    //TODO: replace NotFound()
         }
 
         [HttpGet]
-        public IActionResult Login(string returnUrl = null)
+        public IActionResult Login(string returnUrl)
         {
-            return View(new LoginViewModel { /*ReturnUrl = returnUrl*/ });
+            return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl)
         {
             if (ModelState.IsValid)
             {
@@ -191,12 +191,12 @@ namespace KVA.Cinema.Controllers    //TODO: replace NotFound()
 
                 if (result.Succeeded)
                 {
-                    // проверяем, принадлежит ли URL приложению
-                    //if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
-                    //{
-                    //    return Redirect(model.ReturnUrl);
-                    //}
-                    //else
+                    //проверяем, принадлежит ли URL приложению
+                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    {
+                        return Redirect(returnUrl);
+                    }
+                    else
                     {
                         return RedirectToAction("Index", "Home");
                     }
