@@ -121,6 +121,16 @@
                 throw new DuplicatedEntityException($"Country with name \"{countryNewData.Name}\" is already exist");
             }
 
+            if (countryNewData.Name.Length < NAME_LENGHT_MIN)
+            {
+                throw new ArgumentException($"Length cannot be less than {NAME_LENGHT_MIN} symbols");
+            }
+
+            if (countryNewData.Name.Length > NAME_LENGHT_MAX)
+            {
+                throw new ArgumentException($"Length cannot be more than {NAME_LENGHT_MAX} symbols");
+            }
+
             country.Name = countryNewData.Name;
 
             Context.SaveChanges();
