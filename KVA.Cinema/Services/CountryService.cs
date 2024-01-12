@@ -116,11 +116,6 @@
                 throw new EntityNotFoundException($"Country with id \"{id}\" not found");
             }
 
-            if (Context.Countries.FirstOrDefault(x => x.Name == countryNewData.Name) != default)
-            {
-                throw new DuplicatedEntityException($"Country with name \"{countryNewData.Name}\" is already exist");
-            }
-
             if (countryNewData.Name.Length < NAME_LENGHT_MIN)
             {
                 throw new ArgumentException($"Length cannot be less than {NAME_LENGHT_MIN} symbols");
@@ -129,6 +124,11 @@
             if (countryNewData.Name.Length > NAME_LENGHT_MAX)
             {
                 throw new ArgumentException($"Length cannot be more than {NAME_LENGHT_MAX} symbols");
+            }
+
+            if (Context.Countries.FirstOrDefault(x => x.Name == countryNewData.Name && x.Id != countryNewData.Id) != default)
+            {
+                throw new DuplicatedEntityException($"Country with name \"{countryNewData.Name}\" is already exist");
             }
 
             country.Name = countryNewData.Name;
