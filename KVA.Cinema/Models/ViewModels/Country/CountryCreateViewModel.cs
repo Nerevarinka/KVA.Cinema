@@ -8,8 +8,9 @@
         public Guid Id { get; set; }
 
         [Required(ErrorMessage = "Required field")]
-        [StringLength(20, MinimumLength = 2, ErrorMessage = "Last name length must be in 2-20 symbols")]
-        [Display(Name = "Last name")]
+        [StringLength(128, ErrorMessage = "Name length cannot be more than 128 symbols")]
+        [MinLength(2, ErrorMessage = "Name length cannot be less than 2 symbols")]
+        [Display(Name = "Name")]
         public string Name { get; set; }
     }
 }

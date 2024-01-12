@@ -21,7 +21,7 @@
         /// <summary>
         /// Maximum length allowed for Name
         /// </summary>
-        private const int NAME_LENGHT_MAX = 20;
+        private const int NAME_LENGHT_MAX = 128;
 
         private CinemaContext Context { get; set; }
 
