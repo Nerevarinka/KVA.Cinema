@@ -15,4 +15,10 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\ViewModels\Language\" />
+    <Folder Include="Models\ViewModels\Pegi\" />
+    <Folder Include="Models\ViewModels\Video\" />
+  </ItemGroup>
+
 </Project>
