@@ -59,11 +59,6 @@
                 throw new ArgumentNullException("Name has no value");
             }
 
-            if (Context.Countries.FirstOrDefault(x => x.Name == countryData.Name) != default)
-            {
-                throw new DuplicatedEntityException($"Country with name \"{countryData.Name}\" is already exist");
-            }
-
             if (countryData.Name.Length < NAME_LENGHT_MIN)
             {
                 throw new ArgumentException($"Length cannot be less than {NAME_LENGHT_MIN} symbols");
@@ -72,6 +67,11 @@
             if (countryData.Name.Length > NAME_LENGHT_MAX)
             {
                 throw new ArgumentException($"Length cannot be more than {NAME_LENGHT_MAX} symbols");
+            }
+
+            if (Context.Countries.FirstOrDefault(x => x.Name == countryData.Name) != default)
+            {
+                throw new DuplicatedEntityException($"Country with name \"{countryData.Name}\" is already exist");
             }
 
             Country newCountry = new Country()
