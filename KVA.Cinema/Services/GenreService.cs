@@ -12,6 +12,16 @@
 
     public class GenreService : IService<GenreCreateViewModel, GenreDisplayViewModel, GenreEditViewModel>
     {
+        /// <summary>
+        /// Minimum length allowed for Name
+        /// </summary>
+        private const int NAME_LENGHT_MIN = 2;
+
+        /// <summary>
+        /// Maximum length allowed for Name
+        /// </summary>
+        private const int NAME_LENGHT_MAX = 50;
+
         public CinemaContext Context { get; set; }
 
         public GenreService(CinemaContext db)
@@ -20,7 +30,13 @@
         }
         public IEnumerable<GenreCreateViewModel> Read()
         {
-            throw new NotImplementedException();
+            List<Genre> genres = Context.Genres.ToList(); //TODO: перенести ToList в return
+
+            return genres.Select(x => new GenreCreateViewModel()
+            {
+                Id = x.Id,
+                Title = x.Title
+            });
         }
 
         public IEnumerable<GenreDisplayViewModel> ReadAll()
@@ -39,6 +55,16 @@
             if (CheckUtilities.ContainsNullOrEmptyValue(genreData.Title))
             {
                 throw new ArgumentNullException("Title has no value");
+            }
+
+            if (genreData.Title.Length < NAME_LENGHT_MIN)
+            {
+                throw new ArgumentException($"Length cannot be less than {NAME_LENGHT_MIN} symbols");
+            }
+
+            if (genreData.Title.Length > NAME_LENGHT_MAX)
+            {
+                throw new ArgumentException($"Length cannot be more than {NAME_LENGHT_MAX} symbols");
             }
 
             if (Context.Genres.FirstOrDefault(x => x.Title == genreData.Title) != default)
@@ -88,7 +114,17 @@
                 throw new EntityNotFoundException($"Genre with id \"{genreId}\" not found");
             }
 
-            if (Context.Genres.FirstOrDefault(x => x.Title == genreNewData.Title) != default)
+            if (genreNewData.Title.Length < NAME_LENGHT_MIN)
+            {
+                throw new ArgumentException($"Length cannot be less than {NAME_LENGHT_MIN} symbols");
+            }
+
+            if (genreNewData.Title.Length > NAME_LENGHT_MAX)
+            {
+                throw new ArgumentException($"Length cannot be more than {NAME_LENGHT_MAX} symbols");
+            }
+
+            if (Context.Genres.FirstOrDefault(x => x.Title == genreNewData.Title && x.Id != genreNewData.Id) != default)
             {
                 throw new DuplicatedEntityException($"Genre with title \"{genreNewData.Title}\" is already exist");
             }
