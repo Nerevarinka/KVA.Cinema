@@ -118,7 +118,7 @@
                 throw new ArgumentException($"Length cannot be more than {NAME_LENGHT_MAX} symbols");
             }
 
-            if (Context.Directors.FirstOrDefault(x => x.Name == directorNewData.Name) != default)
+            if (Context.Directors.FirstOrDefault(x => x.Name == directorNewData.Name && x.Id != directorNewData.Id) != default)
             {
                 throw new DuplicatedEntityException($"Director with name \"{directorNewData.Name}\" is already exist");
             }
