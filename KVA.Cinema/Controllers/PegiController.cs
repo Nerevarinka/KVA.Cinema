@@ -7,34 +7,38 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using KVA.Cinema.Models;
 using KVA.Cinema.Models.Entities;
+using KVA.Cinema.Services;
+using KVA.Cinema.Models.ViewModels.Pegi;
 
 namespace KVA.Cinema.Controllers
 {
     public class PegiController : Controller
     {
-        private readonly CinemaContext _context;
+        private PegiService PegiService { get; }
 
-        public PegiController(CinemaContext context)
+        public PegiController(PegiService pegiService)
         {
-            _context = context;
+            PegiService = pegiService;
         }
 
         // GET: Pegi
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Pegis.ToListAsync());
+            var data = PegiService.ReadAll();
+            return View(data);
         }
 
         // GET: Pegi/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        public IActionResult Details(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var pegi = await _context.Pegis
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var pegi = PegiService.ReadAll()
+                .FirstOrDefault(m => m.Id == id);
+
             if (pegi == null)
             {
                 return NotFound();
@@ -54,32 +58,47 @@ namespace KVA.Cinema.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Type")] Pegi pegi)
+        public IActionResult Create(PegiCreateViewModel pegiData)
         {
             if (ModelState.IsValid)
             {
-                pegi.Id = Guid.NewGuid();
-                _context.Add(pegi);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    PegiService.CreateAsync(pegiData);
+                    return RedirectToAction(nameof(Index));
+
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
             }
-            return View(pegi);
+            return View(pegiData);
         }
 
         // GET: Pegi/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        public IActionResult Edit(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var pegi = await _context.Pegis.FindAsync(id);
+            var pegi = PegiService.ReadAll()
+                .FirstOrDefault(m => m.Id == id);
+
             if (pegi == null)
             {
                 return NotFound();
             }
-            return View(pegi);
+
+            var pegiEditModel = new PegiEditViewModel()
+            {
+                Id = pegi.Id,
+                Type = pegi.Type
+            };
+
+            return View(pegiEditModel);
         }
 
         // POST: Pegi/Edit/5
@@ -87,9 +106,9 @@ namespace KVA.Cinema.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Type")] Pegi pegi)
+        public IActionResult Edit(Guid id, PegiEditViewModel pegiNewData)
         {
-            if (id != pegi.Id)
+            if (id != pegiNewData.Id)
             {
                 return NotFound();
             }
@@ -98,35 +117,28 @@ namespace KVA.Cinema.Controllers
             {
                 try
                 {
-                    _context.Update(pegi);
-                    await _context.SaveChangesAsync();
+                    PegiService.Update(id, pegiNewData);
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    if (!PegiExists(pegi.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError(string.Empty, ex.Message);
                 }
-                return RedirectToAction(nameof(Index));
             }
-            return View(pegi);
+            return View(pegiNewData);
         }
 
         // GET: Pegi/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+        public IActionResult Delete(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var pegi = await _context.Pegis
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var pegi = PegiService.ReadAll()
+                .FirstOrDefault(m => m.Id == id);
+
             if (pegi == null)
             {
                 return NotFound();
@@ -138,17 +150,18 @@ namespace KVA.Cinema.Controllers
         // POST: Pegi/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public IActionResult DeleteConfirmed(Guid id)
         {
-            var pegi = await _context.Pegis.FindAsync(id);
-            _context.Pegis.Remove(pegi);
-            await _context.SaveChangesAsync();
+            var pegi = PegiService.ReadAll()
+                .FirstOrDefault(m => m.Id == id);
+            PegiService.Delete(pegi.Id);
+
             return RedirectToAction(nameof(Index));
         }
 
         private bool PegiExists(Guid id)
         {
-            return _context.Pegis.Any(e => e.Id == id);
+            return PegiService.IsEntityExist(id);
         }
     }
 }

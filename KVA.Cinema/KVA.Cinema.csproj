@@ -17,7 +17,6 @@
 
   <ItemGroup>
     <Folder Include="Models\ViewModels\Language\" />
-    <Folder Include="Models\ViewModels\Pegi\" />
     <Folder Include="Models\ViewModels\Video\" />
   </ItemGroup>
 
