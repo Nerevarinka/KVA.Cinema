@@ -73,14 +73,6 @@ namespace KVA.Cinema.Models
         public CinemaContext(DbContextOptions<CinemaContext> options)
             : base(options)
         {
-            Database.EnsureCreated();
-        }
-
-        [Obsolete]
-        public CinemaContext()
-            : base()
-        {
-            Database.EnsureCreated();
         }
     }
 }
