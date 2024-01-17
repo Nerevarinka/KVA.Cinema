@@ -14,7 +14,7 @@
     {
         private const int AGE_MIN = 0;
 
-        private const int AGE_MAX = 128;
+        private const int AGE_MAX = 99;
 
         private CinemaContext Context { get; set; }
 
