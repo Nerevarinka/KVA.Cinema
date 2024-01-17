@@ -1,0 +1,82 @@
+﻿@model KVA.Cinema.Models.ViewModels.Video.VideoDisplayViewModel
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this video?</h3>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>Video</legend>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Title)
+            @Html.DisplayFor(model => model.Title, additionalViewData: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Title)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.ReleasedIn)
+            @Html.DisplayFor(model => model.ReleasedIn, additionalViewData: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.ReleasedIn)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.CountryName)
+            @Html.DisplayFor(model => model.CountryName, additionalViewData: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.CountryName)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Preview)
+            @Html.DisplayFor(model => model.Preview, additionalViewData: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Preview)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.GenreName) @*genre*@
+            @Html.DisplayFor(model => model.GenreName, additionalViewData: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.GenreName)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.DirectorName)
+            @Html.DisplayFor(model => model.DirectorName, additionalViewData: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.DirectorName)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.PegiName)
+            @Html.DisplayFor(model => model.PegiName, additionalViewData: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.PegiName)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Length)
+            @Html.DisplayFor(model => model.Length, additionalViewData: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Length)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.LanguageName)
+            @Html.DisplayFor(model => model.LanguageName, additionalViewData: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.LanguageName)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Description)
+            @Html.DisplayFor(model => model.Description, additionalViewData: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Description)
+        </div>
+    </fieldset>
+
+    <p>
+        <input type="submit" value="Delete" /> | @Html.ActionLink("Back to List", "Index")
+    </p>
+}
+
+@section Scripts
+{
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
