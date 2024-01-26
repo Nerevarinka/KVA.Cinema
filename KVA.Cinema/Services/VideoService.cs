@@ -174,7 +174,10 @@
                 throw new ArgumentException($"Length cannot be more than {TITLE_LENGHT_MAX} symbols");
             }
 
-            if (Context.Videos.FirstOrDefault(x => x.Title == newVideoData.Title && x.DirectorId == newVideoData.DirectorId) != default)
+            if (Context.Videos.FirstOrDefault(x => 
+                                                x.Title == newVideoData.Title &&
+                                                x.DirectorId == newVideoData.DirectorId &&
+                                                x.Id != newVideoData.Id) != default)
             {
                 throw new DuplicatedEntityException($"Video with title \"{newVideoData.Title}\" by this director is already exist");
             }
