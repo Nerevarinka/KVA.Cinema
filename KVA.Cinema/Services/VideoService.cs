@@ -55,13 +55,13 @@
                 Title = x.Title,
                 Description = x.Description,
                 Length = x.Length,
-                //CountryId = x.CountryId,
+                CountryId = x.CountryId,
                 ReleasedIn = x.ReleasedIn,
                 Views = x.Views,
                 Preview = x.Preview,
-                //PegiId = x.PegiId,
-                //LanguageId = x.LanguageId,
-                //DirectorId = x.DirectorId,
+                PegiId = x.PegiId,
+                LanguageId = x.LanguageId,
+                DirectorId = x.DirectorId,
                 CountryName = x.Country.Name,
                 PegiName = x.Pegi.Type.ToString() + "+",
                 LanguageName = x.Language.Name,
@@ -174,10 +174,11 @@
                 throw new ArgumentException($"Length cannot be more than {TITLE_LENGHT_MAX} symbols");
             }
 
-            if (Context.Videos.FirstOrDefault(x => 
-                                                x.Title == newVideoData.Title &&
-                                                x.DirectorId == newVideoData.DirectorId &&
-                                                x.Id != newVideoData.Id) != default)
+            Video video1 = Context.Videos.FirstOrDefault(x =>
+                                                               x.Title == newVideoData.Title &&
+                                                               x.DirectorId == newVideoData.DirectorId &&
+                                                               x.Id != newVideoData.Id);
+            if (video1 != default)
             {
                 throw new DuplicatedEntityException($"Video with title \"{newVideoData.Title}\" by this director is already exist");
             }
