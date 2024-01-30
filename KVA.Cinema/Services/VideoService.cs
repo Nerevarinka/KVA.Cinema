@@ -43,7 +43,7 @@
                 DirectorId = x.DirectorId,
 
                 //temp. TO DO
-                GenresId = x.VideoGenres.Any() ? x.VideoGenres.First().GenreId : Guid.Empty,
+                //GenresId = x.VideoGenres.Any() ? x.VideoGenres.First().GenreId : Guid.Empty,
             });
         }
 
@@ -64,11 +64,11 @@
                 //DirectorId = x.DirectorId,
                 CountryName = x.Country.Name,
                 PegiName = x.Pegi.Type.ToString() + "+",
-                LanguageName=x.Language.Name,
-                DirectorName=x.Director.Name,
+                LanguageName = x.Language.Name,
+                DirectorName = x.Director.Name,
 
                 //temp. TO DO
-                GenresId = x.VideoGenres.Any() ? x.VideoGenres.First().GenreId : Guid.Empty,
+                //GenresId = x.VideoGenres.Any() ? x.VideoGenres.First().GenreId : Guid.Empty,
             }).ToList();
         }
 
@@ -79,8 +79,8 @@
                                                         videoData.ReleasedIn,
                                                         videoData.PegiId,
                                                         videoData.LanguageId,
-                                                        videoData.DirectorId,
-                                                        videoData.GenresId))
+                                                        videoData.DirectorId))
+                                                        //videoData.GenresId))
             {
                 throw new ArgumentNullException("One or more required fields have no value");
             }
@@ -115,15 +115,15 @@
                 PegiId = videoData.PegiId,
                 LanguageId = videoData.LanguageId,
                 DirectorId = videoData.DirectorId,
-                VideoGenres = new List<VideoGenre>()
-                {
-                    new VideoGenre
-                    {
-                        Id = Guid.NewGuid(),
-                        GenreId = videoData.GenresId,
-                        VideoId = videoId
-                    }
-                }
+                //VideoGenres = new List<VideoGenre>()
+                //{
+                //    new VideoGenre
+                //    {
+                //        Id = Guid.NewGuid(),
+                //        GenreId = videoData.GenresId,
+                //        VideoId = videoId
+                //    }
+                //}
             };
 
             Context.Videos.Add(newVideo);
@@ -156,8 +156,8 @@
                                                         newVideoData.ReleasedIn,
                                                         newVideoData.PegiId,
                                                         newVideoData.LanguageId,
-                                                        newVideoData.DirectorId,
-                                                        newVideoData.GenresId))
+                                                        newVideoData.DirectorId))
+                                                        //newVideoData.GenresId))
             {
                 throw new ArgumentNullException("One or more required fields have no value");
             }
@@ -192,15 +192,15 @@
             video.PegiId = newVideoData.PegiId;
             video.LanguageId = newVideoData.LanguageId;
             video.DirectorId = newVideoData.DirectorId;
-            video.VideoGenres = new List<VideoGenre>() //Check this
-                {
-                    new VideoGenre
-                    {
-                        Id = Guid.NewGuid(),
-                        GenreId = newVideoData.GenresId,
-                        VideoId = newVideoData.Id
-                    }
-                };
+            //video.VideoGenres = new List<VideoGenre>() //Check this
+            //    {
+            //        new VideoGenre
+            //        {
+            //            Id = Guid.NewGuid(),
+            //            GenreId = newVideoData.GenresId,
+            //            VideoId = newVideoData.Id
+            //        }
+            //    };
 
             Context.SaveChanges();
         }

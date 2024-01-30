@@ -50,8 +50,8 @@
         [Display(Name = "Director")]
         public Guid DirectorId { get; set; }
 
-        [Required(ErrorMessage = "Required field")]
-        [Display(Name = "Genres")]
-        public Guid GenresId { get; set; }
+        //[Required(ErrorMessage = "Required field")]
+        //[Display(Name = "Genres")]
+        //public Guid GenresId { get; set; }
     }
 }

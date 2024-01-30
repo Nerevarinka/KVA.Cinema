@@ -17,7 +17,7 @@
         [Display(Name = "Description")]
         public string Description { get; set; }
 
-        [Display(Name = "Country")]
+        [Display(Name = "Length")]
         public int Length { get; set; }
 
         public Guid CountryId { get; set; }
@@ -50,9 +50,9 @@
         [Display(Name = "Director")]
         public string DirectorName { get; set; }
 
-        public Guid GenresId { get; set; }
+        //public Guid GenresId { get; set; }
 
-        [Display(Name = "Genre")]
-        public string GenreName { get; set; }
+        //[Display(Name = "Genre")]
+        //public string GenreName { get; set; }
     }
 }

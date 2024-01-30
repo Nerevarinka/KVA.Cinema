@@ -43,9 +43,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.PegiName)
             </th>
-            <th>
+            @*<th>
                 @Html.DisplayNameFor(model => model.GenreName)
-            </th>
+            </th>*@
             <th></th>
         </tr>
     </thead>
@@ -80,9 +80,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.PegiName)
             </td>
-            <td>
+            @*<td>
                 @Html.DisplayFor(modelItem => item.GenreName)
-            </td>
+            </td>*@
             <td>
                 @Html.ActionLink("Edit", "Edit", new { Id = item.Id }) |
                 @Html.ActionLink("Details", "Details", new { Id = item.Id }) |

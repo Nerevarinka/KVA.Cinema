@@ -39,11 +39,11 @@
             @Html.DisplayFor(model => model.Preview, additionalViewData: new { @class = "form-control" })
             @Html.ValidationMessageFor(model => model.Preview)
         </div>
-        <div class="form-group">
-            @Html.LabelFor(model => model.GenreName) @*genre*@
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.GenreName)
             @Html.DisplayFor(model => model.GenreName, additionalViewData: new { @class = "form-control" })
             @Html.ValidationMessageFor(model => model.GenreName)
-        </div>
+        </div>*@
         <div class="form-group">
             @Html.LabelFor(model => model.DirectorName)
             @Html.DisplayFor(model => model.DirectorName, additionalViewData: new { @class = "form-control" })

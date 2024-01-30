@@ -144,7 +144,7 @@ namespace KVA.Cinema.Controllers
                 PegiId = video.PegiId,
                 LanguageId = video.LanguageId,
                 DirectorId = video.DirectorId,
-                GenresId = video.GenresId
+                //GenresId = video.GenresId
             };
 
             return View(videoEditModel);
