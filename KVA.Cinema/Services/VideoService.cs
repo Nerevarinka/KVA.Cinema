@@ -130,27 +130,27 @@
             Context.SaveChanges();
         }
 
-        public void Delete(Guid id)
+        public void Delete(Guid videoId)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(id))
+            if (CheckUtilities.ContainsNullOrEmptyValue(videoId))
             {
                 throw new ArgumentNullException("Video Id has no value");
             }
 
-            Video video = Context.Videos.FirstOrDefault(x => x.Id == id);
+            Video video = Context.Videos.FirstOrDefault(x => x.Id == videoId);
 
             if (video == default)
             {
-                throw new EntityNotFoundException($"Video with Id \"{id}\" not found");
+                throw new EntityNotFoundException($"Video with Id \"{videoId}\" not found");
             }
 
             Context.Videos.Remove(video);
             Context.SaveChanges();
         }
 
-        public void Update(Guid id, VideoEditViewModel newVideoData) //add check for id
+        public void Update(Guid videoId, VideoEditViewModel newVideoData) //add check for id
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(id,
+            if (CheckUtilities.ContainsNullOrEmptyValue(videoId,
                                                         newVideoData.Title,
                                                         newVideoData.CountryId,
                                                         newVideoData.ReleasedIn,
@@ -162,11 +162,11 @@
                 throw new ArgumentNullException("One or more required fields have no value");
             }
 
-            Video video = Context.Videos.FirstOrDefault(x => x.Id == id);
+            Video video = Context.Videos.FirstOrDefault(x => x.Id == videoId);
 
-            if (id == default)
+            if (video == default)
             {
-                throw new EntityNotFoundException($"Video with id \"{id}\" not found");
+                throw new EntityNotFoundException($"Video with id \"{videoId}\" not found");
             }
 
             if (newVideoData.Title.Length > TITLE_LENGHT_MAX)
@@ -205,14 +205,14 @@
             Context.SaveChanges();
         }
 
-        public bool IsEntityExist(Guid id)
+        public bool IsEntityExist(Guid videoId)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(id))
+            if (CheckUtilities.ContainsNullOrEmptyValue(videoId))
             {
                 return false;
             }
 
-            Video video = Context.Videos.FirstOrDefault(x => x.Id == id);
+            Video video = Context.Videos.FirstOrDefault(x => x.Id == videoId);
 
             return video != default;
         }

@@ -83,36 +83,36 @@
             Context.SaveChanges();
         }
 
-        public void Delete(Guid id)
+        public void Delete(Guid languageId)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(id))
+            if (CheckUtilities.ContainsNullOrEmptyValue(languageId))
             {
                 throw new ArgumentNullException("Language Id has no value");
             }
 
-            Language language = Context.Languages.FirstOrDefault(x => x.Id == id);
+            Language language = Context.Languages.FirstOrDefault(x => x.Id == languageId);
 
             if (language == default)
             {
-                throw new EntityNotFoundException($"Language with Id \"{id}\" not found");
+                throw new EntityNotFoundException($"Language with Id \"{languageId}\" not found");
             }
 
             Context.Languages.Remove(language);
             Context.SaveChanges();
         }
 
-        public void Update(Guid id, LanguageEditViewModel languageNewData)
+        public void Update(Guid languageId, LanguageEditViewModel languageNewData)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(id, languageNewData.Name))
+            if (CheckUtilities.ContainsNullOrEmptyValue(languageId, languageNewData.Name))
             {
                 throw new ArgumentNullException("Language name or id has no value");
             }
 
-            Language language = Context.Languages.FirstOrDefault(x => x.Id == id);
+            Language language = Context.Languages.FirstOrDefault(x => x.Id == languageId);
 
-            if (id == default)
+            if (language == default)
             {
-                throw new EntityNotFoundException($"Language with id \"{id}\" not found");
+                throw new EntityNotFoundException($"Language with id \"{languageId}\" not found");
             }
 
             if (languageNewData.Name.Length < NAME_LENGHT_MIN)
@@ -135,14 +135,14 @@
             Context.SaveChanges();
         }
 
-        public bool IsEntityExist(Guid id)
+        public bool IsEntityExist(Guid languageId)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(id))
+            if (CheckUtilities.ContainsNullOrEmptyValue(languageId))
             {
                 return false;
             }
 
-            Language language = Context.Languages.FirstOrDefault(x => x.Id == id);
+            Language language = Context.Languages.FirstOrDefault(x => x.Id == languageId);
 
             return language != default;
         }

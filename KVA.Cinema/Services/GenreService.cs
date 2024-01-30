@@ -109,7 +109,7 @@
 
             Genre genre = Context.Genres.FirstOrDefault(x => x.Id == genreId);
 
-            if (genreId == default)
+            if (genre == default)
             {
                 throw new EntityNotFoundException($"Genre with id \"{genreId}\" not found");
             }

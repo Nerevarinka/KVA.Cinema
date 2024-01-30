@@ -103,7 +103,7 @@
 
             Director director = Context.Directors.FirstOrDefault(x => x.Id == directorId);
 
-            if (directorId == default)
+            if (director == default)
             {
                 throw new EntityNotFoundException($"Director with id \"{directorId}\" not found");
             }

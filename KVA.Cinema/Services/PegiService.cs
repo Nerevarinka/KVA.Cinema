@@ -67,36 +67,36 @@
             Context.SaveChanges();
         }
 
-        public void Delete(Guid id)
+        public void Delete(Guid pegiId)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(id))
+            if (CheckUtilities.ContainsNullOrEmptyValue(pegiId))
             {
                 throw new ArgumentNullException("PEGI Id has no value");
             }
 
-            Pegi pegi = Context.Pegis.FirstOrDefault(x => x.Id == id);
+            Pegi pegi = Context.Pegis.FirstOrDefault(x => x.Id == pegiId);
 
             if (pegi == default)
             {
-                throw new EntityNotFoundException($"PEGI with Id \"{id}\" not found");
+                throw new EntityNotFoundException($"PEGI with Id \"{pegiId}\" not found");
             }
 
             Context.Pegis.Remove(pegi);
             Context.SaveChanges();
         }
 
-        public void Update(Guid id, PegiEditViewModel pegiNewData)
+        public void Update(Guid pegiId, PegiEditViewModel pegiNewData)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(id, pegiNewData.Type))
+            if (CheckUtilities.ContainsNullOrEmptyValue(pegiId, pegiNewData.Type))
             {
                 throw new ArgumentNullException("PEGI type or id has no value");
             }
 
-            Pegi pegi = Context.Pegis.FirstOrDefault(x => x.Id == id);
+            Pegi pegi = Context.Pegis.FirstOrDefault(x => x.Id == pegiId);
 
-            if (id == default)
+            if (pegi == default)
             {
-                throw new EntityNotFoundException($"PEGI with id \"{id}\" not found");
+                throw new EntityNotFoundException($"PEGI with id \"{pegiId}\" not found");
             }
 
             if (pegiNewData.Type is > AGE_MAX or < AGE_MIN)
@@ -114,14 +114,14 @@
             Context.SaveChanges();
         }
 
-        public bool IsEntityExist(Guid id)
+        public bool IsEntityExist(Guid pegiId)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(id))
+            if (CheckUtilities.ContainsNullOrEmptyValue(pegiId))
             {
                 return false;
             }
 
-            Pegi pegi = Context.Pegis.FirstOrDefault(x => x.Id == id);
+            Pegi pegi = Context.Pegis.FirstOrDefault(x => x.Id == pegiId);
 
             return pegi != default;
         }

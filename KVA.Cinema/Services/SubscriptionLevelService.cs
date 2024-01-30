@@ -89,29 +89,36 @@
             Context.SaveChanges();
         }
 
-        public void Delete(Guid id)
+        public void Delete(Guid subscriptionLevelId)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(id))
+            if (CheckUtilities.ContainsNullOrEmptyValue(subscriptionLevelId))
             {
                 throw new ArgumentNullException("Id has no value");
             }
 
-            SubscriptionLevel subscriptionLevel = Context.SubscriptionLevels.FirstOrDefault(x => x.Id == id);
+            SubscriptionLevel subscriptionLevel = Context.SubscriptionLevels.FirstOrDefault(x => x.Id == subscriptionLevelId);
 
             if (subscriptionLevel == default)
             {
-                throw new EntityNotFoundException($"Subscription level with Id \"{id}\" not found");
+                throw new EntityNotFoundException($"Subscription level with Id \"{subscriptionLevelId}\" not found");
             }
 
             Context.SubscriptionLevels.Remove(subscriptionLevel);
             Context.SaveChanges();
         }
 
-        public void Update(Guid id, SubscriptionLevelEditViewModel subscriptionLevelNewData)
+        public void Update(Guid subscriptionLevelId, SubscriptionLevelEditViewModel subscriptionLevelNewData)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(id, subscriptionLevelNewData.Title))
+            if (CheckUtilities.ContainsNullOrEmptyValue(subscriptionLevelId, subscriptionLevelNewData.Title))
             {
                 throw new ArgumentNullException("One or more parameters have no value");
+            }
+
+            SubscriptionLevel subscriptionLevel = Context.SubscriptionLevels.FirstOrDefault(x => x.Id == subscriptionLevelId);
+
+            if (subscriptionLevel == default)
+            {
+                throw new EntityNotFoundException($"Subscription level with id \"{subscriptionLevelId}\" not found");
             }
 
             if (subscriptionLevelNewData.Title.Length < TITLE_LENGHT_MIN)
@@ -124,13 +131,6 @@
                 throw new ArgumentException($"Length cannot be more than {TITLE_LENGHT_MAX} symbols");
             }
 
-            SubscriptionLevel subscriptionLevel = Context.SubscriptionLevels.FirstOrDefault(x => x.Id == id);
-
-            if (id == default)
-            {
-                throw new EntityNotFoundException($"Subscription level with id \"{id}\" not found");
-            }
-
             if (Context.SubscriptionLevels.FirstOrDefault(x => x.Title == subscriptionLevelNewData.Title && x.Id != subscriptionLevelNewData.Id) != default)
             {
                 throw new DuplicatedEntityException($"Subscription level with title \"{subscriptionLevelNewData.Title}\" is already exist");
@@ -141,14 +141,14 @@
             Context.SaveChanges();
         }
 
-        public bool IsEntityExist(Guid id)
+        public bool IsEntityExist(Guid subscriptionLevelId)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(id))
+            if (CheckUtilities.ContainsNullOrEmptyValue(subscriptionLevelId))
             {
                 return false;
             }
 
-            SubscriptionLevel subscriptionLevel = Context.SubscriptionLevels.FirstOrDefault(x => x.Id == id);
+            SubscriptionLevel subscriptionLevel = Context.SubscriptionLevels.FirstOrDefault(x => x.Id == subscriptionLevelId);
 
             return subscriptionLevel != default;
         }
