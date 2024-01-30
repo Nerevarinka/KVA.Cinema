@@ -1,0 +1,34 @@
+﻿@model KVA.Cinema.Models.ViewModels.Tag.TagDisplayViewModel
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+
+<h1>Details</h1>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>Tag</legend>
+
+        <div class="form-group">
+            @Html.DisplayNameFor(model => model.Text)
+            @Html.DisplayFor(model => model.Text, additionalViewData: new { @class = "form-control", @style = $"background-color:{Model.Color}" })
+        </div>
+    </fieldset>
+
+    <p>
+        @Html.ActionLink("Edit", "Edit", "Tags", new { Id = Model.Id }) | @Html.ActionLink("Back to List", "Index")
+    </p>
+}
+
+@section Scripts
+{
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

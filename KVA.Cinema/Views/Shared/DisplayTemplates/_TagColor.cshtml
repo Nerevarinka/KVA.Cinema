@@ -1,0 +1,20 @@
+﻿@model KVA.Cinema.Models.ViewModels.Tag.TagDisplayViewModel
+
+@{
+    ViewData["Title"] = "TagColor";
+
+    var rgbColor = System.Drawing.ColorTranslator.FromHtml(Model.Color);
+
+    var intensity =
+          rgbColor.R * 0.299
+        + rgbColor.G * 0.587
+        + rgbColor.B * 0.114;
+
+    var textColor = intensity > 125 ? "black" : "white";
+
+}
+
+<span style="background-color: @Model.Color; color: @textColor; padding: 4px; border-style: solid; border-radius: 5px; border-color: black; border-width: 1px">
+    @Model.Text
+</span>
+
