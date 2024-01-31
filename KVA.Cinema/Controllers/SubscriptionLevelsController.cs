@@ -14,7 +14,7 @@ namespace KVA.Cinema.Controllers
 {
     public class SubscriptionLevelsController : Controller
     {
-        public SubscriptionLevelService SubscriptionLevelService { get; set; }
+        private SubscriptionLevelService SubscriptionLevelService { get; set; }
 
         public SubscriptionLevelsController(SubscriptionLevelService subscriptionLevelService)
         {

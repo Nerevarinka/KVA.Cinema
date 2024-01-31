@@ -69,11 +69,6 @@
                 throw new ArgumentException($"Length cannot be more than {TITLE_LENGHT_MAX} symbols");
             }
 
-            if (Context.Countries.FirstOrDefault(x => x.Name == subscriptionLevelData.Title) != default)
-            {
-                throw new DuplicatedEntityException($"Subscription level with name \"{subscriptionLevelData.Title}\" is already exist");
-            }
-
             if (Context.SubscriptionLevels.FirstOrDefault(x => x.Title == subscriptionLevelData.Title) != default)
             {
                 throw new DuplicatedEntityException($"Subscription level with title \"{subscriptionLevelData.Title}\" is already exist");
