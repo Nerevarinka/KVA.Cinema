@@ -99,7 +99,7 @@ namespace KVA.Cinema.Controllers
                     ModelState.AddModelError(string.Empty, ex.Message);
                 }
             }
-
+            // TODO: При каждой ошибки валидации считывается 5 раз наборы сущностей
             ViewBag.CountryId = new SelectList(CountryService.ReadAll(), "Id", "Name");
             ViewBag.DirectorId = new SelectList(DirectorService.ReadAll(), "Id", "Name");
             ViewBag.LanguageId = new SelectList(LanguageService.ReadAll(), "Id", "Name");
