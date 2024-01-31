@@ -47,12 +47,16 @@ namespace KVA.Cinema
             services.AddDbContext<CinemaContext>(options => options.UseLazyLoadingProxies().UseSqlServer(connection));
 
             services.AddTransient<UserService>();
+            services.AddTransient<VideoService>();
             services.AddTransient<CountryService>();
             services.AddTransient<DirectorService>();
             services.AddTransient<GenreService>();
             services.AddTransient<SubscriptionLevelService>();
             services.AddTransient<SubscriptionService>();
             services.AddTransient<UserSubscriptionService>();
+            services.AddTransient<PegiService>();
+            services.AddTransient<LanguageService>();
+            services.AddTransient<TagService>();
 
             services.AddControllersWithViews();
         }

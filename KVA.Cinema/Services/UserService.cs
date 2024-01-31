@@ -139,9 +139,14 @@
 
             foreach (var item in names)
             {
-                if (item.Length is < NAME_LENGHT_MIN or > NAME_LENGHT_MAX)
+                if (item.Length < NAME_LENGHT_MIN)
                 {
-                    throw new ArgumentException($"Length must be in {NAME_LENGHT_MIN}-{NAME_LENGHT_MAX} symbols");
+                    throw new ArgumentException($"Length cannot be less than {NAME_LENGHT_MIN}");
+                }
+
+                if (item.Length > NAME_LENGHT_MAX)
+                {
+                    throw new ArgumentException($"Length cannot be more than {NAME_LENGHT_MAX} symbols");
                 }
             }
 
@@ -198,6 +203,14 @@
 
         public void Update(Guid userId, UserEditViewModel userNewData)
         {
+
+            User user = Context.Users.FirstOrDefault(x => x.Id == userId);
+
+            if (user == default)
+            {
+                throw new EntityNotFoundException($"User with id \"{userId}\" not found");
+            }
+
             if (CheckUtilities.ContainsNullOrEmptyValue(userId,
                                                         userNewData.LastName,
                                                         userNewData.FirstName,
@@ -213,11 +226,24 @@
                 throw new ArgumentException($"Age must not be less than {AGE_MIN}");
             }
 
-            User user = Context.Users.FirstOrDefault(x => x.Id == userId);
-
-            if (user == default)
+            if (!new Regex(EMAIL_PATTERN).IsMatch(userNewData.Email))
             {
-                throw new EntityNotFoundException($"User with id \"{userId}\" not found");
+                throw new ArgumentException("Incorrect email format");
+            }
+
+            names = new string[] { userNewData.FirstName, userNewData.LastName, userNewData.Nickname };
+
+            foreach (var item in names)
+            {
+                if (item.Length < NAME_LENGHT_MIN)
+                {
+                    throw new ArgumentException($"Length cannot be less than {NAME_LENGHT_MIN}");
+                }
+
+                if (item.Length > NAME_LENGHT_MAX)
+                {
+                    throw new ArgumentException($"Length cannot be more than {NAME_LENGHT_MAX} symbols");
+                }
             }
 
             if (Context.Users.FirstOrDefault(x => x.Nickname == userNewData.Nickname && x.Id != userNewData.Id) != default)

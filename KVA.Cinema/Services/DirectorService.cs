@@ -9,8 +9,18 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    internal class DirectorService : IService<DirectorCreateViewModel, DirectorDisplayViewModel, DirectorEditViewModel>
+    public class DirectorService : IService<DirectorCreateViewModel, DirectorDisplayViewModel, DirectorEditViewModel>
     {
+        /// <summary>
+        /// Minimum length allowed for Name
+        /// </summary>
+        private const int NAME_LENGHT_MIN = 2;
+
+        /// <summary>
+        /// Maximum length allowed for Name
+        /// </summary>
+        private const int NAME_LENGHT_MAX = 128;
+
         public CinemaContext Context { get; set; }
 
         public DirectorService(CinemaContext db)
@@ -39,6 +49,16 @@
             if (CheckUtilities.ContainsNullOrEmptyValue(directorData.Name))
             {
                 throw new ArgumentNullException("Name has no value");
+            }
+
+            if (directorData.Name.Length < NAME_LENGHT_MIN)
+            {
+                throw new ArgumentException($"Length cannot be less than {NAME_LENGHT_MIN} symbols");
+            }
+
+            if (directorData.Name.Length > NAME_LENGHT_MAX)
+            {
+                throw new ArgumentException($"Length cannot be more than {NAME_LENGHT_MAX} symbols");
             }
 
             if (Context.Directors.FirstOrDefault(x => x.Name == directorData.Name) != default)
@@ -83,12 +103,22 @@
 
             Director director = Context.Directors.FirstOrDefault(x => x.Id == directorId);
 
-            if (directorId == default)
+            if (director == default)
             {
                 throw new EntityNotFoundException($"Director with id \"{directorId}\" not found");
             }
 
-            if (Context.Directors.FirstOrDefault(x => x.Name == directorNewData.Name) != default)
+            if (directorNewData.Name.Length < NAME_LENGHT_MIN)
+            {
+                throw new ArgumentException($"Length cannot be less than {NAME_LENGHT_MIN} symbols");
+            }
+
+            if (directorNewData.Name.Length > NAME_LENGHT_MAX)
+            {
+                throw new ArgumentException($"Length cannot be more than {NAME_LENGHT_MAX} symbols");
+            }
+
+            if (Context.Directors.FirstOrDefault(x => x.Name == directorNewData.Name && x.Id != directorNewData.Id) != default)
             {
                 throw new DuplicatedEntityException($"Director with name \"{directorNewData.Name}\" is already exist");
             }

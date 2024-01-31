@@ -13,6 +13,16 @@
 
     public class CountryService : IService<CountryCreateViewModel, CountryDisplayViewModel, CountryEditViewModel>
     {
+        /// <summary>
+        /// Minimum length allowed for Name
+        /// </summary>
+        private const int NAME_LENGHT_MIN = 2;
+
+        /// <summary>
+        /// Maximum length allowed for Name
+        /// </summary>
+        private const int NAME_LENGHT_MAX = 128;
+
         private CinemaContext Context { get; set; }
 
         public CountryService(CinemaContext db)
@@ -49,6 +59,16 @@
                 throw new ArgumentNullException("Name has no value");
             }
 
+            if (countryData.Name.Length < NAME_LENGHT_MIN)
+            {
+                throw new ArgumentException($"Length cannot be less than {NAME_LENGHT_MIN} symbols");
+            }
+
+            if (countryData.Name.Length > NAME_LENGHT_MAX)
+            {
+                throw new ArgumentException($"Length cannot be more than {NAME_LENGHT_MAX} symbols");
+            }
+
             if (Context.Countries.FirstOrDefault(x => x.Name == countryData.Name) != default)
             {
                 throw new DuplicatedEntityException($"Country with name \"{countryData.Name}\" is already exist");
@@ -64,39 +84,49 @@
             Context.SaveChanges();
         }
 
-        public void Delete(Guid id)
+        public void Delete(Guid countryId)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(id))
+            if (CheckUtilities.ContainsNullOrEmptyValue(countryId))
             {
                 throw new ArgumentNullException("Country Id has no value");
             }
 
-            Country country = Context.Countries.FirstOrDefault(x => x.Id == id);
+            Country country = Context.Countries.FirstOrDefault(x => x.Id == countryId);
 
             if (country == default)
             {
-                throw new EntityNotFoundException($"Country with Id \"{id}\" not found");
+                throw new EntityNotFoundException($"Country with Id \"{countryId}\" not found");
             }
 
             Context.Countries.Remove(country);
             Context.SaveChanges();
         }
 
-        public void Update(Guid id, CountryEditViewModel countryNewData)
+        public void Update(Guid countryId, CountryEditViewModel countryNewData)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(id, countryNewData.Name))
+            if (CheckUtilities.ContainsNullOrEmptyValue(countryId, countryNewData.Name))
             {
                 throw new ArgumentNullException("Country name or id has no value");
             }
 
-            Country country = Context.Countries.FirstOrDefault(x => x.Id == id);
+            Country country = Context.Countries.FirstOrDefault(x => x.Id == countryId);
 
-            if (id == default)
+            if (country == default)
             {
-                throw new EntityNotFoundException($"Country with id \"{id}\" not found");
+                throw new EntityNotFoundException($"Country with id \"{countryId}\" not found");
             }
 
-            if (Context.Countries.FirstOrDefault(x => x.Name == countryNewData.Name) != default)
+            if (countryNewData.Name.Length < NAME_LENGHT_MIN)
+            {
+                throw new ArgumentException($"Length cannot be less than {NAME_LENGHT_MIN} symbols");
+            }
+
+            if (countryNewData.Name.Length > NAME_LENGHT_MAX)
+            {
+                throw new ArgumentException($"Length cannot be more than {NAME_LENGHT_MAX} symbols");
+            }
+
+            if (Context.Countries.FirstOrDefault(x => x.Name == countryNewData.Name && x.Id != countryNewData.Id) != default)
             {
                 throw new DuplicatedEntityException($"Country with name \"{countryNewData.Name}\" is already exist");
             }
@@ -106,14 +136,14 @@
             Context.SaveChanges();
         }
 
-        public bool IsEntityExist(Guid id)
+        public bool IsEntityExist(Guid countryId)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(id))
+            if (CheckUtilities.ContainsNullOrEmptyValue(countryId))
             {
                 return false;
             }
 
-            Country country = Context.Countries.FirstOrDefault(x => x.Id == id);
+            Country country = Context.Countries.FirstOrDefault(x => x.Id == countryId);
 
             return country != default;
         }

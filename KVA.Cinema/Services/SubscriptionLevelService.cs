@@ -3,7 +3,6 @@
     using KVA.Cinema.Exceptions;
     using KVA.Cinema.Models;
     using KVA.Cinema.Models.Entities;
-    using KVA.Cinema.Models.SubscriptionLevel;
     using KVA.Cinema.Models.ViewModels.SubscriptionLevel;
     using KVA.Cinema.Utilities;
     using System;
@@ -12,8 +11,18 @@
     using System.Text;
     using System.Threading.Tasks;
 
-    internal class SubscriptionLevelService : IService<SubscriptionLevelCreateViewModel, SubscriptionLevelDisplayViewModel, SubscriptionLevelEditViewModel>
+    public class SubscriptionLevelService : IService<SubscriptionLevelCreateViewModel, SubscriptionLevelDisplayViewModel, SubscriptionLevelEditViewModel>
     {
+        /// <summary>
+        /// Minimum length allowed for Title
+        /// </summary>
+        private const int TITLE_LENGHT_MIN = 2;
+
+        /// <summary>
+        /// Maximum length allowed for Title
+        /// </summary>
+        private const int TITLE_LENGHT_MAX = 50;
+
         public CinemaContext Context { get; set; }
 
         public SubscriptionLevelService(CinemaContext db)
@@ -50,6 +59,16 @@
                 throw new ArgumentNullException("Title has no value");
             }
 
+            if (subscriptionLevelData.Title.Length < TITLE_LENGHT_MIN)
+            {
+                throw new ArgumentException($"Length cannot be less than {TITLE_LENGHT_MIN} symbols");
+            }
+
+            if (subscriptionLevelData.Title.Length > TITLE_LENGHT_MAX)
+            {
+                throw new ArgumentException($"Length cannot be more than {TITLE_LENGHT_MAX} symbols");
+            }
+
             if (Context.SubscriptionLevels.FirstOrDefault(x => x.Title == subscriptionLevelData.Title) != default)
             {
                 throw new DuplicatedEntityException($"Subscription level with title \"{subscriptionLevelData.Title}\" is already exist");
@@ -76,7 +95,7 @@
 
             if (subscriptionLevel == default)
             {
-                throw new EntityNotFoundException($"Level with Id \"{subscriptionLevelId}\" not found");
+                throw new EntityNotFoundException($"Subscription level with Id \"{subscriptionLevelId}\" not found");
             }
 
             Context.SubscriptionLevels.Remove(subscriptionLevel);
@@ -92,12 +111,22 @@
 
             SubscriptionLevel subscriptionLevel = Context.SubscriptionLevels.FirstOrDefault(x => x.Id == subscriptionLevelId);
 
-            if (subscriptionLevelId == default)
+            if (subscriptionLevel == default)
             {
                 throw new EntityNotFoundException($"Subscription level with id \"{subscriptionLevelId}\" not found");
             }
 
-            if (Context.SubscriptionLevels.FirstOrDefault(x => x.Title == subscriptionLevelNewData.Title) != default)
+            if (subscriptionLevelNewData.Title.Length < TITLE_LENGHT_MIN)
+            {
+                throw new ArgumentException($"Length cannot be less than {TITLE_LENGHT_MIN} symbols");
+            }
+
+            if (subscriptionLevelNewData.Title.Length > TITLE_LENGHT_MAX)
+            {
+                throw new ArgumentException($"Length cannot be more than {TITLE_LENGHT_MAX} symbols");
+            }
+
+            if (Context.SubscriptionLevels.FirstOrDefault(x => x.Title == subscriptionLevelNewData.Title && x.Id != subscriptionLevelNewData.Id) != default)
             {
                 throw new DuplicatedEntityException($"Subscription level with title \"{subscriptionLevelNewData.Title}\" is already exist");
             }

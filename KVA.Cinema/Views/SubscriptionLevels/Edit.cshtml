@@ -1,0 +1,35 @@
+﻿@model KVA.Cinema.Models.ViewModels.SubscriptionLevel.SubscriptionLevelEditViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+
+<h1>Edit</h1>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>SubscriptionLevel</legend>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Title)
+            @Html.EditorFor(model => model.Title, additionalViewData: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Title)
+        </div>
+    </fieldset>
+
+    <p>
+        <input type="submit" value="Save changes" /> | @Html.ActionLink("Back to List", "Index")
+    </p>
+}
+
+@section Scripts
+{
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -12,17 +12,20 @@
         public Guid Id { get; set; }
 
         [Required(ErrorMessage = "Required field")]
-        [StringLength(20, MinimumLength = 2, ErrorMessage = "Last name length must be in 2-20 symbols")]
+        [StringLength(20, ErrorMessage = "Last name length cannot be more than 20 symbols")]
+        [MinLength(2, ErrorMessage = "Last name length cannot be less than 2 symbols")]
         [Display(Name = "Last name")]
         public string LastName { get; set; }
 
         [Required(ErrorMessage = "Required field")]
-        [StringLength(20, MinimumLength = 2, ErrorMessage = "First name length must be in 2-20 symbols")]
+        [StringLength(20, ErrorMessage = "First name length cannot be more than 20 symbols")]
+        [MinLength(2, ErrorMessage = "First name length cannot be less than 2 symbols")]
         [Display(Name = "First name")]
         public string FirstName { get; set; }
 
         [Required(ErrorMessage = "Required field")]
-        [StringLength(20, MinimumLength = 2, ErrorMessage = "Nickname length must be in 2-20 symbols")]
+        [StringLength(20, ErrorMessage = "Nickname length cannot be more than 20 symbols")]
+        [MinLength(2, ErrorMessage = "Nickname length cannot be less than 2 symbols")]
         [Display(Name = "Nickname")]
         public string Nickname { get; set; }
 
