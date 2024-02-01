@@ -187,7 +187,7 @@ namespace KVA.Cinema.Controllers    //TODO: replace NotFound()
             if (ModelState.IsValid)
             {
                 var result =
-                    await UserService.SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+                    await UserService.SignInManager.PasswordSignInAsync(model.Nickname, model.Password, model.RememberMe, false);
 
                 if (result.Succeeded)
                 {
