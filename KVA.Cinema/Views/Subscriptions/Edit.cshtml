@@ -29,7 +29,7 @@
         </div>
         <div class="form-group">
             @Html.LabelFor(model => model.Cost)
-            @Html.EditorFor(model => model.Cost, additionalViewData: new { @class = "form-control" })
+            @Html.EditorFor(model => model.Cost, new { @class = "form-control", type = "number", step = "0.01", max = "100000.00", required = "required" })
             @Html.ValidationMessageFor(model => model.Cost)
         </div>
         <div class="form-group">

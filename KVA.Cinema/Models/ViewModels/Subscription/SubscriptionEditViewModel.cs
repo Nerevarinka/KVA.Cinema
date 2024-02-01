@@ -25,9 +25,8 @@
         public string Description { get; set; }
 
         [Required(ErrorMessage = "Required field")]
-        [Range(0, 10_000, ErrorMessage = "Value is not valid for cost")]
+        [Range(0.00, 10_000.00, ErrorMessage = "Value is not valid for cost")]
         [Display(Name = "Cost ($)")]
-        [DataType(DataType.Currency)]
         public decimal Cost { get; set; }
 
         [Required(ErrorMessage = "Required field")]
