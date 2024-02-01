@@ -17,9 +17,9 @@
         <legend>Login</legend>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.Nickname)
-            @Html.EditorFor(model => model.Nickname, additionalViewData: new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.Nickname)
+            @Html.LabelFor(model => model.Email)
+            @Html.EditorFor(model => model.Email, additionalViewData: new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Email)
         </div>
         <div class="form-group">
             @Html.LabelFor(model => model.Password)

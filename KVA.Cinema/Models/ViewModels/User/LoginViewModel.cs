@@ -9,8 +9,8 @@
     public class LoginViewModel
     {
         [Required]
-        [Display(Name = "Nickname")]
-        public string Nickname { get; set; }
+        [Display(Name = "Email")]
+        public string Email { get; set; }
 
         [Required]
         [DataType(DataType.Password)]

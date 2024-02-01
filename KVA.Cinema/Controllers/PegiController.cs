@@ -158,5 +158,10 @@ namespace KVA.Cinema.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        private bool PegiExists(Guid id)
+        {
+            return PegiService.IsEntityExist(id);
+        }
     }
 }
