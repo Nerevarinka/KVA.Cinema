@@ -10,7 +10,7 @@
     {
         public Guid Id { get; set; }
 
-        [Display(Name = "Text")]
+        [Display(Name = "Tag text")]
         public string Text { get; set; }
 
         [Display(Name = "Color")]
