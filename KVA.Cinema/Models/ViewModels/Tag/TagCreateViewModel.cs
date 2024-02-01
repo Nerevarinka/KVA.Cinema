@@ -13,7 +13,7 @@
         [Required(ErrorMessage = "Required field")]
         [StringLength(20, ErrorMessage = "Tag text length cannot be more than 20 symbols")]
         [MinLength(2, ErrorMessage = "Tag text length cannot be less than 2 symbols")]
-        [Display(Name = "Tag text")]
+        [Display(Name = "Text")]
         public string Text { get; set; }
 
         [Required(ErrorMessage = "Required field")]

@@ -87,9 +87,9 @@
 
         public void Update(Guid pegiId, PegiEditViewModel pegiNewData)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(pegiId, pegiNewData.Type))
+            if (CheckUtilities.ContainsNullOrEmptyValue(pegiId))
             {
-                throw new ArgumentNullException("PEGI type or id has no value");
+                throw new ArgumentNullException("PEGI id has no value");
             }
 
             Pegi pegi = Context.Pegis.FirstOrDefault(x => x.Id == pegiId);
