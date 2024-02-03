@@ -36,9 +36,13 @@
     <p>
         <input type="submit" value="Log in" />
     </p>
+
+    <p>
+        Don't have an account? @Html.ActionLink("Register", "Create", "Users")
+    </p>
 }
 
-@section Scripts 
+@section Scripts
 {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
