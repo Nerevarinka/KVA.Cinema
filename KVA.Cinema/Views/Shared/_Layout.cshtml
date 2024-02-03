@@ -14,52 +14,41 @@
 
             <div class="container">
                 <a href="" style="display:contents">
-                    <img src="~/lib/other-icons/frog.svg" width="5%"/>
+                    <img src="~/lib/other-icons/frog.svg" width="5%" style="margin: auto 0.75rem"/>
                 </a>
-                
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">KVA.Cinema</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                    <ul class="nav nav-pills">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index"><b>Users</b></a>
+                            <a class="nav-link" href="@Url.Action("Index", "Users")">Users</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Videos" asp-action="Index"><b>Videos</b></a>
+                            <a class="nav-link" href="@Url.Action("Index", "Videos")">Videos</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Subscriptions" asp-action="Index"><b>Subscriptions</b></a>
+                            <a class="nav-link" href="@Url.Action("Index", "Subscriptions")">Subscriptions</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Countries" asp-action="Index">Countries</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Languages" asp-action="Index">Languages</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Genres" asp-action="Index">Genres</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Directors" asp-action="Index">Directors</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Pegi" asp-action="Index">PEGI</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="SubscriptionLevels" asp-action="Index">Subscription levels</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Tags" asp-action="Index">Tags</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Lookups</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="@Url.Action("Index", "Countries")">Countries</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Index", "Users")">Languages</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Index", "Genres")">Genres</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Index", "Directors")">Directors</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Index", "Pegi")">PEGI</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Index", "SubscriptionLevels")">Subscription levels</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Index", "Tags")">Tags</a></li>
+                            </ul>
                         </li>
                     </ul>
                     <a href="@Url.Action("Login", "Users")"
                        title="Sign in / sign up" style="font-size: 1.75rem">
                         <i class="bi bi-person-circle"></i>
                     </a>
-
                 </div>
             </div>
         </nav>
@@ -72,7 +61,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2023 - KVA.Cinema - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2023-2024 KVA.Cinema - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
