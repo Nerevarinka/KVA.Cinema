@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - KVA.Cinema</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+
             <div class="container">
                 <a href="" style="display:contents">
                     <img src="~/lib/other-icons/frog.svg" width="5%"/>
@@ -53,6 +55,11 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Tags" asp-action="Index">Tags</a>
                         </li>
                     </ul>
+                    <a href="@Url.Action("Login", "Users")"
+                       title="Sign in / sign up" style="font-size: 1.75rem">
+                        <i class="bi bi-person-circle"></i>
+                    </a>
+
                 </div>
             </div>
         </nav>

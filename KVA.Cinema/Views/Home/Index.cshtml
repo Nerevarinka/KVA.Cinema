@@ -7,11 +7,6 @@
     <p>@User.Identity.Name</p>
 
     <form method="post" asp-controller="Users" asp-action="Logout">
-        <input type="submit" value="Выход" />
+        <input type="submit" value="Logout" />
     </form>
-}
-else
-{
-    <a asp-controller="Users" asp-action="Login">Вход</a>
-    <a asp-controller="Users" asp-action="Create">Регистрация</a>
 }
