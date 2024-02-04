@@ -5,8 +5,11 @@
     using KVA.Cinema.Models.Entities;
     using KVA.Cinema.Models.ViewModels.Video;
     using KVA.Cinema.Utilities;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -19,9 +22,12 @@
 
         private CinemaContext Context { get; set; }
 
-        public VideoService(CinemaContext db)
+        private IWebHostEnvironment HostEnvironment { get; }
+
+        public VideoService(CinemaContext db, IWebHostEnvironment hostEnvironment)
         {
             Context = db;
+            HostEnvironment = hostEnvironment;
         }
 
         public IEnumerable<VideoCreateViewModel> Read()
@@ -37,7 +43,7 @@
                 CountryId = x.CountryId,
                 ReleasedIn = x.ReleasedIn,
                 Views = x.Views,
-                Preview = x.Preview,
+                PreviewFileName = x.Preview,
                 PegiId = x.PegiId,
                 LanguageId = x.LanguageId,
                 DirectorId = x.DirectorId,
@@ -72,6 +78,31 @@
             }).ToList();
         }
 
+        public string SaveFile(IFormFile file, string folderName)
+        {
+            //checks
+
+            string fileName = file.FileName;
+
+            string uploadsFolder = Path.Combine(HostEnvironment.WebRootPath, "upload/videoPreview");
+
+            DirectoryInfo directoryInfo = new DirectoryInfo(uploadsFolder);
+
+            if (!directoryInfo.Exists)
+            {
+                directoryInfo.Create();
+            }
+
+            string pathToFile = Path.Combine(uploadsFolder, fileName);
+
+            using (var stream = new FileStream(pathToFile, FileMode.Create))
+            {
+                file.CopyTo(stream);
+            }
+
+            return fileName;
+        }
+
         public void CreateAsync(VideoCreateViewModel videoData)
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(videoData.Title,
@@ -80,7 +111,7 @@
                                                         videoData.PegiId,
                                                         videoData.LanguageId,
                                                         videoData.DirectorId))
-                                                        //videoData.GenresId))
+            //videoData.GenresId))
             {
                 throw new ArgumentNullException("One or more required fields have no value");
             }
@@ -102,6 +133,24 @@
 
             Guid videoId = Guid.NewGuid();
 
+            if (videoData.Preview != null)
+            {
+                string uploadsFolder = Path.Combine(HostEnvironment.WebRootPath, "upload/videoPreview");
+                DirectoryInfo drInfo = new DirectoryInfo(uploadsFolder);
+
+                if (!drInfo.Exists)
+                {
+                    drInfo.Create();
+                }
+
+                videoData.PreviewFileName = Path.Combine(uploadsFolder, videoData.Preview.FileName);
+
+                using (var stream = new FileStream(videoData.PreviewFileName, FileMode.Create))
+                {
+                    videoData.Preview.CopyTo(stream);
+                }
+            }
+
             Video newVideo = new Video()
             {
                 Id = videoId,
@@ -111,7 +160,7 @@
                 CountryId = videoData.CountryId,
                 ReleasedIn = videoData.ReleasedIn,
                 Views = 0,
-                Preview = videoData.Preview,
+                Preview = videoData.Preview.FileName, //videoData.PreviewSource,
                 PegiId = videoData.PegiId,
                 LanguageId = videoData.LanguageId,
                 DirectorId = videoData.DirectorId,
@@ -157,7 +206,7 @@
                                                         newVideoData.PegiId,
                                                         newVideoData.LanguageId,
                                                         newVideoData.DirectorId))
-                                                        //newVideoData.GenresId))
+            //newVideoData.GenresId))
             {
                 throw new ArgumentNullException("One or more required fields have no value");
             }

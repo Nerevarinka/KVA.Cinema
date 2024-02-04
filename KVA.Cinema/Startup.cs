@@ -1,20 +1,16 @@
 namespace KVA.Cinema
 {
     using KVA.Cinema.Models;
+    using KVA.Cinema.Models.Entities;
+    using KVA.Cinema.Services;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.HttpsPolicy;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using Microsoft.EntityFrameworkCore;
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using KVA.Cinema.Models.Entities;
-    using Microsoft.AspNetCore.Identity;
-    using KVA.Cinema.Services;
 
     public class Startup
     {

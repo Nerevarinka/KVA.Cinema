@@ -9,6 +9,7 @@ using KVA.Cinema.Models;
 using KVA.Cinema.Models.Entities;
 using KVA.Cinema.Services;
 using KVA.Cinema.Models.ViewModels.Video;
+using Microsoft.AspNetCore.Http;
 
 namespace KVA.Cinema.Controllers
 {
