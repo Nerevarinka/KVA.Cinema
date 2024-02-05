@@ -16,57 +16,66 @@
 
 <fieldset>
     <legend>Video</legend>
+    <div style="display:flex">
+        <div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Title)
+                @Html.EditorFor(model => model.Title, additionalViewData: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Title)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.ReleasedIn)
+                @Html.EditorFor(model => model.ReleasedIn, additionalViewData: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.ReleasedIn)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.CountryId)
+                @Html.DropDownListFor(model => model.CountryId, ViewBag.CountryId as SelectList)
+                @Html.ValidationMessageFor(model => model.CountryId)
+            </div>
+            <div>
+                @Html.LabelFor(model => model.Preview)
+                @Html.TextBoxFor(model => model.Preview, new { type = "file", accept = "image/*", id = "imgInp"})
+                @Html.ValidationMessageFor(model => model.Preview)
+            </div>
+            @*<div class="form-group">
+                @Html.LabelFor(model => model.GenresId)
+                @Html.DropDownListFor(model => model.GenresId, ViewBag.GenresId as SelectList)
+                @Html.ValidationMessageFor(model => model.GenresId)
+            </div>*@
+            <div class="form-group">
+                @Html.LabelFor(model => model.DirectorId)
+                @Html.DropDownListFor(model => model.DirectorId, ViewBag.DirectorId as SelectList)
+                @Html.ValidationMessageFor(model => model.DirectorId)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.PegiId)
+                @Html.DropDownListFor(model => model.PegiId, ViewBag.PegiId as SelectList)
+                @Html.ValidationMessageFor(model => model.PegiId)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Length)
+                @Html.EditorFor(model => model.Length, additionalViewData: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Length)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.LanguageId)
+                @Html.DropDownListFor(model => model.LanguageId, ViewBag.LanguageId as SelectList)
+                @Html.ValidationMessageFor(model => model.LanguageId)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Description)
+                @Html.EditorFor(model => model.Description, additionalViewData: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Description)
+            </div>
+        </div>
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.Title)
-        @Html.EditorFor(model => model.Title, additionalViewData: new { @class = "form-control" })
-        @Html.ValidationMessageFor(model => model.Title)
+        <div>
+            <img id="uploadPreview" src="#" alt="Preview" style = "max-width:20rem; margin-left:10rem" />
+        </div>
     </div>
-    <div class="form-group">
-        @Html.LabelFor(model => model.ReleasedIn)
-        @Html.EditorFor(model => model.ReleasedIn, additionalViewData: new { @class = "form-control" })
-        @Html.ValidationMessageFor(model => model.ReleasedIn)
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(model => model.CountryId)
-        @Html.DropDownListFor(model => model.CountryId, ViewBag.CountryId as SelectList)
-        @Html.ValidationMessageFor(model => model.CountryId)
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(model => model.Preview)
-        @Html.TextBoxFor(model => model.Preview, new { type = "file" })
-        @Html.ValidationMessageFor(model => model.Preview)
-    </div>
-    @*<div class="form-group">
-        @Html.LabelFor(model => model.GenresId)
-        @Html.DropDownListFor(model => model.GenresId, ViewBag.GenresId as SelectList)
-        @Html.ValidationMessageFor(model => model.GenresId)
-    </div>*@
-    <div class="form-group">
-        @Html.LabelFor(model => model.DirectorId)
-        @Html.DropDownListFor(model => model.DirectorId, ViewBag.DirectorId as SelectList)
-        @Html.ValidationMessageFor(model => model.DirectorId)
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(model => model.PegiId)
-        @Html.DropDownListFor(model => model.PegiId, ViewBag.PegiId as SelectList)
-        @Html.ValidationMessageFor(model => model.PegiId)
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(model => model.Length)
-        @Html.EditorFor(model => model.Length, additionalViewData: new { @class = "form-control" })
-        @Html.ValidationMessageFor(model => model.Length)
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(model => model.LanguageId)
-        @Html.DropDownListFor(model => model.LanguageId, ViewBag.LanguageId as SelectList)
-        @Html.ValidationMessageFor(model => model.LanguageId)
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(model => model.Description)
-        @Html.EditorFor(model => model.Description, additionalViewData: new { @class = "form-control" })
-        @Html.ValidationMessageFor(model => model.Description)
-    </div>
+
+    
 </fieldset>
 
     <p>
@@ -77,4 +86,12 @@
 @section Scripts
 {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script>
+    imgInp.onchange = evt => {
+        const [file] = imgInp.files
+        if (file) {
+            uploadPreview.src = URL.createObjectURL(file)
+        }
+    }
+</script>
 }
