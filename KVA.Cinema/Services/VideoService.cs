@@ -121,7 +121,7 @@
                 throw new ArgumentException($"Length cannot be more than {TITLE_LENGHT_MAX} symbols");
             }
 
-            if (videoData.ReleasedIn > DateTime.UtcNow)
+            if (videoData.ReleasedIn.ToUniversalTime() > DateTime.UtcNow)
             {
                 throw new DuplicatedEntityException($"Only released video can be uploaded");
             }
@@ -158,9 +158,9 @@
                 Description = videoData.Description,
                 Length = videoData.Length,
                 CountryId = videoData.CountryId,
-                ReleasedIn = videoData.ReleasedIn,
+                ReleasedIn = videoData.ReleasedIn.ToUniversalTime(),
                 Views = 0,
-                Preview = videoData.Preview.FileName, //videoData.PreviewSource,
+                Preview = videoData.Preview?.FileName,
                 PegiId = videoData.PegiId,
                 LanguageId = videoData.LanguageId,
                 DirectorId = videoData.DirectorId,
