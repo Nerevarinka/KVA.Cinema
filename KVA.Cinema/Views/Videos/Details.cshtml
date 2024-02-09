@@ -66,7 +66,14 @@
             </div>
 
             <div>
-                <img src="~/upload/videoPreview/@Model.Preview" alt="@Model.Title preview" style="max-width:20rem; margin-left:10rem">
+                @if (Model.PreviewFileName != null)
+                {
+                <img src="~/upload/videoPreview/@Model.PreviewFileName" alt="@Model.Title preview" style="max-width:20rem; margin-left:10rem">
+                }
+                else
+                {
+                    <img src="~/lib/other-icons/No-Image-Placeholder.svg" alt="No image" style="max-width:20rem; margin-left:10rem">
+                }
                 @Html.ValidationMessageFor(model => model.Preview)
             </div>
         </div>

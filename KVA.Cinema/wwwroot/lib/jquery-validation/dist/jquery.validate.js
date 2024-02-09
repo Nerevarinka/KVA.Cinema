@@ -1356,8 +1356,8 @@ $.extend( $.validator, {
 	methods: {
 
 		// https://jqueryvalidation.org/required-method/
-		required: function( value, element, param ) {
-
+		required: function (value, element, param) {
+			debugger;
 			// Check if dependency is met
 			if ( !this.depend( param, element ) ) {
 				return "dependency-mismatch";

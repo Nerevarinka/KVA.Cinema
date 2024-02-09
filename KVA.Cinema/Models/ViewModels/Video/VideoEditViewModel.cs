@@ -1,5 +1,6 @@
 ﻿namespace KVA.Cinema.Models.ViewModels.Video
 {
+    using Microsoft.AspNetCore.Http;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -36,7 +37,9 @@
         public int Views { get; set; }
 
         [Display(Name = "Preview (poster)")]
-        public string Preview { get; set; }
+        public IFormFile Preview { get; set; }
+
+        public string PreviewFileName { get; set; }
 
         [Required(ErrorMessage = "Required field")]
         [Display(Name = "PEGI")]

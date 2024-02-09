@@ -20,6 +20,8 @@
         /// </summary>
         private const int TITLE_LENGHT_MAX = 128;
 
+        private const string POSTER_UPLOAD_PATH = "upload/videoPreview";
+
         private CinemaContext Context { get; set; }
 
         private IWebHostEnvironment HostEnvironment { get; }
@@ -64,7 +66,7 @@
                 CountryId = x.CountryId,
                 ReleasedIn = x.ReleasedIn,
                 Views = x.Views,
-                Preview = x.Preview,
+                PreviewFileName = x.Preview,
                 PegiId = x.PegiId,
                 LanguageId = x.LanguageId,
                 DirectorId = x.DirectorId,
@@ -84,7 +86,7 @@
 
             string fileName = file.FileName;
 
-            string uploadsFolder = Path.Combine(HostEnvironment.WebRootPath, "upload/videoPreview");
+            string uploadsFolder = Path.Combine(HostEnvironment.WebRootPath, POSTER_UPLOAD_PATH);
 
             DirectoryInfo directoryInfo = new DirectoryInfo(uploadsFolder);
 
@@ -123,7 +125,7 @@
 
             if (videoData.ReleasedIn.ToUniversalTime() > DateTime.UtcNow)
             {
-                throw new DuplicatedEntityException($"Only released video can be uploaded");
+                throw new ArgumentException($"Only released video can be uploaded");
             }
 
             if (Context.Videos.FirstOrDefault(x => x.Title == videoData.Title && x.DirectorId == videoData.DirectorId) != default)
@@ -133,9 +135,11 @@
 
             Guid videoId = Guid.NewGuid();
 
+            string previewNewName = null;
+
             if (videoData.Preview != null)
             {
-                string uploadsFolder = Path.Combine(HostEnvironment.WebRootPath, "upload/videoPreview");
+                string uploadsFolder = Path.Combine(HostEnvironment.WebRootPath, POSTER_UPLOAD_PATH);
                 DirectoryInfo drInfo = new DirectoryInfo(uploadsFolder);
 
                 if (!drInfo.Exists)
@@ -143,7 +147,9 @@
                     drInfo.Create();
                 }
 
-                videoData.PreviewFileName = Path.Combine(uploadsFolder, videoData.Preview.FileName);
+                previewNewName = Guid.NewGuid().ToString() + Path.GetExtension(videoData.Preview.FileName);
+
+                videoData.PreviewFileName = Path.Combine(uploadsFolder, previewNewName);
 
                 using (var stream = new FileStream(videoData.PreviewFileName, FileMode.Create))
                 {
@@ -160,7 +166,7 @@
                 CountryId = videoData.CountryId,
                 ReleasedIn = videoData.ReleasedIn.ToUniversalTime(),
                 Views = 0,
-                Preview = videoData.Preview?.FileName,
+                Preview = previewNewName,
                 PegiId = videoData.PegiId,
                 LanguageId = videoData.LanguageId,
                 DirectorId = videoData.DirectorId,
@@ -223,6 +229,11 @@
                 throw new ArgumentException($"Length cannot be more than {TITLE_LENGHT_MAX} symbols");
             }
 
+            if (newVideoData.ReleasedIn.ToUniversalTime() > DateTime.UtcNow)
+            {
+                throw new ArgumentException($"Only released video can be uploaded");
+            }
+
             Video duplicate = Context.Videos.FirstOrDefault(x =>
                                                                x.Title == newVideoData.Title &&
                                                                x.DirectorId == newVideoData.DirectorId &&
@@ -232,13 +243,35 @@
                 throw new DuplicatedEntityException($"Video with title \"{newVideoData.Title}\" by this director is already exist");
             }
 
+            string previewNewName = null;
+
+            if (newVideoData.Preview != null)
+            {
+                string uploadsFolder = Path.Combine(HostEnvironment.WebRootPath, POSTER_UPLOAD_PATH);
+                DirectoryInfo drInfo = new DirectoryInfo(uploadsFolder);
+
+                if (!drInfo.Exists)
+                {
+                    drInfo.Create();
+                }
+
+                previewNewName = Guid.NewGuid().ToString() + Path.GetExtension(newVideoData.Preview.FileName);
+
+                newVideoData.PreviewFileName = Path.Combine(uploadsFolder, previewNewName);
+
+                using (var stream = new FileStream(newVideoData.PreviewFileName, FileMode.Create))
+                {
+                    newVideoData.Preview.CopyTo(stream);
+                }
+            }
+
             video.Title = newVideoData.Title;
             video.Description = newVideoData.Description;
             video.Length = newVideoData.Length;
             video.CountryId = newVideoData.CountryId;
-            video.ReleasedIn = newVideoData.ReleasedIn;
+            video.ReleasedIn = newVideoData.ReleasedIn.ToUniversalTime();
             video.Views = video.Views;
-            video.Preview = newVideoData.Preview;
+            video.Preview = previewNewName;
             video.PegiId = newVideoData.PegiId;
             video.LanguageId = newVideoData.LanguageId;
             video.DirectorId = newVideoData.DirectorId;

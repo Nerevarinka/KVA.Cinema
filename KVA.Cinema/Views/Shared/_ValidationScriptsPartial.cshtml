@@ -1,8 +1,10 @@
 ﻿<script src="~/lib/jquery/dist/jquery.js"></script>
 <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-<script type="text/javascript">
+@*<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>*@
+@*<script type="text/javascript">
     // переопределение валидации на стороне клиента
+    const rangeFn = $.validator.methods.range;
+
     $.validator.methods.range = function (value, element, param) {
         var globalizedValue = value.replace(",", ".");
         return this.optional(element) || (globalizedValue >= param[0] && globalizedValue <= param[1]);
@@ -11,4 +13,4 @@
     $.validator.methods.number = function (value, element) {
         return this.optional(element) || /^-?(?:\d+|\d{1,3}(?:[\s\.,]\d{3})+)(?:[\.,]\d+)?$/.test(value);
     }
-</script>
+</script>*@
