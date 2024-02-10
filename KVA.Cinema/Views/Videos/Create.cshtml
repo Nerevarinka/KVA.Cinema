@@ -19,9 +19,9 @@
         <div style="display:flex">
             <div>
                 <div class="form-group">
-                    @Html.LabelFor(model => model.Title)
-                    @Html.EditorFor(model => model.Title, additionalViewData: new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.Title)
+                    @Html.LabelFor(model => model.Name)
+                    @Html.EditorFor(model => model.Name, additionalViewData: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Name)
                 </div>
                 <div class="form-group">
                     @Html.LabelFor(model => model.ReleasedIn)
@@ -105,6 +105,7 @@
                 }
 
                 uploadPreview.src = URL.createObjectURL(selectedFile);
+                uploadPreview.alt = "Preview";
             }
             else {
                 // файл уже не выбран
@@ -123,6 +124,7 @@
             if (imgInp.files.length > 0) {
                 imgInp.value = null;
                 uploadPreview.src = "/lib/other-icons/No-Image-Placeholder.svg";
+                uploadPreview.alt = "No image";
             }
         }
 

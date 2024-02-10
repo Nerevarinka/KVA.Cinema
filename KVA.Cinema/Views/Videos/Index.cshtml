@@ -20,7 +20,7 @@
                 @Html.DisplayNameFor(model => model.Preview)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Title)
+                @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Length)
@@ -56,7 +56,7 @@
                 <td>
                     @if (item.PreviewFileName != null)
                     {
-                        <img src="~/upload/videoPreview/@item.PreviewFileName" alt="@item.Title preview" style="max-width: 5rem">
+                        <img src="~/upload/videoPreview/@item.PreviewFileName" alt="@item.Name preview" style="max-width: 5rem">
                     }
                     else
                     {
@@ -64,7 +64,7 @@
                     }
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Title)
+                    @Html.DisplayFor(modelItem => item.Name)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Length)

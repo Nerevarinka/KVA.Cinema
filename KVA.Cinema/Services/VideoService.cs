@@ -39,7 +39,7 @@
             return videos.Select(x => new VideoCreateViewModel()
             {
                 Id = x.Id,
-                Title = x.Title,
+                Name = x.Title,
                 Description = x.Description,
                 Length = x.Length,
                 CountryId = x.CountryId,
@@ -60,7 +60,7 @@
             return Context.Videos.Select(x => new VideoDisplayViewModel()
             {
                 Id = x.Id,
-                Title = x.Title,
+                Name = x.Title,
                 Description = x.Description,
                 Length = x.Length,
                 CountryId = x.CountryId,
@@ -107,7 +107,7 @@
 
         public void CreateAsync(VideoCreateViewModel videoData)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(videoData.Title,
+            if (CheckUtilities.ContainsNullOrEmptyValue(videoData.Name,
                                                         videoData.CountryId,
                                                         videoData.ReleasedIn,
                                                         videoData.PegiId,
@@ -118,7 +118,7 @@
                 throw new ArgumentNullException("One or more required fields have no value");
             }
 
-            if (videoData.Title.Length > TITLE_LENGHT_MAX)
+            if (videoData.Name.Length > TITLE_LENGHT_MAX)
             {
                 throw new ArgumentException($"Length cannot be more than {TITLE_LENGHT_MAX} symbols");
             }
@@ -128,9 +128,9 @@
                 throw new ArgumentException($"Only released video can be uploaded");
             }
 
-            if (Context.Videos.FirstOrDefault(x => x.Title == videoData.Title && x.DirectorId == videoData.DirectorId) != default)
+            if (Context.Videos.FirstOrDefault(x => x.Title == videoData.Name && x.DirectorId == videoData.DirectorId) != default)
             {
-                throw new DuplicatedEntityException($"Video with title \"{videoData.Title}\" by this director is already exist");
+                throw new DuplicatedEntityException($"Video with title \"{videoData.Name}\" by this director is already exist");
             }
 
             Guid videoId = Guid.NewGuid();
@@ -160,7 +160,7 @@
             Video newVideo = new Video()
             {
                 Id = videoId,
-                Title = videoData.Title,
+                Title = videoData.Name,
                 Description = videoData.Description,
                 Length = videoData.Length,
                 CountryId = videoData.CountryId,
@@ -199,14 +199,24 @@
                 throw new EntityNotFoundException($"Video with Id \"{videoId}\" not found");
             }
 
+            var preview = video.Preview;
+
             Context.Videos.Remove(video);
             Context.SaveChanges();
+
+            if (preview != null)
+            {
+                var previewFolderPath = Path.Combine(HostEnvironment.WebRootPath, POSTER_UPLOAD_PATH);
+                var previewFullPath = previewFolderPath + "\\" + preview;
+
+                File.Delete(previewFullPath);
+            }
         }
 
         public void Update(Guid videoId, VideoEditViewModel newVideoData) //add check for id
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(videoId,
-                                                        newVideoData.Title,
+                                                        newVideoData.Name,
                                                         newVideoData.CountryId,
                                                         newVideoData.ReleasedIn,
                                                         newVideoData.PegiId,
@@ -224,7 +234,7 @@
                 throw new EntityNotFoundException($"Video with id \"{videoId}\" not found");
             }
 
-            if (newVideoData.Title.Length > TITLE_LENGHT_MAX)
+            if (newVideoData.Name.Length > TITLE_LENGHT_MAX)
             {
                 throw new ArgumentException($"Length cannot be more than {TITLE_LENGHT_MAX} symbols");
             }
@@ -235,12 +245,12 @@
             }
 
             Video duplicate = Context.Videos.FirstOrDefault(x =>
-                                                               x.Title == newVideoData.Title &&
+                                                               x.Title == newVideoData.Name &&
                                                                x.DirectorId == newVideoData.DirectorId &&
                                                                x.Id != newVideoData.Id);
             if (duplicate != default)
             {
-                throw new DuplicatedEntityException($"Video with title \"{newVideoData.Title}\" by this director is already exist");
+                throw new DuplicatedEntityException($"Video with title \"{newVideoData.Name}\" by this director is already exist");
             }
 
             string previewNewName = null;
@@ -265,7 +275,9 @@
                 }
             }
 
-            video.Title = newVideoData.Title;
+            var preview = video.Preview;
+
+            video.Title = newVideoData.Name;
             video.Description = newVideoData.Description;
             video.Length = newVideoData.Length;
             video.CountryId = newVideoData.CountryId;
@@ -286,6 +298,14 @@
             //    };
 
             Context.SaveChanges();
+
+            if (preview != null)
+            {
+                var previewFolderPath = Path.Combine(HostEnvironment.WebRootPath, POSTER_UPLOAD_PATH);
+                var previewFullPath = previewFolderPath + "\\" + preview;
+
+                File.Delete(previewFullPath);
+            }
         }
 
         public bool IsEntityExist(Guid videoId)

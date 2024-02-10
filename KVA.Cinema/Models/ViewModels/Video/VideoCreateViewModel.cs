@@ -11,12 +11,13 @@
     {
         public Guid Id { get; set; }
 
-        [Required(ErrorMessage = "Required field")]
-        [StringLength(128, ErrorMessage = "Title length cannot be more than 128 symbols")]
+        [Required(ErrorMessage = "Required1 field")]
+        [StringLength(1, ErrorMessage = "Title length cannot be more than 128 symbols]]]]]]]]]]")]
         [Display(Name = "Title")]
-        public string Title { get; set; }
+        [DataType(DataType.Text)]
+        public string Name { get; set; }
 
-        [StringLength(600, ErrorMessage = "Title length cannot be more than 600 symbols")]
+        [StringLength(6, ErrorMessage = "Title length cannot be more than XXX_600_XXX symbols")]
         [DataType(DataType.MultilineText)]
         [Display(Name = "Description")]
         public string Description { get; set; }
@@ -28,7 +29,7 @@
         [Display(Name = "Country")]
         public Guid CountryId { get; set; }
 
-        [Required(ErrorMessage = "Required field")]
+        [Required(ErrorMessage = "Required2 field")]
         [DataType(DataType.Date)]
         [Display(Name = "Released in")]
         public DateTime ReleasedIn { get; set; }
@@ -36,7 +37,7 @@
         [Display(Name = "Views")]
         public int Views { get; set; }
 
-        [Display(Name = "Preview (poster)")]
+        [Display(Name = "Poster")]
         public IFormFile Preview { get; set; }
 
         public string PreviewFileName { get; set; }

@@ -135,13 +135,14 @@ namespace KVA.Cinema.Controllers
             var videoEditModel = new VideoEditViewModel()
             {
                 Id = video.Id,
-                Title = video.Title,
+                Name = video.Name,
                 Description = video.Description,
                 Length = video.Length,
                 CountryId = video.CountryId,
                 ReleasedIn = video.ReleasedIn,
                 Views = video.Views,
                 Preview = video.Preview,
+                PreviewFileName = video.PreviewFileName,
                 PegiId = video.PegiId,
                 LanguageId = video.LanguageId,
                 DirectorId = video.DirectorId,

@@ -20,9 +20,9 @@
         <div style="display:flex">
             <div>
                 <div class="form-group">
-                    @Html.LabelFor(model => model.Title)
-                    @Html.EditorFor(model => model.Title, additionalViewData: new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.Title)
+                    @Html.LabelFor(model => model.Name)
+                    @Html.EditorFor(model => model.Name, additionalViewData: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Name)
                 </div>
                 <div class="form-group">
                     @Html.LabelFor(model => model.ReleasedIn)
@@ -38,6 +38,7 @@
                     @Html.LabelFor(model => model.Preview)
                     @Html.TextBoxFor(model => model.Preview, new { type = "file", accept = "image/*", id = "imgInp" })
                     @Html.ValidationMessageFor(model => model.Preview)
+                    <input type="button" id="reset_button" value="Reset" />
                 </div>
                 @*<div class="form-group">
                         @Html.LabelFor(model => model.GenresId)
@@ -93,13 +94,47 @@
 {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-    <script>
-        imgInp.onchange = evt => {
-            const [file] = imgInp.files
-            if (file) {
-                uploadPreview.src = URL.createObjectURL(file)
+    <script type="text/javascript">
+        const MAX_FILE_SIZE = 25_000_000; // bytes
+
+        function onFileSelect() {
+            if (imgInp.files.length > 0) {
+                // файл выбран
+                const selectedFile = imgInp.files[0];
+
+                const isSizeValid = validateSize(selectedFile);
+
+                if (!isSizeValid) {
+                    imgInp.value = null;
+                    alert("Size is too big");
+                    return;
+                }
+
+                uploadPreview.src = URL.createObjectURL(selectedFile);
+                uploadPreview.alt = "Preview";
+            }
+            else {
+                // файл уже не выбран
+
+                uploadPreview.src = "/lib/other-icons/No-Image-Placeholder.svg";
             }
         }
+
+        function validateSize(file) {
+            return file.size <= MAX_FILE_SIZE;
+        }
+
+        imgInp.onchange = onFileSelect;
+
+        function resetImage() {
+            if (imgInp.files.length > 0) {
+                imgInp.value = null;
+            }
+            uploadPreview.src = "/lib/other-icons/No-Image-Placeholder.svg";
+            uploadPreview.alt = "No image";
+        }
+
+        reset_button.onclick = resetImage;
     </script>
 }
 

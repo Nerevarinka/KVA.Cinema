@@ -14,7 +14,7 @@
         [Required(ErrorMessage = "Required field")]
         [StringLength(128, ErrorMessage = "Title length cannot be more than 128 symbols")]
         [Display(Name = "Title")]
-        public string Title { get; set; }
+        public string Name { get; set; }
 
         [StringLength(600, ErrorMessage = "Title length cannot be more than 600 symbols")]
         [DataType(DataType.MultilineText)]
