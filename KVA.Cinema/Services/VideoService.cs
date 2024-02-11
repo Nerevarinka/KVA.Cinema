@@ -80,29 +80,27 @@
             }).ToList();
         }
 
-        public string SaveFile(IFormFile file, string folderName)
+        private string SaveFile(IFormFile file, string destinationFolderName)
         {
             //checks
+            
+            DirectoryInfo drInfo = new DirectoryInfo(destinationFolderName);
 
-            string fileName = file.FileName;
-
-            string uploadsFolder = Path.Combine(HostEnvironment.WebRootPath, POSTER_UPLOAD_PATH);
-
-            DirectoryInfo directoryInfo = new DirectoryInfo(uploadsFolder);
-
-            if (!directoryInfo.Exists)
+            if (!drInfo.Exists)
             {
-                directoryInfo.Create();
+                drInfo.Create();
             }
 
-            string pathToFile = Path.Combine(uploadsFolder, fileName);
+            string fileNewName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+
+            string pathToFile = Path.Combine(destinationFolderName, fileNewName);
 
             using (var stream = new FileStream(pathToFile, FileMode.Create))
             {
                 file.CopyTo(stream);
             }
 
-            return fileName;
+            return fileNewName;
         }
 
         public void CreateAsync(VideoCreateViewModel videoData)
@@ -140,21 +138,8 @@
             if (videoData.Preview != null)
             {
                 string uploadsFolder = Path.Combine(HostEnvironment.WebRootPath, POSTER_UPLOAD_PATH);
-                DirectoryInfo drInfo = new DirectoryInfo(uploadsFolder);
 
-                if (!drInfo.Exists)
-                {
-                    drInfo.Create();
-                }
-
-                previewNewName = Guid.NewGuid().ToString() + Path.GetExtension(videoData.Preview.FileName);
-
-                videoData.PreviewFileName = Path.Combine(uploadsFolder, previewNewName);
-
-                using (var stream = new FileStream(videoData.PreviewFileName, FileMode.Create))
-                {
-                    videoData.Preview.CopyTo(stream);
-                }
+                previewNewName = SaveFile(videoData.Preview, uploadsFolder);
             }
 
             Video newVideo = new Video()
@@ -258,21 +243,8 @@
             if (newVideoData.Preview != null)
             {
                 string uploadsFolder = Path.Combine(HostEnvironment.WebRootPath, POSTER_UPLOAD_PATH);
-                DirectoryInfo drInfo = new DirectoryInfo(uploadsFolder);
 
-                if (!drInfo.Exists)
-                {
-                    drInfo.Create();
-                }
-
-                previewNewName = Guid.NewGuid().ToString() + Path.GetExtension(newVideoData.Preview.FileName);
-
-                newVideoData.PreviewFileName = Path.Combine(uploadsFolder, previewNewName);
-
-                using (var stream = new FileStream(newVideoData.PreviewFileName, FileMode.Create))
-                {
-                    newVideoData.Preview.CopyTo(stream);
-                }
+                previewNewName = SaveFile(newVideoData.Preview, uploadsFolder);
             }
 
             var preview = video.Preview;

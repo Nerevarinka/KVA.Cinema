@@ -98,8 +98,10 @@ namespace KVA.Cinema.Controllers
                 catch (Exception ex)
                 {
                     ModelState.AddModelError(string.Empty, ex.Message);
+                    ModelState.AddModelError(string.Empty, "Please upload preview again");
                 }
             }
+
             // TODO: При каждой ошибки валидации считывается 5 раз наборы сущностей
             ViewBag.CountryId = new SelectList(CountryService.ReadAll(), "Id", "Name");
             ViewBag.DirectorId = new SelectList(DirectorService.ReadAll(), "Id", "Name");
@@ -175,6 +177,7 @@ namespace KVA.Cinema.Controllers
                 catch (Exception ex)
                 {
                     ModelState.AddModelError(string.Empty, ex.Message);
+                    ModelState.AddModelError(string.Empty, "Please upload preview again");
                 }
             }
 
