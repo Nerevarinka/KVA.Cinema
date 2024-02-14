@@ -18,56 +18,72 @@
 
     <fieldset>
         <legend>Video</legend>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Title)
-            @Html.DisplayFor(model => model.Title, additionalViewData: new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.Title)
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(model => model.ReleasedIn)
-            @Html.DisplayFor(model => model.ReleasedIn, additionalViewData: new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.ReleasedIn)
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(model => model.CountryName)
-            @Html.DisplayFor(model => model.CountryName, additionalViewData: new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.CountryName)
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(model => model.Preview)
-            @Html.DisplayFor(model => model.Preview, additionalViewData: new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.Preview)
-        </div>
-        @*<div class="form-group">
+        <div style="display:flex">
+            <div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Name)
+                @Html.DisplayFor(model => model.Name, additionalViewData: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Name)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.ReleasedIn)
+                @Html.DisplayFor(model => model.ReleasedIn, additionalViewData: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.ReleasedIn)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.CountryName)
+                @Html.DisplayFor(model => model.CountryName, additionalViewData: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CountryName)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Preview)
+                @Html.DisplayFor(model => model.Preview, additionalViewData: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Preview)
+            </div>
+            @*<div class="form-group">
             @Html.LabelFor(model => model.GenreName)
             @Html.DisplayFor(model => model.GenreName, additionalViewData: new { @class = "form-control" })
             @Html.ValidationMessageFor(model => model.GenreName)
         </div>*@
-        <div class="form-group">
-            @Html.LabelFor(model => model.DirectorName)
-            @Html.DisplayFor(model => model.DirectorName, additionalViewData: new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.DirectorName)
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(model => model.PegiName)
-            @Html.DisplayFor(model => model.PegiName, additionalViewData: new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.PegiName)
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(model => model.Length)
-            @Html.DisplayFor(model => model.Length, additionalViewData: new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.Length)
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(model => model.LanguageName)
-            @Html.DisplayFor(model => model.LanguageName, additionalViewData: new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.LanguageName)
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(model => model.Description)
-            @Html.DisplayFor(model => model.Description, additionalViewData: new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.Description)
+            <div class="form-group">
+                @Html.LabelFor(model => model.DirectorName)
+                @Html.DisplayFor(model => model.DirectorName, additionalViewData: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.DirectorName)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.PegiName)
+                @Html.DisplayFor(model => model.PegiName, additionalViewData: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.PegiName)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Length)
+                @Html.DisplayFor(model => model.Length, additionalViewData: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Length)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.LanguageName)
+                @Html.DisplayFor(model => model.LanguageName, additionalViewData: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.LanguageName)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Description)
+                @Html.DisplayFor(model => model.Description, additionalViewData: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Description)
+            </div>
+
+            </div>
+
+            <div>
+                @if (Model.PreviewFileName != null)
+                {
+                    <img src="~/upload/videoPreview/@Model.PreviewFileName" alt="@Model.Name preview" style="max-width:20rem; margin-left:10rem">
+                }
+                else
+                {
+                    <img src="~/lib/other-icons/No-Image-Placeholder.svg" alt="No image" style="max-width:20rem; margin-left:10rem">
+                }
+                @Html.ValidationMessageFor(model => model.Preview)
+            </div>
         </div>
     </fieldset>
 

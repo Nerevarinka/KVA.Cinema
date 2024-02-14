@@ -1,17 +1,15 @@
 ﻿namespace KVA.Cinema.Models.ViewModels.Video
 {
+    using Microsoft.AspNetCore.Http;
     using System;
-    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using System.Linq;
-    using System.Threading.Tasks;
 
     public class VideoDisplayViewModel
     {
         public Guid Id { get; set; }
 
         [Display(Name = "Title")]
-        public string Title { get; set; }
+        public string Name { get; set; }
 
         [DataType(DataType.MultilineText)]
         [Display(Name = "Description")]
@@ -33,7 +31,9 @@
         public int Views { get; set; }
 
         [Display(Name = "Preview (poster)")]
-        public string Preview { get; set; }
+        public IFormFile Preview { get; set; }
+
+        public string PreviewFileName { get; set; }
 
         public Guid PegiId { get; set; }
 

@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using KVA.Cinema.Models;
-using KVA.Cinema.Models.Entities;
 using KVA.Cinema.Services;
 using KVA.Cinema.Models.ViewModels.Video;
 
@@ -97,8 +92,10 @@ namespace KVA.Cinema.Controllers
                 catch (Exception ex)
                 {
                     ModelState.AddModelError(string.Empty, ex.Message);
+                    ModelState.AddModelError(string.Empty, "Please upload preview again");
                 }
             }
+
             // TODO: При каждой ошибки валидации считывается 5 раз наборы сущностей
             ViewBag.CountryId = new SelectList(CountryService.ReadAll(), "Id", "Name");
             ViewBag.DirectorId = new SelectList(DirectorService.ReadAll(), "Id", "Name");
@@ -134,13 +131,14 @@ namespace KVA.Cinema.Controllers
             var videoEditModel = new VideoEditViewModel()
             {
                 Id = video.Id,
-                Title = video.Title,
+                Name = video.Name,
                 Description = video.Description,
                 Length = video.Length,
                 CountryId = video.CountryId,
                 ReleasedIn = video.ReleasedIn,
                 Views = video.Views,
                 Preview = video.Preview,
+                PreviewFileName = video.PreviewFileName,
                 PegiId = video.PegiId,
                 LanguageId = video.LanguageId,
                 DirectorId = video.DirectorId,
@@ -173,6 +171,7 @@ namespace KVA.Cinema.Controllers
                 catch (Exception ex)
                 {
                     ModelState.AddModelError(string.Empty, ex.Message);
+                    ModelState.AddModelError(string.Empty, "Please upload preview again");
                 }
             }
 

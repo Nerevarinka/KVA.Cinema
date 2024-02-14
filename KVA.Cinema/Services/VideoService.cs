@@ -5,10 +5,12 @@
     using KVA.Cinema.Models.Entities;
     using KVA.Cinema.Models.ViewModels.Video;
     using KVA.Cinema.Utilities;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
-    using System.Threading.Tasks;
 
     public class VideoService : IService<VideoCreateViewModel, VideoDisplayViewModel, VideoEditViewModel>
     {
@@ -17,11 +19,21 @@
         /// </summary>
         private const int TITLE_LENGHT_MAX = 128;
 
+        private const string POSTER_UPLOAD_PATH = "upload/videoPreview";
+
+        /// <summary>
+        /// Maximum size allowed for preview in bytes
+        /// </summary>
+        private const int MAX_PREVIEW_SIZE = 25_000_000; // 25 MB
+
         private CinemaContext Context { get; set; }
 
-        public VideoService(CinemaContext db)
+        private IWebHostEnvironment HostEnvironment { get; }
+
+        public VideoService(CinemaContext db, IWebHostEnvironment hostEnvironment)
         {
             Context = db;
+            HostEnvironment = hostEnvironment;
         }
 
         public IEnumerable<VideoCreateViewModel> Read()
@@ -31,13 +43,13 @@
             return videos.Select(x => new VideoCreateViewModel()
             {
                 Id = x.Id,
-                Title = x.Title,
+                Name = x.Title,
                 Description = x.Description,
                 Length = x.Length,
                 CountryId = x.CountryId,
                 ReleasedIn = x.ReleasedIn,
                 Views = x.Views,
-                Preview = x.Preview,
+                PreviewFileName = x.Preview,
                 PegiId = x.PegiId,
                 LanguageId = x.LanguageId,
                 DirectorId = x.DirectorId,
@@ -52,13 +64,13 @@
             return Context.Videos.Select(x => new VideoDisplayViewModel()
             {
                 Id = x.Id,
-                Title = x.Title,
+                Name = x.Title,
                 Description = x.Description,
                 Length = x.Length,
                 CountryId = x.CountryId,
                 ReleasedIn = x.ReleasedIn,
                 Views = x.Views,
-                Preview = x.Preview,
+                PreviewFileName = x.Preview,
                 PegiId = x.PegiId,
                 LanguageId = x.LanguageId,
                 DirectorId = x.DirectorId,
@@ -72,46 +84,86 @@
             }).ToList();
         }
 
+        private string SaveFile(IFormFile file, string destinationFolderName)
+        {
+            if (file == null || string.IsNullOrWhiteSpace(destinationFolderName))
+            {
+                throw new ArgumentNullException("Invalid argument");
+            }
+
+            DirectoryInfo drInfo = new DirectoryInfo(destinationFolderName);
+
+            if (!drInfo.Exists)
+            {
+                drInfo.Create();
+            }
+
+            string fileNewName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+
+            string pathToFile = Path.Combine(destinationFolderName, fileNewName);
+
+            using (var stream = new FileStream(pathToFile, FileMode.Create))
+            {
+                file.CopyTo(stream);
+            }
+
+            return fileNewName;
+        }
+
         public void CreateAsync(VideoCreateViewModel videoData)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(videoData.Title,
+            if (CheckUtilities.ContainsNullOrEmptyValue(videoData.Name,
                                                         videoData.CountryId,
                                                         videoData.ReleasedIn,
                                                         videoData.PegiId,
                                                         videoData.LanguageId,
                                                         videoData.DirectorId))
-                                                        //videoData.GenresId))
+            //videoData.GenresId))
             {
                 throw new ArgumentNullException("One or more required fields have no value");
             }
 
-            if (videoData.Title.Length > TITLE_LENGHT_MAX)
+            if (videoData.Name.Length > TITLE_LENGHT_MAX)
             {
-                throw new ArgumentException($"Length cannot be more than {TITLE_LENGHT_MAX} symbols");
+                throw new ArgumentException($"Title length cannot be more than {TITLE_LENGHT_MAX} symbols");
             }
 
-            if (videoData.ReleasedIn > DateTime.UtcNow)
+            if (videoData.ReleasedIn.ToUniversalTime() > DateTime.UtcNow)
             {
-                throw new DuplicatedEntityException($"Only released video can be uploaded");
+                throw new ArgumentException($"Only released video can be uploaded");
             }
 
-            if (Context.Videos.FirstOrDefault(x => x.Title == videoData.Title && x.DirectorId == videoData.DirectorId) != default)
+            if (Context.Videos.FirstOrDefault(x => x.Title == videoData.Name && x.DirectorId == videoData.DirectorId) != default)
             {
-                throw new DuplicatedEntityException($"Video with title \"{videoData.Title}\" by this director is already exist");
+                throw new DuplicatedEntityException($"Video with title \"{videoData.Name}\" by this director is already exist");
             }
 
             Guid videoId = Guid.NewGuid();
 
+            string previewNewName = null;
+
+            if (videoData.Preview != null)
+            {
+                if (videoData.Preview.Length > MAX_PREVIEW_SIZE)
+                {
+                    throw new ArgumentOutOfRangeException($"File is too big");
+                }
+
+                string uploadsFolder = Path.Combine(HostEnvironment.WebRootPath, POSTER_UPLOAD_PATH);
+
+                previewNewName = SaveFile(videoData.Preview, uploadsFolder);
+            }
+
             Video newVideo = new Video()
             {
                 Id = videoId,
-                Title = videoData.Title,
+                Title = videoData.Name,
                 Description = videoData.Description,
                 Length = videoData.Length,
                 CountryId = videoData.CountryId,
-                ReleasedIn = videoData.ReleasedIn,
+                ReleasedIn = videoData.ReleasedIn.ToUniversalTime(),
                 Views = 0,
-                Preview = videoData.Preview,
+                Preview = previewNewName,
                 PegiId = videoData.PegiId,
                 LanguageId = videoData.LanguageId,
                 DirectorId = videoData.DirectorId,
@@ -144,20 +196,30 @@
                 throw new EntityNotFoundException($"Video with Id \"{videoId}\" not found");
             }
 
+            var preview = video.Preview;
+
             Context.Videos.Remove(video);
             Context.SaveChanges();
+
+            if (preview != null)
+            {
+                var previewFolderPath = Path.Combine(HostEnvironment.WebRootPath, POSTER_UPLOAD_PATH);
+                var previewFullPath = previewFolderPath + "\\" + preview;
+
+                File.Delete(previewFullPath);
+            }
         }
 
         public void Update(Guid videoId, VideoEditViewModel newVideoData) //add check for id
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(videoId,
-                                                        newVideoData.Title,
+                                                        newVideoData.Name,
                                                         newVideoData.CountryId,
                                                         newVideoData.ReleasedIn,
                                                         newVideoData.PegiId,
                                                         newVideoData.LanguageId,
                                                         newVideoData.DirectorId))
-                                                        //newVideoData.GenresId))
+            //newVideoData.GenresId))
             {
                 throw new ArgumentNullException("One or more required fields have no value");
             }
@@ -169,27 +231,56 @@
                 throw new EntityNotFoundException($"Video with id \"{videoId}\" not found");
             }
 
-            if (newVideoData.Title.Length > TITLE_LENGHT_MAX)
+            if (newVideoData.Name.Length > TITLE_LENGHT_MAX)
             {
-                throw new ArgumentException($"Length cannot be more than {TITLE_LENGHT_MAX} symbols");
+                throw new ArgumentException($"Title length cannot be more than {TITLE_LENGHT_MAX} symbols");
+            }
+
+            if (newVideoData.ReleasedIn.ToUniversalTime() > DateTime.UtcNow)
+            {
+                throw new ArgumentException($"Only released video can be uploaded");
             }
 
             Video duplicate = Context.Videos.FirstOrDefault(x =>
-                                                               x.Title == newVideoData.Title &&
+                                                               x.Title == newVideoData.Name &&
                                                                x.DirectorId == newVideoData.DirectorId &&
                                                                x.Id != newVideoData.Id);
             if (duplicate != default)
             {
-                throw new DuplicatedEntityException($"Video with title \"{newVideoData.Title}\" by this director is already exist");
+                throw new DuplicatedEntityException($"Video with title \"{newVideoData.Name}\" by this director is already exist");
             }
 
-            video.Title = newVideoData.Title;
+            string newPreviewName = null;
+
+            if (newVideoData.Preview != null)
+            {
+                if (newVideoData.Preview.Length > MAX_PREVIEW_SIZE)
+                {
+                    throw new ArgumentOutOfRangeException($"File is too big");
+                }
+
+                string uploadsFolder = Path.Combine(HostEnvironment.WebRootPath, POSTER_UPLOAD_PATH);
+
+                newPreviewName = SaveFile(newVideoData.Preview, uploadsFolder);
+            }
+
+            var oldPreview = video.Preview;
+
+            if (oldPreview == null || newVideoData.IsResetPreviewButtonClicked || newPreviewName != null)
+            {
+                video.Preview = newPreviewName;
+            }
+            else
+            {
+                video.Preview = oldPreview;
+            }
+
+            video.Title = newVideoData.Name;
             video.Description = newVideoData.Description;
             video.Length = newVideoData.Length;
             video.CountryId = newVideoData.CountryId;
-            video.ReleasedIn = newVideoData.ReleasedIn;
+            video.ReleasedIn = newVideoData.ReleasedIn.ToUniversalTime();
             video.Views = video.Views;
-            video.Preview = newVideoData.Preview;
             video.PegiId = newVideoData.PegiId;
             video.LanguageId = newVideoData.LanguageId;
             video.DirectorId = newVideoData.DirectorId;
@@ -204,6 +295,14 @@
             //    };
 
             Context.SaveChanges();
+
+            if ((newVideoData.IsResetPreviewButtonClicked || newPreviewName != null) && oldPreview != null)
+            {
+                var previewFolderPath = Path.Combine(HostEnvironment.WebRootPath, POSTER_UPLOAD_PATH);
+                var oldPreviewFullPath = previewFolderPath + "\\" + oldPreview;
+
+                File.Delete(oldPreviewFullPath);
+            }
         }
 
         public bool IsEntityExist(Guid videoId)
