@@ -3,7 +3,6 @@
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 <script type="text/javascript">
     // переопределение валидации на стороне клиента
-    const rangeFn = $.validator.methods.range;
 
     $.validator.methods.range = function (value, element, param) {
         var globalizedValue = value.replace(",", ".");

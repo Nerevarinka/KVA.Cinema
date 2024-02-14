@@ -14,76 +14,77 @@
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true)
 
-<fieldset>
-    <legend>Video</legend>
+    <fieldset>
+        <legend>Video</legend>
 
-    <div style="display:flex">
-        <div>
-            <div class="form-group">
-                @Html.LabelFor(model => model.Name)
-                @Html.EditorFor(model => model.Name, additionalViewData: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Name)
-            </div>
-            <div class="form-group">
-                @Html.LabelFor(model => model.ReleasedIn)
-                @Html.EditorFor(model => model.ReleasedIn, additionalViewData: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.ReleasedIn)
-            </div>
-            <div class="form-group">
-                @Html.LabelFor(model => model.CountryId)
-                @Html.DropDownListFor(model => model.CountryId, ViewBag.CountryId as SelectList)
-                @Html.ValidationMessageFor(model => model.CountryId)
-            </div>
+        <div style="display:flex">
             <div>
-                @Html.LabelFor(model => model.Preview)
-                @Html.TextBoxFor(model => model.Preview, new { type = "file", accept = "image/*", id = "imgInp" })
-                @Html.ValidationMessageFor(model => model.Preview)
-                <input type="button" id="reset_button" value="Reset" />
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Name)
+                    @Html.EditorFor(model => model.Name, additionalViewData: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Name)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ReleasedIn)
+                    @Html.EditorFor(model => model.ReleasedIn, additionalViewData: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.ReleasedIn)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CountryId)
+                    @Html.DropDownListFor(model => model.CountryId, ViewBag.CountryId as SelectList)
+                    @Html.ValidationMessageFor(model => model.CountryId)
+                </div>
+                <div>
+                    @Html.LabelFor(model => model.Preview)
+                    @Html.TextBoxFor(model => model.Preview, new { type = "file", accept = "image/*", id = "imgInp" })
+                    @Html.ValidationMessageFor(model => model.Preview)
+                    <input type="button" id="reset_button" value="Reset" />
+                    @Html.HiddenFor(model => model.IsResetPreviewButtonClicked, new { id = "isResetClicked", value = false })
+                </div>
+                @*<div class="form-group">
+                        @Html.LabelFor(model => model.GenresId)
+                        @Html.DropDownListFor(model => model.GenresId, ViewBag.GenresId as SelectList)
+                        @Html.ValidationMessageFor(model => model.GenresId)
+                    </div>*@
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DirectorId)
+                    @Html.DropDownListFor(model => model.DirectorId, ViewBag.DirectorId as SelectList)
+                    @Html.ValidationMessageFor(model => model.DirectorId)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PegiId)
+                    @Html.DropDownListFor(model => model.PegiId, ViewBag.PegiId as SelectList)
+                    @Html.ValidationMessageFor(model => model.PegiId)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Length)
+                    @Html.EditorFor(model => model.Length, additionalViewData: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Length)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LanguageId)
+                    @Html.DropDownListFor(model => model.LanguageId, ViewBag.LanguageId as SelectList)
+                    @Html.ValidationMessageFor(model => model.LanguageId)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Description)
+                    @Html.EditorFor(model => model.Description, additionalViewData: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Description)
+                </div>
             </div>
-            @*<div class="form-group">
-                    @Html.LabelFor(model => model.GenresId)
-                    @Html.DropDownListFor(model => model.GenresId, ViewBag.GenresId as SelectList)
-                    @Html.ValidationMessageFor(model => model.GenresId)
-                </div>*@
-            <div class="form-group">
-                @Html.LabelFor(model => model.DirectorId)
-                @Html.DropDownListFor(model => model.DirectorId, ViewBag.DirectorId as SelectList)
-                @Html.ValidationMessageFor(model => model.DirectorId)
-            </div>
-            <div class="form-group">
-                @Html.LabelFor(model => model.PegiId)
-                @Html.DropDownListFor(model => model.PegiId, ViewBag.PegiId as SelectList)
-                @Html.ValidationMessageFor(model => model.PegiId)
-            </div>
-            <div class="form-group">
-                @Html.LabelFor(model => model.Length)
-                @Html.EditorFor(model => model.Length, additionalViewData: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Length)
-            </div>
-            <div class="form-group">
-                @Html.LabelFor(model => model.LanguageId)
-                @Html.DropDownListFor(model => model.LanguageId, ViewBag.LanguageId as SelectList)
-                @Html.ValidationMessageFor(model => model.LanguageId)
-            </div>
-            <div class="form-group">
-                @Html.LabelFor(model => model.Description)
-                @Html.EditorFor(model => model.Description, additionalViewData: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Description)
-            </div>
-        </div>
 
-        <div>
-            @if (Model.PreviewFileName != null)
-            {
-                <img id="uploadPreview" src="~/upload/videoPreview/@Model.PreviewFileName" alt="Preview" style="max-width:20rem; margin-left:10rem" />
-            }
-            else
-            {
-                <img id="uploadPreview" src="~/lib/other-icons/No-Image-Placeholder.svg" alt="No image" style="max-width:20rem; margin-left:10rem" />
-            }
+            <div>
+                @if (Model.PreviewFileName != null)
+                {
+                    <img id="uploadPreview" src="~/upload/videoPreview/@Model.PreviewFileName" alt="Preview" style="max-width:20rem; margin-left:10rem" />
+                }
+                else
+                {
+                    <img id="uploadPreview" src="~/lib/other-icons/No-Image-Placeholder.svg" alt="No image" style="max-width:20rem; margin-left:10rem" />
+                }
+            </div>
         </div>
-    </div>
-</fieldset>
+    </fieldset>
 
     <p>
         <input type="submit" value="Save changes" /> | @Html.ActionLink("Back to List", "Index")
@@ -97,6 +98,8 @@
     <script type="text/javascript">
         const MAX_FILE_SIZE = 25_000_000; // bytes
 
+        // number, string, boolean, Array, object, function, undefined, null
+
         function onFileSelect() {
             if (imgInp.files.length > 0) {
                 // файл выбран
@@ -106,7 +109,7 @@
 
                 if (!isSizeValid) {
                     imgInp.value = null;
-                    alert("Size is too big");
+                    alert("File is too big");
                     return;
                 }
 
@@ -127,9 +130,8 @@
         imgInp.onchange = onFileSelect;
 
         function resetImage() {
-            if (imgInp.files.length > 0) {
-                imgInp.value = null;
-            }
+            imgInp.value = null;
+            isResetClicked.value = true;
             uploadPreview.src = "/lib/other-icons/No-Image-Placeholder.svg";
             uploadPreview.alt = "No image";
         }

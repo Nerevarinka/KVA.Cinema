@@ -2,10 +2,7 @@
 {
     using Microsoft.AspNetCore.Http;
     using System;
-    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using System.Linq;
-    using System.Threading.Tasks;
 
     public class VideoEditViewModel
     {
@@ -16,7 +13,7 @@
         [Display(Name = "Title")]
         public string Name { get; set; }
 
-        [StringLength(600, ErrorMessage = "Title length cannot be more than 600 symbols")]
+        [StringLength(600, ErrorMessage = "Description length cannot be more than 600 symbols")]
         [DataType(DataType.MultilineText)]
         [Display(Name = "Description")]
         public string Description { get; set; }
@@ -36,10 +33,12 @@
         [Display(Name = "Views")]
         public int Views { get; set; }
 
-        [Display(Name = "Preview (poster)")]
+        [Display(Name = "Poster (max 25 MB)")]
         public IFormFile Preview { get; set; }
 
         public string PreviewFileName { get; set; }
+
+        public bool IsResetPreviewButtonClicked { get; set; }
 
         [Required(ErrorMessage = "Required field")]
         [Display(Name = "PEGI")]

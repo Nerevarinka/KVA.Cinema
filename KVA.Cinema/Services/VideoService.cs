@@ -11,7 +11,6 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Threading.Tasks;
 
     public class VideoService : IService<VideoCreateViewModel, VideoDisplayViewModel, VideoEditViewModel>
     {
@@ -21,6 +20,11 @@
         private const int TITLE_LENGHT_MAX = 128;
 
         private const string POSTER_UPLOAD_PATH = "upload/videoPreview";
+
+        /// <summary>
+        /// Maximum size allowed for preview in bytes
+        /// </summary>
+        private const int MAX_PREVIEW_SIZE = 25_000_000; // 25 MB
 
         private CinemaContext Context { get; set; }
 
@@ -82,8 +86,11 @@
 
         private string SaveFile(IFormFile file, string destinationFolderName)
         {
-            //checks
-            
+            if (file == null || string.IsNullOrWhiteSpace(destinationFolderName))
+            {
+                throw new ArgumentNullException("Invalid argument");
+            }
+
             DirectoryInfo drInfo = new DirectoryInfo(destinationFolderName);
 
             if (!drInfo.Exists)
@@ -118,7 +125,7 @@
 
             if (videoData.Name.Length > TITLE_LENGHT_MAX)
             {
-                throw new ArgumentException($"Length cannot be more than {TITLE_LENGHT_MAX} symbols");
+                throw new ArgumentException($"Title length cannot be more than {TITLE_LENGHT_MAX} symbols");
             }
 
             if (videoData.ReleasedIn.ToUniversalTime() > DateTime.UtcNow)
@@ -137,6 +144,11 @@
 
             if (videoData.Preview != null)
             {
+                if (videoData.Preview.Length > MAX_PREVIEW_SIZE)
+                {
+                    throw new ArgumentOutOfRangeException($"File is too big");
+                }
+
                 string uploadsFolder = Path.Combine(HostEnvironment.WebRootPath, POSTER_UPLOAD_PATH);
 
                 previewNewName = SaveFile(videoData.Preview, uploadsFolder);
@@ -221,7 +233,7 @@
 
             if (newVideoData.Name.Length > TITLE_LENGHT_MAX)
             {
-                throw new ArgumentException($"Length cannot be more than {TITLE_LENGHT_MAX} symbols");
+                throw new ArgumentException($"Title length cannot be more than {TITLE_LENGHT_MAX} symbols");
             }
 
             if (newVideoData.ReleasedIn.ToUniversalTime() > DateTime.UtcNow)
@@ -238,16 +250,30 @@
                 throw new DuplicatedEntityException($"Video with title \"{newVideoData.Name}\" by this director is already exist");
             }
 
-            string previewNewName = null;
+            string newPreviewName = null;
 
             if (newVideoData.Preview != null)
             {
+                if (newVideoData.Preview.Length > MAX_PREVIEW_SIZE)
+                {
+                    throw new ArgumentOutOfRangeException($"File is too big");
+                }
+
                 string uploadsFolder = Path.Combine(HostEnvironment.WebRootPath, POSTER_UPLOAD_PATH);
 
-                previewNewName = SaveFile(newVideoData.Preview, uploadsFolder);
+                newPreviewName = SaveFile(newVideoData.Preview, uploadsFolder);
             }
 
-            var preview = video.Preview;
+            var oldPreview = video.Preview;
+
+            if (oldPreview == null || newVideoData.IsResetPreviewButtonClicked || newPreviewName != null)
+            {
+                video.Preview = newPreviewName;
+            }
+            else
+            {
+                video.Preview = oldPreview;
+            }
 
             video.Title = newVideoData.Name;
             video.Description = newVideoData.Description;
@@ -255,7 +281,6 @@
             video.CountryId = newVideoData.CountryId;
             video.ReleasedIn = newVideoData.ReleasedIn.ToUniversalTime();
             video.Views = video.Views;
-            video.Preview = previewNewName;
             video.PegiId = newVideoData.PegiId;
             video.LanguageId = newVideoData.LanguageId;
             video.DirectorId = newVideoData.DirectorId;
@@ -271,12 +296,12 @@
 
             Context.SaveChanges();
 
-            if (preview != null)
+            if ((newVideoData.IsResetPreviewButtonClicked || newPreviewName != null) && oldPreview != null)
             {
                 var previewFolderPath = Path.Combine(HostEnvironment.WebRootPath, POSTER_UPLOAD_PATH);
-                var previewFullPath = previewFolderPath + "\\" + preview;
+                var oldPreviewFullPath = previewFolderPath + "\\" + oldPreview;
 
-                File.Delete(previewFullPath);
+                File.Delete(oldPreviewFullPath);
             }
         }
 
