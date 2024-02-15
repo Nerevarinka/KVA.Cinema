@@ -4,9 +4,14 @@
 
 @if (User.Identity.IsAuthenticated)
 {
-    <p>@User.Identity.Name</p>
+    <h3>Welcome, @User.Identity.Name!</h3>
 
     <form method="post" asp-controller="Users" asp-action="Logout">
         <input type="submit" value="Logout" />
     </form>
+}
+else
+{
+    <h3>Welcome!</h3>
+    <p>@Html.ActionLink("Authorize", "Login", "Users") to get full access</p>
 }
