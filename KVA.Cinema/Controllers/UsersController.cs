@@ -209,8 +209,7 @@ namespace KVA.Cinema.Controllers    //TODO: replace NotFound()
             return View(model);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpGet, HttpPost]
         public async Task<IActionResult> Logout()
         {
             // удаляем аутентификационные куки

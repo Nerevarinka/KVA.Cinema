@@ -14,7 +14,7 @@
 
             <div class="container">
                 <a href="" style="display:contents">
-                    <img src="~/lib/other-icons/frog.svg" width="5%" style="margin: auto 0.75rem"/>
+                    <img src="~/lib/other-icons/frog.svg" width="5%" style="margin: auto 0.75rem" />
                 </a>
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">KVA.Cinema</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -45,15 +45,35 @@
                             </ul>
                         </li>
                     </ul>
-                    <div>
+                    <div style="display: flex; align-items: center; gap: 1rem">
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <p>@User.Identity.Name</p>
+                            <span>Hello, @User.Identity.Name</span>
+
+                            <div class="dropdown-center">
+                                <a class="icon-link"
+                                   title="@User.Identity.Name"
+                                   data-bs-toggle="dropdown"
+                                   aria-expanded="false"
+                                   style="font-size: 1.75rem"
+                                   role="button"
+                                >
+                                    <i class="bi bi-person-circle"></i>
+                                </a>
+
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Profile</a></li>
+                                    <li><a class="dropdown-item" href="#" id="logout_link">Logout</a></li>
+                                </ul>
+                            </div>
                         }
-                        <a href="@Url.Action("Login", "Users")"
-                           title="Sign in / sign up" style="font-size: 1.75rem">
-                            <i class="bi bi-person-circle"></i>
-                        </a>
+                        else
+                        {
+                            <a href="@Url.Action("Login", "Users")" class="icon-link"
+                               title="Sign in / sign up" style="font-size: 1.75rem">
+                                <i class="bi bi-person-circle"></i>
+                            </a>
+                        }
                     </div>
                 </div>
             </div>
@@ -73,6 +93,21 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script type="text/javascript">
+        function logout(event) {
+            event.preventDefault();
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("Logout", "Users")",
+                success: function (resultData) {
+                    window.location.reload();
+                },
+            });
+        }
+
+        logout_link.onclick = logout;
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
