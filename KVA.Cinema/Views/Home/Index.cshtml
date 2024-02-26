@@ -2,11 +2,14 @@
     ViewData["Title"] = "Home Page";
 }
 
+<div style="display: flex; flex-direction: column; align-items: center;">
 @if (User.Identity.IsAuthenticated)
 {
-    <p>@User.Identity.Name</p>
-
-    <form method="post" asp-controller="Users" asp-action="Logout">
-        <input type="submit" value="Logout" />
-    </form>
+    <h3>Welcome, @User.Identity.Name!</h3>
 }
+else
+{
+    <h3>Welcome!</h3>
+    <p>@Html.ActionLink("Authorize", "Login", "Users") to get full access</p>
+}
+</div>
