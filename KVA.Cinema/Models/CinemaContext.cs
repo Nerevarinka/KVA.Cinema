@@ -44,8 +44,6 @@ namespace KVA.Cinema.Models
 
         public virtual DbSet<Video> Videos { get; set; }
 
-        public virtual DbSet<VideoGenre> VideoGenres { get; set; }
-
         public virtual DbSet<VideoInSubscription> VideoInSubscriptions { get; set; }
 
         public virtual DbSet<VideoRate> VideoRates { get; set; }
@@ -53,6 +51,11 @@ namespace KVA.Cinema.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder
+                .Entity<Subscription>()
+                .Property(p => p.Cost)
+                .HasColumnType("decimal(18,4)");
 
             modelBuilder
                 .Entity<Subtitle>() //каждый субтитр относится к одному конкретному видео
@@ -66,8 +69,9 @@ namespace KVA.Cinema.Models
                 .WithMany(e => e.CommentMarks)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<IdentityUser>()
-                        .ToTable("Users", "dbo");
+            modelBuilder
+                .Entity<IdentityUser>()
+                .ToTable("Users", "dbo");
         }
 
         public CinemaContext(DbContextOptions<CinemaContext> options)

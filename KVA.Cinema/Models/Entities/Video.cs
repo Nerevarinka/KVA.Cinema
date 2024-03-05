@@ -55,7 +55,7 @@
 
         //public virtual Video PreviousPart { get; set; }
 
-        public virtual ICollection<VideoGenre> VideoGenres { get; set; }
+        public virtual ICollection<Genre> Genres { get; set; }
 
         public virtual ICollection<VideoInSubscription> VideoInSubscriptions { get; set; }
 
@@ -69,7 +69,7 @@
             Reviews = new HashSet<Review>();
             Subtitles = new HashSet<Subtitle>();
             //Video1 = new HashSet<Video>();
-            VideoGenres = new HashSet<VideoGenre>();
+            Genres = new HashSet<Genre>();
             VideoInSubscriptions = new HashSet<VideoInSubscription>();
             VideoRates = new HashSet<VideoRate>();
         }
