@@ -26,8 +26,6 @@ namespace KVA.Cinema.Models
 
         public virtual DbSet<Entities.SubscriptionLevel> SubscriptionLevels { get; set; }
 
-        public virtual DbSet<ObjectsTag> ObjectsTags { get; set; }
-
         public virtual DbSet<Pegi> Pegis { get; set; }
 
         public virtual DbSet<Review> Reviews { get; set; }
