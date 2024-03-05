@@ -7,6 +7,7 @@
     using KVA.Cinema.Utilities;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.EntityFrameworkCore;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -42,20 +43,16 @@
 
             return videos.Select(x => new VideoCreateViewModel()
             {
-                Id = x.Id,
                 Name = x.Title,
                 Description = x.Description,
                 Length = x.Length,
                 CountryId = x.CountryId,
                 ReleasedIn = x.ReleasedIn,
                 Views = x.Views,
-                PreviewFileName = x.Preview,
                 PegiId = x.PegiId,
                 LanguageId = x.LanguageId,
                 DirectorId = x.DirectorId,
-
-                //temp. TO DO
-                //GenresId = x.VideoGenres.Any() ? x.VideoGenres.First().GenreId : Guid.Empty,
+                Genres = x.Genres
             });
         }
 
@@ -78,47 +75,20 @@
                 PegiName = x.Pegi.Type.ToString() + "+",
                 LanguageName = x.Language.Name,
                 DirectorName = x.Director.Name,
-
-                //temp. TO DO
-                //GenresId = x.VideoGenres.Any() ? x.VideoGenres.First().GenreId : Guid.Empty,
+                Genres = x.Genres
             }).ToList();
-        }
-
-        private string SaveFile(IFormFile file, string destinationFolderName)
-        {
-            if (file == null || string.IsNullOrWhiteSpace(destinationFolderName))
-            {
-                throw new ArgumentNullException("Invalid argument");
-            }
-
-            DirectoryInfo drInfo = new DirectoryInfo(destinationFolderName);
-
-            if (!drInfo.Exists)
-            {
-                drInfo.Create();
-            }
-
-            string fileNewName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-
-            string pathToFile = Path.Combine(destinationFolderName, fileNewName);
-
-            using (var stream = new FileStream(pathToFile, FileMode.Create))
-            {
-                file.CopyTo(stream);
-            }
-
-            return fileNewName;
         }
 
         public void CreateAsync(VideoCreateViewModel videoData)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(videoData.Name,
+            if (CheckUtilities.ContainsNullOrEmptyValue(videoData,
+                                                        videoData.Name,
                                                         videoData.CountryId,
                                                         videoData.ReleasedIn,
                                                         videoData.PegiId,
                                                         videoData.LanguageId,
-                                                        videoData.DirectorId))
-            //videoData.GenresId))
+                                                        videoData.DirectorId,
+                                                        videoData.Genres))
             {
                 throw new ArgumentNullException("One or more required fields have no value");
             }
@@ -167,15 +137,7 @@
                 PegiId = videoData.PegiId,
                 LanguageId = videoData.LanguageId,
                 DirectorId = videoData.DirectorId,
-                //VideoGenres = new List<VideoGenre>()
-                //{
-                //    new VideoGenre
-                //    {
-                //        Id = Guid.NewGuid(),
-                //        GenreId = videoData.GenresId,
-                //        VideoId = videoId
-                //    }
-                //}
+                Genres = videoData.Genres.ToList() 
             };
 
             Context.Videos.Add(newVideo);
@@ -210,21 +172,22 @@
             }
         }
 
-        public void Update(Guid videoId, VideoEditViewModel newVideoData) //add check for id
+        public void Update(Guid videoId, VideoEditViewModel newVideoData)
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(videoId,
+                                                        newVideoData,
                                                         newVideoData.Name,
                                                         newVideoData.CountryId,
                                                         newVideoData.ReleasedIn,
                                                         newVideoData.PegiId,
                                                         newVideoData.LanguageId,
-                                                        newVideoData.DirectorId))
-            //newVideoData.GenresId))
+                                                        newVideoData.DirectorId,
+                                                        newVideoData.GenresId))
             {
                 throw new ArgumentNullException("One or more required fields have no value");
             }
 
-            Video video = Context.Videos.FirstOrDefault(x => x.Id == videoId);
+            Video video = Context.Videos.Include(x => x.Genres).FirstOrDefault(x => x.Id == videoId);
 
             if (video == default)
             {
@@ -275,6 +238,8 @@
                 video.Preview = oldPreview;
             }
 
+            newVideoData.GenresId ??= Enumerable.Empty<Guid>();
+
             video.Title = newVideoData.Name;
             video.Description = newVideoData.Description;
             video.Length = newVideoData.Length;
@@ -284,15 +249,7 @@
             video.PegiId = newVideoData.PegiId;
             video.LanguageId = newVideoData.LanguageId;
             video.DirectorId = newVideoData.DirectorId;
-            //video.VideoGenres = new List<VideoGenre>() //Check this
-            //    {
-            //        new VideoGenre
-            //        {
-            //            Id = Guid.NewGuid(),
-            //            GenreId = newVideoData.GenresId,
-            //            VideoId = newVideoData.Id
-            //        }
-            //    };
+            video.Genres = Context.Genres.Where(x => newVideoData.GenresId.Contains(x.Id)).ToList();
 
             Context.SaveChanges();
 
@@ -315,6 +272,32 @@
             Video video = Context.Videos.FirstOrDefault(x => x.Id == videoId);
 
             return video != default;
+        }
+        
+        private string SaveFile(IFormFile file, string destinationFolderName)
+        {
+            if (file == null || string.IsNullOrWhiteSpace(destinationFolderName))
+            {
+                throw new ArgumentNullException("Invalid argument");
+            }
+
+            DirectoryInfo drInfo = new DirectoryInfo(destinationFolderName);
+
+            if (!drInfo.Exists)
+            {
+                drInfo.Create();
+            }
+
+            string fileNewName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+
+            string pathToFile = Path.Combine(destinationFolderName, fileNewName);
+
+            using (var stream = new FileStream(pathToFile, FileMode.Create))
+            {
+                file.CopyTo(stream);
+            }
+
+            return fileNewName;
         }
     }
 }

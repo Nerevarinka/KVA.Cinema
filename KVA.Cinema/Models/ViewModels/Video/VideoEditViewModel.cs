@@ -2,7 +2,9 @@
 {
     using Microsoft.AspNetCore.Http;
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.Linq;
 
     public class VideoEditViewModel
     {
@@ -52,8 +54,8 @@
         [Display(Name = "Director")]
         public Guid DirectorId { get; set; }
 
-        //[Required(ErrorMessage = "Required field")]
-        //[Display(Name = "Genres")]
-        //public Guid GenresId { get; set; }
+        [Required(ErrorMessage = "Required field")]
+        [Display(Name = "Genres (at least one)")]
+        public IEnumerable<Guid> GenresId { get; set; }
     }
 }

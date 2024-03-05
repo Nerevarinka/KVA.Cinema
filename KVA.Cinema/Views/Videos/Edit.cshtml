@@ -41,11 +41,11 @@
                     <input type="button" id="reset_button" value="Reset" />
                     @Html.HiddenFor(model => model.IsResetPreviewButtonClicked, new { id = "isResetClicked", value = false })
                 </div>
-                @*<div class="form-group">
-                        @Html.LabelFor(model => model.GenresId)
-                        @Html.DropDownListFor(model => model.GenresId, ViewBag.GenresId as SelectList)
-                        @Html.ValidationMessageFor(model => model.GenresId)
-                    </div>*@
+                <div class="form-group">
+                    @Html.LabelFor(model => model.GenresId)
+                    @Html.ListBoxFor(model => model.GenresId, ViewBag.GenresIds as SelectList, new { multiple = "multiple", @id = "multiple-select-clear-field", @name = "GenresId", @class = "form-select", @data_placeholder = "Genres" })
+                    @Html.ValidationMessageFor(model => model.GenresId)
+                </div>
                 <div class="form-group">
                     @Html.LabelFor(model => model.DirectorId)
                     @Html.DropDownListFor(model => model.DirectorId, ViewBag.DirectorId as SelectList)
@@ -98,8 +98,6 @@
     <script type="text/javascript">
         const MAX_FILE_SIZE = 25_000_000; // bytes
 
-        // number, string, boolean, Array, object, function, undefined, null
-
         function onFileSelect() {
             if (imgInp.files.length > 0) {
                 // файл выбран
@@ -137,6 +135,16 @@
         }
 
         reset_button.onclick = resetImage;
+
+        $(document).ready(function () {
+            $('#multiple-select-clear-field').select2({
+                theme: "bootstrap-5",
+                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+                placeholder: $(this).data('placeholder'),
+                closeOnSelect: false,
+                allowClear: true,
+            });
+        });
     </script>
 }
 
