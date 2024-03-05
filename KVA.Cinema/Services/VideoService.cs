@@ -182,7 +182,7 @@
                                                         newVideoData.PegiId,
                                                         newVideoData.LanguageId,
                                                         newVideoData.DirectorId,
-                                                        newVideoData.GenresId))
+                                                        newVideoData.GenresIds))
             {
                 throw new ArgumentNullException("One or more required fields have no value");
             }
@@ -238,7 +238,7 @@
                 video.Preview = oldPreview;
             }
 
-            newVideoData.GenresId ??= Enumerable.Empty<Guid>();
+            newVideoData.GenresIds ??= Enumerable.Empty<Guid>();
 
             video.Title = newVideoData.Name;
             video.Description = newVideoData.Description;
@@ -249,7 +249,7 @@
             video.PegiId = newVideoData.PegiId;
             video.LanguageId = newVideoData.LanguageId;
             video.DirectorId = newVideoData.DirectorId;
-            video.Genres = Context.Genres.Where(x => newVideoData.GenresId.Contains(x.Id)).ToList();
+            video.Genres = Context.Genres.Where(x => newVideoData.GenresIds.Contains(x.Id)).ToList();
 
             Context.SaveChanges();
 

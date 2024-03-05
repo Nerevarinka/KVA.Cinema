@@ -42,9 +42,9 @@
                     @Html.HiddenFor(model => model.IsResetPreviewButtonClicked, new { id = "isResetClicked", value = false })
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(model => model.GenresId)
-                    @Html.ListBoxFor(model => model.GenresId, ViewBag.GenresIds as SelectList, new { multiple = "multiple", @id = "multiple-select-clear-field", @name = "GenresId", @class = "form-select", @data_placeholder = "Genres" })
-                    @Html.ValidationMessageFor(model => model.GenresId)
+                    @Html.LabelFor(model => model.GenresIds)
+                    @Html.ListBoxFor(model => model.GenresIds, ViewBag.GenresIds as SelectList, new { multiple = "multiple", @id = "multiple-select-clear-field", @name = "GenresId", @class = "form-select", @data_placeholder = "Genres" })
+                    @Html.ValidationMessageFor(model => model.GenresIds)
                 </div>
                 <div class="form-group">
                     @Html.LabelFor(model => model.DirectorId)
