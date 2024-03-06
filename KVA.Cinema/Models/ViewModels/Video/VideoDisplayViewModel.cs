@@ -1,5 +1,6 @@
 ﻿namespace KVA.Cinema.Models.ViewModels.Video
 {
+    using KVA.Cinema.Models.ViewModels.Tag;
     using Microsoft.AspNetCore.Http;
     using System;
     using System.Collections.Generic;
@@ -57,5 +58,14 @@
 
         [Display(Name = "Genres")]
         public IEnumerable<Entities.Genre> Genres { get; set; }
+
+        [Display(Name = "Tags")]
+        public string TagsNames => string.Join(", ", Tags.Select(x => x.Text));
+
+        [Display(Name = "Tags")]
+        public IEnumerable<Entities.Tag> Tags { get; set; }
+
+        [Display(Name = "Tags")]
+        public IEnumerable<TagDisplayViewModel> TagsViewModels { get; set; }
     }
 }

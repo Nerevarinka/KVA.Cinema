@@ -54,6 +54,13 @@
                     @Html.LabelFor(model => model.Description)
                     @Html.DisplayFor(model => model.Description, additionalViewData: new { @class = "form-control" })
                 </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TagsViewModels)
+                    @foreach (var tagDisplayViewModel in Model.TagsViewModels)
+                    {
+                        @Html.DisplayFor(model => tagDisplayViewModel, "_TagColor")
+                    }
+                </div>
             </div>
 
             <div>

@@ -52,7 +52,9 @@
                 PegiId = x.PegiId,
                 LanguageId = x.LanguageId,
                 DirectorId = x.DirectorId,
-                Genres = x.Genres
+                Genres = x.Genres,
+                Tags = x.Tags,
+                TagsViewModels = x.Tags.Select(x => new Models.ViewModels.Tag.TagDisplayViewModel() { Text = x.Text, Color = x.Color })
             });
         }
 
@@ -75,7 +77,9 @@
                 PegiName = x.Pegi.Type.ToString() + "+",
                 LanguageName = x.Language.Name,
                 DirectorName = x.Director.Name,
-                Genres = x.Genres
+                Genres = x.Genres,
+                Tags = x.Tags,
+                TagsViewModels = x.Tags.Select(x => new Models.ViewModels.Tag.TagDisplayViewModel() { Text = x.Text, Color = x.Color })
             }).ToList();
         }
 
@@ -137,7 +141,8 @@
                 PegiId = videoData.PegiId,
                 LanguageId = videoData.LanguageId,
                 DirectorId = videoData.DirectorId,
-                Genres = videoData.Genres.ToList() 
+                Genres = videoData.Genres.ToList(),
+                Tags = videoData.Tags?.ToList()
             };
 
             Context.Videos.Add(newVideo);
@@ -187,7 +192,7 @@
                 throw new ArgumentNullException("One or more required fields have no value");
             }
 
-            Video video = Context.Videos.Include(x => x.Genres).FirstOrDefault(x => x.Id == videoId);
+            Video video = Context.Videos.Include(x => x.Genres).Include(x => x.Tags).FirstOrDefault(x => x.Id == videoId);
 
             if (video == default)
             {
@@ -239,6 +244,7 @@
             }
 
             newVideoData.GenresIds ??= Enumerable.Empty<Guid>();
+            newVideoData.TagsIds ??= Enumerable.Empty<Guid>();
 
             video.Title = newVideoData.Name;
             video.Description = newVideoData.Description;
@@ -250,6 +256,7 @@
             video.LanguageId = newVideoData.LanguageId;
             video.DirectorId = newVideoData.DirectorId;
             video.Genres = Context.Genres.Where(x => newVideoData.GenresIds.Contains(x.Id)).ToList();
+            video.Tags = Context.Tags.Where(x => newVideoData.TagsIds.Contains(x.Id)).ToList();
 
             Context.SaveChanges();
 
@@ -273,7 +280,7 @@
 
             return video != default;
         }
-        
+
         private string SaveFile(IFormFile file, string destinationFolderName)
         {
             if (file == null || string.IsNullOrWhiteSpace(destinationFolderName))

@@ -35,7 +35,6 @@
 
             return tags.Select(x => new TagCreateViewModel()
             {
-                Id = x.Id,
                 Text = x.Text,
                 Color = x.Color
             });
@@ -106,7 +105,7 @@
 
         public void Update(Guid id, TagEditViewModel newTagData)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(id, newTagData.Text, newTagData.Color))
+            if (CheckUtilities.ContainsNullOrEmptyValue(id, newTagData, newTagData.Text, newTagData.Color))
             {
                 throw new ArgumentNullException("One or more parameter has no value");
             }

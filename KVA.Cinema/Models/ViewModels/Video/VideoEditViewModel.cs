@@ -4,7 +4,6 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using System.Linq;
 
     public class VideoEditViewModel
     {
@@ -57,5 +56,8 @@
         [Required(ErrorMessage = "Required field")]
         [Display(Name = "Genres (at least one)")]
         public IEnumerable<Guid> GenresIds { get; set; }
+
+        [Display(Name = "Tags (at least one)")]
+        public IEnumerable<Guid> TagsIds { get; set; }
     }
 }
