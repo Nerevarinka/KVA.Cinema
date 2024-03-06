@@ -1,13 +1,13 @@
 ﻿namespace KVA.Cinema.Models.ViewModels.Video
 {
+    using KVA.Cinema.Models.ViewModels.Tag;
     using Microsoft.AspNetCore.Http;
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
     public class VideoCreateViewModel
     {
-        public Guid Id { get; set; }
-
         [Required(ErrorMessage = "Required field")]
         [StringLength(128, ErrorMessage = "Title length cannot be more than 128 symbols")]
         [Display(Name = "Title")]
@@ -37,8 +37,6 @@
         [Display(Name = "Poster (max 25 MB)")]
         public IFormFile Preview { get; set; }
 
-        public string PreviewFileName { get; set; }
-
         [Required(ErrorMessage = "Required field")]
         [Display(Name = "PEGI")]
         public Guid PegiId { get; set; }
@@ -51,8 +49,14 @@
         [Display(Name = "Director")]
         public Guid DirectorId { get; set; }
 
-        //[Required(ErrorMessage = "Required field")]
-        //[Display(Name = "Genres")]
-        //public Guid GenresId { get; set; }
+        [Required(ErrorMessage = "Required field")]
+        [Display(Name = "Genres (at least one)")]
+        public IEnumerable<Entities.Genre> Genres { get; set; }
+
+        [Display(Name = "Tags")]
+        public IEnumerable<Entities.Tag> Tags { get; set; }
+
+        [Display(Name = "Tags")]
+        public IEnumerable<TagDisplayViewModel> TagsViewModels { get; set; }
     }
 }

@@ -41,8 +41,6 @@
 
         public virtual Language Language { get; set; }
 
-        public virtual ICollection<ObjectsTag> ObjectsTags { get; set; }
-
         public virtual Pegi Pegi { get; set; }
 
         public virtual ICollection<Review> Reviews { get; set; }
@@ -55,7 +53,9 @@
 
         //public virtual Video PreviousPart { get; set; }
 
-        public virtual ICollection<VideoGenre> VideoGenres { get; set; }
+        public virtual ICollection<Genre> Genres { get; set; }
+
+        public virtual ICollection<Tag> Tags { get; set; }
 
         public virtual ICollection<VideoInSubscription> VideoInSubscriptions { get; set; }
 
@@ -65,11 +65,11 @@
         {
             Comments = new HashSet<Comment>();
             Frames = new HashSet<Frame>();
-            ObjectsTags = new HashSet<ObjectsTag>();
             Reviews = new HashSet<Review>();
             Subtitles = new HashSet<Subtitle>();
             //Video1 = new HashSet<Video>();
-            VideoGenres = new HashSet<VideoGenre>();
+            Genres = new HashSet<Genre>();
+            Tags = new HashSet<Tag>();
             VideoInSubscriptions = new HashSet<VideoInSubscription>();
             VideoRates = new HashSet<VideoRate>();
         }

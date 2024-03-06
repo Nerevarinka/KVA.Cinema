@@ -4,14 +4,16 @@ using KVA.Cinema.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace KVA.Cinema.Migrations
 {
     [DbContext(typeof(CinemaContext))]
-    partial class CinemaContextModelSnapshot : ModelSnapshot
+    [Migration("20240301185738_UpdateVideoGenreRelation")]
+    partial class UpdateVideoGenreRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -157,6 +159,32 @@ namespace KVA.Cinema.Migrations
                     b.ToTable("Languages");
                 });
 
+            modelBuilder.Entity("KVA.Cinema.Models.Entities.ObjectsTag", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SubscriptionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TagId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("VideoId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubscriptionId");
+
+                    b.HasIndex("TagId");
+
+                    b.HasIndex("VideoId");
+
+                    b.ToTable("ObjectsTags");
+                });
+
             modelBuilder.Entity("KVA.Cinema.Models.Entities.Pegi", b =>
                 {
                     b.Property<Guid>("Id")
@@ -282,15 +310,10 @@ namespace KVA.Cinema.Migrations
                     b.Property<string>("Color")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("SubscriptionId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Text")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("SubscriptionId");
 
                     b.ToTable("Tags");
                 });
@@ -684,21 +707,6 @@ namespace KVA.Cinema.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("TagVideo", b =>
-                {
-                    b.Property<Guid>("TagsId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("VideosId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("TagsId", "VideosId");
-
-                    b.HasIndex("VideosId");
-
-                    b.ToTable("TagVideo");
-                });
-
             modelBuilder.Entity("GenreVideo", b =>
                 {
                     b.HasOne("KVA.Cinema.Models.Entities.Genre", null)
@@ -763,6 +771,29 @@ namespace KVA.Cinema.Migrations
                     b.Navigation("Video");
                 });
 
+            modelBuilder.Entity("KVA.Cinema.Models.Entities.ObjectsTag", b =>
+                {
+                    b.HasOne("KVA.Cinema.Models.Entities.Subscription", "Subscription")
+                        .WithMany("ObjectsTags")
+                        .HasForeignKey("SubscriptionId");
+
+                    b.HasOne("KVA.Cinema.Models.Entities.Tag", "Tag")
+                        .WithMany("ObjectsTags")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("KVA.Cinema.Models.Entities.Video", "Video")
+                        .WithMany("ObjectsTags")
+                        .HasForeignKey("VideoId");
+
+                    b.Navigation("Subscription");
+
+                    b.Navigation("Tag");
+
+                    b.Navigation("Video");
+                });
+
             modelBuilder.Entity("KVA.Cinema.Models.Entities.Review", b =>
                 {
                     b.HasOne("KVA.Cinema.Models.Entities.User", "User")
@@ -810,13 +841,6 @@ namespace KVA.Cinema.Migrations
                     b.Navigation("Language");
 
                     b.Navigation("Video");
-                });
-
-            modelBuilder.Entity("KVA.Cinema.Models.Entities.Tag", b =>
-                {
-                    b.HasOne("KVA.Cinema.Models.Entities.Subscription", null)
-                        .WithMany("Tags")
-                        .HasForeignKey("SubscriptionId");
                 });
 
             modelBuilder.Entity("KVA.Cinema.Models.Entities.UserSubscription", b =>
@@ -962,21 +986,6 @@ namespace KVA.Cinema.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TagVideo", b =>
-                {
-                    b.HasOne("KVA.Cinema.Models.Entities.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("KVA.Cinema.Models.Entities.Video", null)
-                        .WithMany()
-                        .HasForeignKey("VideosId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("KVA.Cinema.Models.Entities.Comment", b =>
                 {
                     b.Navigation("CommentMarks");
@@ -1006,7 +1015,7 @@ namespace KVA.Cinema.Migrations
 
             modelBuilder.Entity("KVA.Cinema.Models.Entities.Subscription", b =>
                 {
-                    b.Navigation("Tags");
+                    b.Navigation("ObjectsTags");
 
                     b.Navigation("UserSubscriptions");
 
@@ -1016,6 +1025,11 @@ namespace KVA.Cinema.Migrations
             modelBuilder.Entity("KVA.Cinema.Models.Entities.SubscriptionLevel", b =>
                 {
                     b.Navigation("Subscriptions");
+                });
+
+            modelBuilder.Entity("KVA.Cinema.Models.Entities.Tag", b =>
+                {
+                    b.Navigation("ObjectsTags");
                 });
 
             modelBuilder.Entity("KVA.Cinema.Models.Entities.User", b =>
@@ -1036,6 +1050,8 @@ namespace KVA.Cinema.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("Frames");
+
+                    b.Navigation("ObjectsTags");
 
                     b.Navigation("Reviews");
 

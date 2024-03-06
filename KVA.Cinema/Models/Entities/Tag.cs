@@ -11,11 +11,11 @@
 
         public string Color { get; set; }
 
-        public virtual ICollection<ObjectsTag> ObjectsTags { get; set; }
+        public virtual ICollection<Video> Videos { get; set; }
 
         public Tag()
         {
-            ObjectsTags = new HashSet<ObjectsTag>();
+            Videos = new HashSet<Video>();
         }
     }
 }

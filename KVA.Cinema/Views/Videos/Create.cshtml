@@ -16,6 +16,7 @@
 
     <fieldset>
         <legend>Video</legend>
+
         <div style="display:flex">
             <div>
                 <div class="form-group">
@@ -37,13 +38,13 @@
                     @Html.LabelFor(model => model.Preview)
                     @Html.TextBoxFor(model => model.Preview, new { type = "file", accept = "image/*", id = "imgInp" })
                     @Html.ValidationMessageFor(model => model.Preview)
-                    <input type="button" id="reset_button" value="Reset"/>
+                    <input type="button" id="reset_button" value="Reset" />
                 </div>
-                @*<div class="form-group">
-                        @Html.LabelFor(model => model.GenresId)
-                        @Html.DropDownListFor(model => model.GenresId, ViewBag.GenresId as SelectList)
-                        @Html.ValidationMessageFor(model => model.GenresId)
-                    </div>*@
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Genres)
+                    @Html.ListBoxFor(model => model.Genres, ViewBag.GenresIds as SelectList, new { multiple = "multiple", @id = "multiple-select-clear-field-genres", @name = "GenresId", @class = "form-select", @data_placeholder = "Genres" })
+                    @Html.ValidationMessageFor(model => model.Genres)
+                </div>
                 <div class="form-group">
                     @Html.LabelFor(model => model.DirectorId)
                     @Html.DropDownListFor(model => model.DirectorId, ViewBag.DirectorId as SelectList)
@@ -68,6 +69,11 @@
                     @Html.LabelFor(model => model.Description)
                     @Html.EditorFor(model => model.Description, additionalViewData: new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.Description)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Tags)
+                    @Html.ListBoxFor(model => model.Tags, ViewBag.TagsIds as SelectList, new { multiple = "multiple", @id = "multiple-select-clear-field-tags", @name = "TagsId", @class = "form-select", @data_placeholder = "Tags" })
+                    @Html.ValidationMessageFor(model => model.Tags)
                 </div>
             </div>
 
@@ -127,5 +133,15 @@
         }
 
         reset_button.onclick = resetImage;
+
+        $(document).ready(function () {
+            $('#multiple-select-clear-field-genres, #multiple-select-clear-field-tags').select2({
+                theme: "bootstrap-5",
+                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+                placeholder: $(this).data('placeholder'),
+                closeOnSelect: false,
+                allowClear: true,
+            });
+        });  
     </script>
 }

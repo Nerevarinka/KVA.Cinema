@@ -41,11 +41,11 @@
                     <input type="button" id="reset_button" value="Reset" />
                     @Html.HiddenFor(model => model.IsResetPreviewButtonClicked, new { id = "isResetClicked", value = false })
                 </div>
-                @*<div class="form-group">
-                        @Html.LabelFor(model => model.GenresId)
-                        @Html.DropDownListFor(model => model.GenresId, ViewBag.GenresId as SelectList)
-                        @Html.ValidationMessageFor(model => model.GenresId)
-                    </div>*@
+                <div class="form-group">
+                    @Html.LabelFor(model => model.GenresIds)
+                    @Html.ListBoxFor(model => model.GenresIds, ViewBag.GenresIds as SelectList, new { multiple = "multiple", @id = "multiple-select-clear-field-genres", @name = "GenresId", @class = "form-select", @data_placeholder = "Genres" })
+                    @Html.ValidationMessageFor(model => model.GenresIds)
+                </div>
                 <div class="form-group">
                     @Html.LabelFor(model => model.DirectorId)
                     @Html.DropDownListFor(model => model.DirectorId, ViewBag.DirectorId as SelectList)
@@ -70,6 +70,11 @@
                     @Html.LabelFor(model => model.Description)
                     @Html.EditorFor(model => model.Description, additionalViewData: new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.Description)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TagsIds)
+                    @Html.ListBoxFor(model => model.TagsIds, ViewBag.TagsIds as SelectList, new { multiple = "multiple", @id = "multiple-select-clear-field-tags", @name = "TagsId", @class = "form-select", @data_placeholder = "Tags" })
+                    @Html.ValidationMessageFor(model => model.TagsIds)
                 </div>
             </div>
 
@@ -97,8 +102,6 @@
 
     <script type="text/javascript">
         const MAX_FILE_SIZE = 25_000_000; // bytes
-
-        // number, string, boolean, Array, object, function, undefined, null
 
         function onFileSelect() {
             if (imgInp.files.length > 0) {
@@ -137,6 +140,16 @@
         }
 
         reset_button.onclick = resetImage;
+
+        $(document).ready(function () {
+            $('#multiple-select-clear-field-genres, #multiple-select-clear-field-tags').select2({
+                theme: "bootstrap-5",
+                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+                placeholder: $(this).data('placeholder'),
+                closeOnSelect: false,
+                allowClear: true,
+            });
+        });
     </script>
 }
 

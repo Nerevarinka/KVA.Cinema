@@ -9,11 +9,11 @@
 
         public string Title { get; set; }
 
-        public virtual ICollection<VideoGenre> VideoGenres { get; set; }
+        public virtual ICollection<Video> Videos { get; set; }
 
         public Genre()
         {
-            VideoGenres = new HashSet<VideoGenre>();
+            Videos = new HashSet<Video>();
         }
     }
 }

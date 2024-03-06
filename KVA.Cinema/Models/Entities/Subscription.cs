@@ -23,7 +23,7 @@
 
         public virtual SubscriptionLevel Level { get; set; }
 
-        public virtual ICollection<ObjectsTag> ObjectsTags { get; set; }
+        public virtual ICollection<Tag> Tags { get; set; }
 
         public virtual ICollection<UserSubscription> UserSubscriptions { get; set; }
 
@@ -31,7 +31,7 @@
 
         public Subscription()
         {
-            ObjectsTags = new HashSet<ObjectsTag>();
+            Tags = new HashSet<Tag>();
             UserSubscriptions = new HashSet<UserSubscription>();
             VideoInSubscriptions = new HashSet<VideoInSubscription>();
         }
