@@ -25,14 +25,14 @@
 
         public virtual ICollection<Tag> Tags { get; set; }
 
-        public virtual ICollection<User> Users { get; set; }
+        public virtual ICollection<UserSubscription> UserSubscriptions { get; set; }
 
         public virtual ICollection<VideoInSubscription> VideoInSubscriptions { get; set; }
 
         public Subscription()
         {
             Tags = new HashSet<Tag>();
-            Users = new HashSet<User>();
+            UserSubscriptions = new HashSet<UserSubscription>();
             VideoInSubscriptions = new HashSet<VideoInSubscription>();
         }
     }

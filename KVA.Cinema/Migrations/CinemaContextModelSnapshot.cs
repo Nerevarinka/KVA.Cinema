@@ -684,21 +684,6 @@ namespace KVA.Cinema.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("SubscriptionUser", b =>
-                {
-                    b.Property<Guid>("SubscriptionsId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("UsersId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("SubscriptionsId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("SubscriptionUser");
-                });
-
             modelBuilder.Entity("TagVideo", b =>
                 {
                     b.Property<Guid>("TagsId")
@@ -837,13 +822,13 @@ namespace KVA.Cinema.Migrations
             modelBuilder.Entity("KVA.Cinema.Models.Entities.UserSubscription", b =>
                 {
                     b.HasOne("KVA.Cinema.Models.Entities.Subscription", "Subscription")
-                        .WithMany()
+                        .WithMany("UserSubscriptions")
                         .HasForeignKey("SubscriptionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("KVA.Cinema.Models.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("UserSubscriptions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -977,21 +962,6 @@ namespace KVA.Cinema.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SubscriptionUser", b =>
-                {
-                    b.HasOne("KVA.Cinema.Models.Entities.Subscription", null)
-                        .WithMany()
-                        .HasForeignKey("SubscriptionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("KVA.Cinema.Models.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("TagVideo", b =>
                 {
                     b.HasOne("KVA.Cinema.Models.Entities.Tag", null)
@@ -1038,6 +1008,8 @@ namespace KVA.Cinema.Migrations
                 {
                     b.Navigation("Tags");
 
+                    b.Navigation("UserSubscriptions");
+
                     b.Navigation("VideoInSubscriptions");
                 });
 
@@ -1053,6 +1025,8 @@ namespace KVA.Cinema.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("Reviews");
+
+                    b.Navigation("UserSubscriptions");
 
                     b.Navigation("VideoRates");
                 });

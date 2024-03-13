@@ -30,7 +30,7 @@
 
         public virtual ICollection<Review> Reviews { get; set; }
 
-        public virtual ICollection<Subscription> Subscriptions { get; set; }
+        public virtual ICollection<UserSubscription> UserSubscriptions { get; set; }
 
         public virtual ICollection<VideoRate> VideoRates { get; set; }
 
@@ -39,7 +39,7 @@
             Comments = new HashSet<Comment>();
             CommentMarks = new HashSet<CommentMark>();
             Reviews = new HashSet<Review>();
-            Subscriptions = new HashSet<Subscription>();
+            UserSubscriptions = new HashSet<UserSubscription>();
             VideoRates = new HashSet<VideoRate>();
         }
     }
