@@ -18,17 +18,33 @@ namespace KVA.Cinema.Controllers
 
         private SubscriptionLevelService SubscriptionLevelService { get; set; }
 
-        public SubscriptionsController(SubscriptionService subscriptionService, SubscriptionLevelService subscriptionLevelService)
+        private UserService UserService { get; set; }
+
+        public SubscriptionsController(SubscriptionService subscriptionService, SubscriptionLevelService subscriptionLevelService, UserService userService)
         {
             SubscriptionService = subscriptionService;
             SubscriptionLevelService = subscriptionLevelService;
+            UserService = userService;
         }
 
         // GET: Subscriptions
         public IActionResult Index()
         {
-            var data = SubscriptionService.ReadAll();
-            return View(data);
+            var subscriptions = SubscriptionService.ReadAll();
+
+            var user = UserService.ReadAll().FirstOrDefault(m => m.Nickname == User.Identity.Name);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            foreach (var subscription in subscriptions)
+            {
+                subscription.IsPurchasedByCurrentUser = user.Subscriptions.Any(m => m.Id == subscription.Id);
+            }
+
+            return View(subscriptions);
         }
 
         // GET: Subscriptions/Details/5

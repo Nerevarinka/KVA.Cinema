@@ -47,5 +47,8 @@
         [DataType(DataType.Date)]
         [Display(Name = "Available to buy until")]
         public DateTime AvailableUntil { get; set; }
+
+        [Display(Name = "Users")]
+        public IEnumerable<User> Users { get; set; }
     }
 }

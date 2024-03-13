@@ -12,6 +12,7 @@ using KVA.Cinema.Services;
 using KVA.Cinema.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using KVA.Cinema.Models.ViewModels.User;
+using KVA.Cinema.Models.ViewModels.Subscription;
 
 namespace KVA.Cinema.Controllers    //TODO: replace NotFound()
 {
@@ -108,7 +109,7 @@ namespace KVA.Cinema.Controllers    //TODO: replace NotFound()
                 Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                Nickname=user.Nickname,
+                Nickname = user.Nickname,
                 BirthDate = user.BirthDate,
                 Email = user.Email
             };
@@ -215,6 +216,45 @@ namespace KVA.Cinema.Controllers    //TODO: replace NotFound()
             // удаляем аутентификационные куки
             await UserService.SignInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet, HttpPost]
+        //[ValidateAntiForgeryToken]
+        public IActionResult BuySubscription(Guid subscriptionId)
+        {
+            var user = UserService.ReadAll()
+                .FirstOrDefault(m => m.Nickname == User.Identity.Name);
+
+            try
+            {
+                UserService.AddSubscription(user.Nickname, subscriptionId);
+                return RedirectToAction(nameof(Index), "Subscriptions");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+            }
+
+            return RedirectToAction(nameof(Index), "Subscriptions");
+        }
+
+        [ValidateAntiForgeryToken]
+        public IActionResult CancelSubscription(Guid subscriptionId)
+        {
+            var user = UserService.ReadAll()
+                .FirstOrDefault(m => m.Nickname == User.Identity.Name);
+
+            try
+            {
+                UserService.RemoveSubscription(user.Nickname, subscriptionId);
+                return RedirectToAction(nameof(Index), "Subscriptions");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+            }
+
+            return RedirectToAction(nameof(Index), "Subscriptions");
         }
 
         private bool UserExists(Guid id)

@@ -49,7 +49,6 @@ namespace KVA.Cinema
             services.AddTransient<GenreService>();
             services.AddTransient<SubscriptionLevelService>();
             services.AddTransient<SubscriptionService>();
-            services.AddTransient<UserSubscriptionService>();
             services.AddTransient<PegiService>();
             services.AddTransient<LanguageService>();
             services.AddTransient<TagService>();

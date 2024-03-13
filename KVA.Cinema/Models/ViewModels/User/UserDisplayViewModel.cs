@@ -1,6 +1,7 @@
 ﻿namespace KVA.Cinema.Models.User
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
     /// <summary>
@@ -26,5 +27,8 @@
 
         [Display(Name = "Email")]
         public string Email { get; set; }
+
+        [Display(Name = "Subscriptions")]
+        public IEnumerable<Entities.Subscription> Subscriptions { get; set; }
     }
 }

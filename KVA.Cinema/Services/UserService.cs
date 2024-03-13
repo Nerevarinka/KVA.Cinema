@@ -4,7 +4,6 @@
     using KVA.Cinema.Models;
     using KVA.Cinema.Models.Entities;
     using KVA.Cinema.Models.User;
-    using KVA.Cinema.Models.UserSubscription;
     using KVA.Cinema.Models.ViewModels.User;
     using KVA.Cinema.Utilities;
     using Microsoft.AspNetCore.Identity;
@@ -92,17 +91,16 @@
 
         public IEnumerable<UserDisplayViewModel> ReadAll()
         {
-            List<User> users = Context.Users.ToList();
-
-            return users.Select(x => new UserDisplayViewModel()
+            return Context.Users.Select(x => new UserDisplayViewModel()
             {
                 Id = x.Id,
                 FirstName = x.FirstName,
                 LastName = x.LastName,
                 Nickname = x.Nickname,
                 BirthDate = x.BirthDate,
-                Email = x.Email
-            });
+                Email = x.Email,
+                Subscriptions = x.Subscriptions
+            }).ToList();
         }
 
         /// <summary>
@@ -284,18 +282,18 @@
             Context.SaveChanges();
         }
 
-        public void AddSubscription(Guid userId, Guid subscriptionId)
+        public void AddSubscription(string nickname, Guid subscriptionId)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(userId, subscriptionId))
+            if (CheckUtilities.ContainsNullOrEmptyValue(nickname, subscriptionId))
             {
                 throw new ArgumentNullException("Id has no value");
             }
 
-            User user = Context.Users.FirstOrDefault(x => x.Id == userId);
+            User user = Context.Users.FirstOrDefault(x => x.UserName == nickname);
 
             if (user == default)
             {
-                throw new EntityNotFoundException($"User with Id \"{userId}\" not found");
+                throw new EntityNotFoundException($"User \"{nickname}\" not found");
             }
 
             Subscription subscription = Context.Subscriptions.FirstOrDefault(x => x.Id == subscriptionId);
@@ -315,18 +313,18 @@
             Context.SaveChanges();
         }
 
-        public void RemoveSubscription(Guid userId, Guid subscriptionId)
+        public void RemoveSubscription(string nickname, Guid subscriptionId)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(userId, subscriptionId))
+            if (CheckUtilities.ContainsNullOrEmptyValue(nickname, subscriptionId))
             {
                 throw new ArgumentNullException("Id has no value");
             }
 
-            User user = Context.Users.FirstOrDefault(x => x.Id == userId);
+            User user = Context.Users.FirstOrDefault(x => x.Nickname == nickname);
 
             if (user == default)
             {
-                throw new EntityNotFoundException($"User with Id \"{userId}\" not found");
+                throw new EntityNotFoundException($"User \"{nickname}\" not found");
             }
 
             Subscription subscription = Context.Subscriptions.FirstOrDefault(x => x.Id == subscriptionId);

@@ -34,5 +34,7 @@
         [DataType(DataType.Date)]
         [Display(Name = "Available to buy until")]
         public DateTime AvailableUntil { get; set; }
+
+        public bool IsPurchasedByCurrentUser { get; set; }
     }
 }

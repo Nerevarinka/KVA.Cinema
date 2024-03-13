@@ -1,6 +1,7 @@
 ﻿namespace KVA.Cinema.Models.User
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using KVA.Cinema.Attributes;
 
@@ -53,5 +54,8 @@
         [DataType(DataType.Password)]
         [Display(Name = "Repeat password")]
         public string PasswordConfirm { get; set; }
+
+        [Display(Name = "Subscriptions")]
+        public IEnumerable<Entities.Subscription> Subscriptions { get; set; }
     }
 }
