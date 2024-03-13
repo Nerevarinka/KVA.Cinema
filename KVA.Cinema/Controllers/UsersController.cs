@@ -20,9 +20,12 @@ namespace KVA.Cinema.Controllers    //TODO: replace NotFound()
     {
         private UserService UserService { get; }
 
-        public UsersController(UserService userService)
+        private SubscriptionService SubscriptionService { get; }
+
+        public UsersController(UserService userService, SubscriptionService subscriptionService)
         {
             UserService = userService;
+            SubscriptionService = subscriptionService;
         }
 
         // GET: Users
@@ -218,9 +221,29 @@ namespace KVA.Cinema.Controllers    //TODO: replace NotFound()
             return RedirectToAction("Index", "Home");
         }
 
-        [HttpGet, HttpPost]
+        [HttpGet]
         //[ValidateAntiForgeryToken]
-        public IActionResult BuySubscription(Guid subscriptionId)
+        public IActionResult BuySubscription(Guid? subscriptionId)
+        {
+            if (subscriptionId == null)
+            {
+                return NotFound();
+            }
+
+            var subscription = SubscriptionService.ReadAll()
+                .FirstOrDefault(m => m.Id == subscriptionId);
+
+            if (subscription == null)
+            {
+                return NotFound();
+            }
+
+            return View(subscription);
+        }
+
+        [HttpPost, ActionName("BuySubscription")]
+        [ValidateAntiForgeryToken]
+        public IActionResult BuySubscriptionConfirmed(Guid subscriptionId)
         {
             var user = UserService.ReadAll()
                 .FirstOrDefault(m => m.Nickname == User.Identity.Name);

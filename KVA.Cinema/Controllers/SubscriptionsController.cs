@@ -32,6 +32,11 @@ namespace KVA.Cinema.Controllers
         {
             var subscriptions = SubscriptionService.ReadAll();
 
+            if (!User.Identity.IsAuthenticated)
+            {
+                return View(subscriptions);
+            }
+
             var user = UserService.ReadAll().FirstOrDefault(m => m.Nickname == User.Identity.Name);
 
             if (user == null)
