@@ -192,7 +192,7 @@
                 throw new ArgumentNullException("One or more required fields have no value");
             }
 
-            Video video = Context.Videos.Include(x => x.Genres).Include(x => x.Tags).FirstOrDefault(x => x.Id == videoId);
+            Video video = Context.Videos.FirstOrDefault(x => x.Id == videoId);
 
             if (video == default)
             {

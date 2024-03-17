@@ -24,9 +24,6 @@ namespace KVA.Cinema
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<CinemaContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
             services.AddIdentity<User, IdentityRole<Guid>>(options =>
             {
                 options.Password.RequireNonAlphanumeric = false;
