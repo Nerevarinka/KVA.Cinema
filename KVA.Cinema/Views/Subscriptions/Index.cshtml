@@ -52,6 +52,7 @@
                     {
                         if (item.IsPurchasedByCurrentUser)
                         {
+                            @Html.ActionLink("Cancel", "CancelSubscription", "Users", new { subscriptionId = item.Id }, new { @class = "btn btn-primary", @title = "Cancel subscription" })
                             @Html.ActionLink("Buy", "", new { subscriptionId = item.Id }, new { @class = "btn btn-secondary disabled", @title = "You are already have this subscription" })
                         }
                         else

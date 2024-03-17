@@ -230,8 +230,7 @@ namespace KVA.Cinema.Controllers    //TODO: replace NotFound()
                 return NotFound();
             }
 
-            var subscription = SubscriptionService.ReadAll()
-                .FirstOrDefault(m => m.Id == subscriptionId);
+            var subscription = SubscriptionService.Read(subscriptionId.Value);
 
             if (subscription == null)
             {
@@ -258,11 +257,32 @@ namespace KVA.Cinema.Controllers    //TODO: replace NotFound()
                 ModelState.AddModelError(string.Empty, ex.Message);
             }
 
-            return RedirectToAction(nameof(Index), "Subscriptions");
+            var subscription = SubscriptionService.Read(subscriptionId);
+
+            return View(subscription);
         }
 
+        [HttpGet]
+        public IActionResult CancelSubscription(Guid? subscriptionId)
+        {
+            if (subscriptionId == null)
+            {
+                return NotFound();
+            }
+
+            var subscription = SubscriptionService.Read(subscriptionId.Value);
+
+            if (subscription == null)
+            {
+                return NotFound();
+            }
+
+            return View(subscription);
+        }
+
+        [HttpPost, ActionName("CancelSubscription")]
         [ValidateAntiForgeryToken]
-        public IActionResult CancelSubscription(Guid subscriptionId)
+        public IActionResult CancelSubscriptionConfirmed(Guid subscriptionId)
         {
             var user = UserService.ReadAll()
                 .FirstOrDefault(m => m.Nickname == User.Identity.Name);
@@ -277,7 +297,9 @@ namespace KVA.Cinema.Controllers    //TODO: replace NotFound()
                 ModelState.AddModelError(string.Empty, ex.Message);
             }
 
-            return RedirectToAction(nameof(Index), "Subscriptions");
+            var subscription = SubscriptionService.Read(subscriptionId);
+
+            return View(subscription);
         }
 
         private bool UserExists(Guid id)

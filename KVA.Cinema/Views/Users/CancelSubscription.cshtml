@@ -1,13 +1,13 @@
 ﻿@model KVA.Cinema.Models.ViewModels.Subscription.SubscriptionDisplayViewModel
 
 @{
-    ViewData["Title"] = "BuySubscription";
+    ViewData["Title"] = "CancelSubscription";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <!DOCTYPE html>
 
-<h3>Are you sure you want to buy this subscription?</h3>
+<h3>Are you sure you want to cancel this subscription?</h3>
 
 @using (Html.BeginForm())
 {
@@ -46,7 +46,7 @@
 </fieldset>
 
     <p>
-        <input type="submit" value="Yes" class = "btn btn-success" /> | @Html.ActionLink("No", "Index", "Subscriptions", new { }, new { @class = "btn btn-outline-secondary" })
+        @Html.ActionLink("No", "Index", "Subscriptions", new { }, new { @class = "btn btn-success" }) | <input type="submit" value="Yes" class="btn btn-outline-danger" />
     </p>
 }
 

@@ -28,7 +28,6 @@
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-        [Display(Name = "Subscriptions")]
-        public IEnumerable<Entities.Subscription> Subscriptions { get; set; }
+        public IEnumerable<Guid> SubscriptionIds { get; set; }
     }
 }

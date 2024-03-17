@@ -76,9 +76,7 @@
 
         public IEnumerable<UserCreateViewModel> Read()
         {
-            List<User> users = Context.Users.ToList();
-
-            return users.Select(x => new UserCreateViewModel()
+            return Context.Users.Select(x => new UserCreateViewModel()
             {
                 Id = x.Id,
                 FirstName = x.FirstName,
@@ -86,21 +84,22 @@
                 Nickname = x.Nickname,
                 BirthDate = x.BirthDate,
                 Email = x.Email
-            });
+            }).ToList();
         }
 
         public IEnumerable<UserDisplayViewModel> ReadAll()
         {
-            return Context.Users.Select(x => new UserDisplayViewModel()
-            {
-                Id = x.Id,
-                FirstName = x.FirstName,
-                LastName = x.LastName,
-                Nickname = x.Nickname,
-                BirthDate = x.BirthDate,
-                Email = x.Email,
-                Subscriptions = x.Subscriptions
-            }).ToList();
+            return Context.Users
+                .Select(x => new UserDisplayViewModel()
+                {
+                    Id = x.Id,
+                    FirstName = x.FirstName,
+                    LastName = x.LastName,
+                    Nickname = x.Nickname,
+                    BirthDate = x.BirthDate,
+                    Email = x.Email,
+                    SubscriptionIds = x.UserSubscriptions.Select(x => x.SubscriptionId)
+                }).ToList();
         }
 
         /// <summary>
@@ -303,12 +302,22 @@
                 throw new EntityNotFoundException($"Subscription with Id \"{subscriptionId}\" not found");
             }
 
-            if (user.Subscriptions.Any(x => x.Id == subscription.Id))
+            if (user.UserSubscriptions.Any(x => x.SubscriptionId == subscription.Id))
             {
                 throw new DuplicatedEntityException("This subscription is already bought");
             }
 
-            user.Subscriptions.Add(subscription);
+            var activatedOn = DateTime.UtcNow;
+            var lastUntil = activatedOn.Date.AddDays(++subscription.Duration);
+
+            Context.UserSubscriptions.Add(new UserSubscription
+            {
+                Id = Guid.NewGuid(),
+                SubscriptionId = subscription.Id,
+                UserId = user.Id,
+                ActivatedOn = activatedOn,
+                LastUntil = lastUntil
+            });
 
             Context.SaveChanges();
         }
@@ -317,10 +326,10 @@
         {
             if (CheckUtilities.ContainsNullOrEmptyValue(nickname, subscriptionId))
             {
-                throw new ArgumentNullException("Id has no value");
+                throw new ArgumentNullException("One or more required fields have no value");
             }
 
-            User user = Context.Users.FirstOrDefault(x => x.Nickname == nickname);
+            User user = Context.Users.FirstOrDefault(x => x.UserName == nickname);
 
             if (user == default)
             {
@@ -334,12 +343,16 @@
                 throw new EntityNotFoundException($"Subscription with Id \"{subscriptionId}\" not found");
             }
 
-            if (!user.Subscriptions.Any(x => x.Id == subscription.Id))
+            if (!user.UserSubscriptions.Any(x => x.SubscriptionId == subscription.Id))
             {
                 throw new EntityNotFoundException("User doesn't have this subscription");
             }
 
-            user.Subscriptions.Remove(subscription);
+            var entity = user.UserSubscriptions.FirstOrDefault(x => x.SubscriptionId == subscription.Id);
+
+            Context.UserSubscriptions.Remove(entity);
+
+            Context.SaveChanges();// TODO
         }
 
         public bool IsEntityExist(Guid userId)
