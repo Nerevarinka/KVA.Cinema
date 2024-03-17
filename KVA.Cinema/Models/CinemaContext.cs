@@ -38,6 +38,8 @@ namespace KVA.Cinema.Models
 
         //public override DbSet<Entities.User> Users { get; set; }
 
+        public virtual DbSet<Entities.UserSubscription> UserSubscriptions { get; set; }
+
         public virtual DbSet<Video> Videos { get; set; }
 
         public virtual DbSet<VideoInSubscription> VideoInSubscriptions { get; set; }

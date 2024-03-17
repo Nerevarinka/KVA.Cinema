@@ -1,7 +1,7 @@
 ﻿namespace KVA.Cinema.Models.ViewModels.Subscription
 {
-    using KVA.Cinema.Models.Entities;
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
     public class SubscriptionCreateViewModel
@@ -45,5 +45,8 @@
         [DataType(DataType.Date)]
         [Display(Name = "Available to buy until")]
         public DateTime AvailableUntil { get; set; }
+
+        [Display(Name = "Videos")]
+        public IEnumerable<Guid> VideoIds { get; set; }
     }
 }

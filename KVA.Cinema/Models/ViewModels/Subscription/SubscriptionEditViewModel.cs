@@ -3,9 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using KVA.Cinema.Models.Entities;
 
     public class SubscriptionEditViewModel
     {
@@ -48,7 +45,7 @@
         [Display(Name = "Available to buy until")]
         public DateTime AvailableUntil { get; set; }
 
-        [Display(Name = "Users")]
-        public IEnumerable<User> Users { get; set; }
+        [Display(Name = "Videos")]
+        public IEnumerable<Guid> VideoIds { get; set; }
     }
 }

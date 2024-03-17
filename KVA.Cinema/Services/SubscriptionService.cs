@@ -23,9 +23,7 @@
 
         public IEnumerable<SubscriptionCreateViewModel> Read()
         {
-            List<Subscription> subscriptions = Context.Subscriptions.ToList(); //TODO: перенести ToList в return
-
-            return subscriptions.Select(x => new SubscriptionCreateViewModel()
+            return Context.Subscriptions.Select(x => new SubscriptionCreateViewModel()
             {
                 Id = x.Id,
                 Title = x.Title,
@@ -34,8 +32,30 @@
                 LevelId = x.LevelId,
                 ReleasedIn = x.ReleasedIn,
                 Duration = x.Duration,
-                AvailableUntil = x.AvailableUntil
-            });
+                AvailableUntil = x.AvailableUntil,
+            }).ToList();
+        } //TODO: remove
+
+        public SubscriptionDisplayViewModel Read(Guid subscriptionId)
+        {
+            if (CheckUtilities.ContainsNullOrEmptyValue(subscriptionId))
+            {
+                throw new ArgumentNullException("Id has no value");
+            }
+
+            return Context.Subscriptions.Select(x => new SubscriptionDisplayViewModel()
+            {
+                Id = x.Id,
+                Title = x.Title,
+                Description = x.Description,
+                Cost = x.Cost,
+                LevelId = x.LevelId,
+                ReleasedIn = x.ReleasedIn,
+                Duration = x.Duration,
+                AvailableUntil = x.AvailableUntil,
+                LevelName = x.Level.Title,
+                VideoNames = Context.VideoInSubscriptions.Where(y => y.SubscriptionId == subscriptionId).Select(x => x.Video.Title).ToList()
+            }).Where(x => x.Id == subscriptionId).First();
         }
 
         public IEnumerable<SubscriptionDisplayViewModel> ReadAll()
@@ -50,7 +70,9 @@
                 LevelName = x.Level.Title,
                 ReleasedIn = x.ReleasedIn,
                 Duration = x.Duration,
-                AvailableUntil = x.AvailableUntil
+                AvailableUntil = x.AvailableUntil,
+                VideosInSubscription = x.VideoInSubscriptions,
+                VideoNames = Context.VideoInSubscriptions.Where(y => y.SubscriptionId == x.Id).Select(x => x.Video.Title).ToList()
             }).ToList();
         }
 
@@ -93,6 +115,24 @@
                 Duration = subscriptionData.Duration,
                 AvailableUntil = subscriptionData.AvailableUntil
             };
+
+            if (subscriptionData.VideoIds != null)
+            {
+                List<VideoInSubscription> videoInSubscriptionList = new List<VideoInSubscription>();
+
+                foreach (var videoId in subscriptionData.VideoIds)
+                {
+                    videoInSubscriptionList.Add(new VideoInSubscription()
+                    {
+                        Id = Guid.NewGuid(),
+                        SubscriptionId = newSubscription.Id,
+                        VideoId = videoId
+                    });
+                }
+
+                newSubscription.VideoInSubscriptions = videoInSubscriptionList;
+                Context.VideoInSubscriptions.AddRange(videoInSubscriptionList);
+            }
 
             Context.Subscriptions.Add(newSubscription);
             Context.SaveChanges();
@@ -151,6 +191,29 @@
             if (Context.Subscriptions.FirstOrDefault(x => x.Title == subscriptionNewData.Title && x.Id != subscriptionNewData.Id) != default)
             {
                 throw new DuplicatedEntityException($"Subscription with title \"{subscriptionNewData.Title}\" is already exist");
+            }
+
+            List<VideoInSubscription> videoInSubscriptionList = Context.VideoInSubscriptions.Where(x => x.SubscriptionId == subscriptionNewData.Id).ToList();
+
+            var subscriptionNewDataVideoIds = subscriptionNewData.VideoIds;
+            var contextVideoIds = videoInSubscriptionList.Select(x => x.VideoId);
+
+            var recordsToDelete = videoInSubscriptionList.Where(x => !subscriptionNewDataVideoIds.Contains(x.VideoId));
+            var videoIdsToAdd = subscriptionNewData.VideoIds.Where(x => !contextVideoIds.Contains(x));
+
+            foreach (var record in recordsToDelete)
+            {
+                Context.VideoInSubscriptions.Remove(record);
+            }
+
+            foreach (var videoId in videoIdsToAdd)
+            {
+                Context.VideoInSubscriptions.Add(new VideoInSubscription()
+                {
+                    Id = Guid.NewGuid(),
+                    SubscriptionId = subscription.Id,
+                    VideoId = videoId
+                });
             }
 
             subscription.Title = subscriptionNewData.Title;

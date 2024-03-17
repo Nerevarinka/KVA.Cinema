@@ -52,6 +52,11 @@
             @Html.EditorFor(model => model.AvailableUntil, additionalViewData: new { @class = "form-control" })
             @Html.ValidationMessageFor(model => model.AvailableUntil)
         </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.VideoIds)
+            @Html.ListBoxFor(model => model.VideoIds, ViewBag.VideoIds as SelectList, new { multiple = "multiple", @id = "multiple-select-clear-field-videos", @name = "VideoIds", @class = "form-select", @data_placeholder = "Videos" })
+            @Html.ValidationMessageFor(model => model.VideoIds)
+        </div>
     </fieldset>
 
     <p>
@@ -62,4 +67,16 @@
 @section Scripts
 {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function () {
+            $('#multiple-select-clear-field-videos').select2({
+                theme: "bootstrap-5",
+                width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+                placeholder: $(this).data('placeholder'),
+                closeOnSelect: false,
+                allowClear: true,
+            });
+        });
+    </script>
 }

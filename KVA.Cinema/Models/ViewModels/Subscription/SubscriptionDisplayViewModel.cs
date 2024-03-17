@@ -1,6 +1,7 @@
 ﻿namespace KVA.Cinema.Models.ViewModels.Subscription
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using KVA.Cinema.Models.Entities;
 
@@ -36,5 +37,14 @@
         public DateTime AvailableUntil { get; set; }
 
         public bool IsPurchasedByCurrentUser { get; set; }
+
+        [Display(Name = "Videos")]
+        public IEnumerable<VideoInSubscription> VideosInSubscription { get; set; }
+
+        [Display(Name = "Videos")]
+        public IEnumerable<string> VideoNames { get; set; }
+
+        [Display(Name = "Available videos")]
+        public string VideoNamesInOneString => VideoNames == null ? string.Empty : string.Join(", ", VideoNames);
     }
 }
