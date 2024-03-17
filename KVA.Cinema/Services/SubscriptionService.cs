@@ -43,7 +43,7 @@
                 throw new ArgumentNullException("Id has no value");
             }
 
-            return Context.Subscriptions.Select(x => new SubscriptionDisplayViewModel()
+            return Context.Subscriptions.Where(x => x.Id == subscriptionId).Select(x => new SubscriptionDisplayViewModel()
             {
                 Id = x.Id,
                 Title = x.Title,
@@ -54,8 +54,8 @@
                 Duration = x.Duration,
                 AvailableUntil = x.AvailableUntil,
                 LevelName = x.Level.Title,
-                VideoNames = Context.VideoInSubscriptions.Where(y => y.SubscriptionId == subscriptionId).Select(x => x.Video.Title).ToList()
-            }).Where(x => x.Id == subscriptionId).First();
+                VideoNames = x.VideoInSubscriptions.Select(y => y.Video.Title)
+            }).FirstOrDefault();
         }
 
         public IEnumerable<SubscriptionDisplayViewModel> ReadAll()
@@ -72,7 +72,7 @@
                 Duration = x.Duration,
                 AvailableUntil = x.AvailableUntil,
                 VideosInSubscription = x.VideoInSubscriptions,
-                VideoNames = Context.VideoInSubscriptions.Where(y => y.SubscriptionId == x.Id).Select(x => x.Video.Title).ToList()
+                VideoNames = x.VideoInSubscriptions.Select(y => y.Video.Title)
             }).ToList();
         }
 
