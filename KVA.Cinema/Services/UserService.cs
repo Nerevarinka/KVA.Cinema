@@ -4,7 +4,6 @@
     using KVA.Cinema.Models;
     using KVA.Cinema.Models.Entities;
     using KVA.Cinema.Models.User;
-    using KVA.Cinema.Models.UserSubscription;
     using KVA.Cinema.Models.ViewModels.User;
     using KVA.Cinema.Utilities;
     using Microsoft.AspNetCore.Identity;
@@ -77,9 +76,7 @@
 
         public IEnumerable<UserCreateViewModel> Read()
         {
-            List<User> users = Context.Users.ToList();
-
-            return users.Select(x => new UserCreateViewModel()
+            return Context.Users.Select(x => new UserCreateViewModel()
             {
                 Id = x.Id,
                 FirstName = x.FirstName,
@@ -87,22 +84,22 @@
                 Nickname = x.Nickname,
                 BirthDate = x.BirthDate,
                 Email = x.Email
-            });
+            }).ToList();
         }
 
         public IEnumerable<UserDisplayViewModel> ReadAll()
         {
-            List<User> users = Context.Users.ToList();
-
-            return users.Select(x => new UserDisplayViewModel()
-            {
-                Id = x.Id,
-                FirstName = x.FirstName,
-                LastName = x.LastName,
-                Nickname = x.Nickname,
-                BirthDate = x.BirthDate,
-                Email = x.Email
-            });
+            return Context.Users
+                .Select(x => new UserDisplayViewModel()
+                {
+                    Id = x.Id,
+                    FirstName = x.FirstName,
+                    LastName = x.LastName,
+                    Nickname = x.Nickname,
+                    BirthDate = x.BirthDate,
+                    Email = x.Email,
+                    SubscriptionIds = x.UserSubscriptions.Select(x => x.SubscriptionId)
+                }).ToList();
         }
 
         /// <summary>
@@ -125,7 +122,7 @@
                 throw new ArgumentNullException("One or more required fields have no value");
             }
 
-            if (userData.BirthDate > DateTime.Now.AddYears(-AGE_MIN) || userData.BirthDate < DateTime.Now.AddYears(-AGE_MAX))
+            if (userData.BirthDate > DateTime.UtcNow.AddYears(-AGE_MIN) || userData.BirthDate < DateTime.UtcNow.AddYears(-AGE_MAX))
             {
                 throw new ArgumentException($"Age must be in {AGE_MIN}-{AGE_MAX}");
             }
@@ -179,8 +176,8 @@
                 Nickname = userData.Nickname,
                 BirthDate = userData.BirthDate,
                 Email = userData.Email,
-                RegisteredOn = DateTime.Now,
-                LastVisit = DateTime.Now,
+                RegisteredOn = DateTime.UtcNow,
+                LastVisit = DateTime.UtcNow,
                 IsActive = true
             };
 
@@ -221,7 +218,7 @@
                 throw new ArgumentNullException("One or more user's parameters have no value");
             }
 
-            if (userNewData.BirthDate > DateTime.Now.AddYears(-AGE_MIN))
+            if (userNewData.BirthDate > DateTime.UtcNow.AddYears(-AGE_MIN))
             {
                 throw new ArgumentException($"Age must not be less than {AGE_MIN}");
             }
@@ -284,18 +281,18 @@
             Context.SaveChanges();
         }
 
-        public void AddSubscription(Guid userId, Guid subscriptionId)
+        public void AddSubscription(string nickname, Guid subscriptionId)
         {
-            if (CheckUtilities.ContainsNullOrEmptyValue(userId, subscriptionId))
+            if (CheckUtilities.ContainsNullOrEmptyValue(nickname, subscriptionId))
             {
                 throw new ArgumentNullException("Id has no value");
             }
 
-            User user = Context.Users.FirstOrDefault(x => x.Id == userId);
+            User user = Context.Users.FirstOrDefault(x => x.UserName == nickname);
 
             if (user == default)
             {
-                throw new EntityNotFoundException($"User with Id \"{userId}\" not found");
+                throw new EntityNotFoundException($"User \"{nickname}\" not found");
             }
 
             Subscription subscription = Context.Subscriptions.FirstOrDefault(x => x.Id == subscriptionId);
@@ -305,33 +302,57 @@
                 throw new EntityNotFoundException($"Subscription with Id \"{subscriptionId}\" not found");
             }
 
-            new UserSubscriptionService(Context).CreateAsync(new UserSubscriptionCreateViewModel()
+            if (user.UserSubscriptions.Any(x => x.SubscriptionId == subscription.Id))
             {
-                Id = Guid.NewGuid(),
-                SubscriptionId = subscriptionId,
-                UserId = userId,
-                ActivatedOn = DateTime.Now,
-                LastUntil = DateTime.Now.AddYears(1)
-            });
-        }
-
-        public void RemoveSubscription(Guid userId, Guid subscriptionId)
-        {
-            if (CheckUtilities.ContainsNullOrEmptyValue(userId, subscriptionId))
-            {
-                throw new ArgumentNullException("Id has no value");
+                throw new DuplicatedEntityException("This subscription is already bought");
             }
 
-            User user = Context.Users.FirstOrDefault(x => x.Id == userId);
+            var activatedOn = DateTime.UtcNow;
+            var lastUntil = activatedOn.Date.AddDays(++subscription.Duration);
+
+            Context.UserSubscriptions.Add(new UserSubscription
+            {
+                Id = Guid.NewGuid(),
+                SubscriptionId = subscription.Id,
+                UserId = user.Id,
+                ActivatedOn = activatedOn,
+                LastUntil = lastUntil
+            });
+
+            Context.SaveChanges();
+        }
+
+        public void RemoveSubscription(string nickname, Guid subscriptionId)
+        {
+            if (CheckUtilities.ContainsNullOrEmptyValue(nickname, subscriptionId))
+            {
+                throw new ArgumentNullException("One or more required fields have no value");
+            }
+
+            User user = Context.Users.FirstOrDefault(x => x.UserName == nickname);
 
             if (user == default)
             {
-                throw new EntityNotFoundException($"User with Id \"{userId}\" not found");
+                throw new EntityNotFoundException($"User \"{nickname}\" not found");
             }
 
-            UserSubscription userSubscription = Context.UserSubscriptions.FirstOrDefault(x => x.SubscriptionId == subscriptionId);
+            Subscription subscription = Context.Subscriptions.FirstOrDefault(x => x.Id == subscriptionId);
 
-            new UserSubscriptionService(Context).Delete(userSubscription.Id);
+            if (subscription == default)
+            {
+                throw new EntityNotFoundException($"Subscription with Id \"{subscriptionId}\" not found");
+            }
+
+            if (!user.UserSubscriptions.Any(x => x.SubscriptionId == subscription.Id))
+            {
+                throw new EntityNotFoundException("User doesn't have this subscription");
+            }
+
+            var entity = user.UserSubscriptions.FirstOrDefault(x => x.SubscriptionId == subscription.Id);
+
+            Context.UserSubscriptions.Remove(entity);
+
+            Context.SaveChanges();// TODO
         }
 
         public bool IsEntityExist(Guid userId)

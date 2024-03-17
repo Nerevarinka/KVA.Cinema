@@ -9,6 +9,7 @@ using KVA.Cinema.Models;
 using KVA.Cinema.Models.Entities;
 using KVA.Cinema.Services;
 using KVA.Cinema.Models.ViewModels.Subscription;
+using KVA.Cinema.Models.ViewModels.Video;
 
 namespace KVA.Cinema.Controllers
 {
@@ -18,17 +19,41 @@ namespace KVA.Cinema.Controllers
 
         private SubscriptionLevelService SubscriptionLevelService { get; set; }
 
-        public SubscriptionsController(SubscriptionService subscriptionService, SubscriptionLevelService subscriptionLevelService)
+        private UserService UserService { get; set; }
+
+        private VideoService VideoService { get; set; }
+
+        public SubscriptionsController(SubscriptionService subscriptionService, SubscriptionLevelService subscriptionLevelService, UserService userService, VideoService videoService)
         {
             SubscriptionService = subscriptionService;
             SubscriptionLevelService = subscriptionLevelService;
+            UserService = userService;
+            VideoService = videoService;
         }
 
         // GET: Subscriptions
         public IActionResult Index()
         {
-            var data = SubscriptionService.ReadAll();
-            return View(data);
+            var subscriptions = SubscriptionService.ReadAll()/*.Where(x => x.VideosInSubscription.Count() != 0)*/; //TODO: обычным юзерам показывать только подписки с видео, админам - все
+
+            if (!User.Identity.IsAuthenticated)
+            {
+                return View(subscriptions);
+            }
+
+            var user = UserService.ReadAll().FirstOrDefault(m => m.Nickname == User.Identity.Name);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            foreach (var subscription in subscriptions)
+            {
+                subscription.IsPurchasedByCurrentUser = user.SubscriptionIds.Any(m => m == subscription.Id);
+            }
+
+            return View(subscriptions);
         }
 
         // GET: Subscriptions/Details/5
@@ -39,8 +64,16 @@ namespace KVA.Cinema.Controllers
                 return NotFound();
             }
 
-            var subscription = SubscriptionService.ReadAll()
-                .FirstOrDefault(m => m.Id == id);
+            SubscriptionDisplayViewModel subscription = null;
+
+            try
+            {
+                subscription = SubscriptionService.Read(id.Value);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+            }
 
             if (subscription == null)
             {
@@ -54,6 +87,8 @@ namespace KVA.Cinema.Controllers
         public IActionResult Create()
         {
             ViewBag.LevelId = new SelectList(SubscriptionLevelService.ReadAll(), "Id", "Title");
+            ViewBag.VideoIds = new SelectList(VideoService.ReadAll(), "Id", nameof(VideoDisplayViewModel.Name));
+
             return View();
         }
 
@@ -78,6 +113,7 @@ namespace KVA.Cinema.Controllers
             }
 
             ViewBag.LevelId = new SelectList(SubscriptionLevelService.ReadAll(), "Id", "Title");
+            ViewBag.VideoIds = new SelectList(VideoService.ReadAll(), "Id", nameof(VideoDisplayViewModel.Name));
 
             return View(subscriptionData);
         }
@@ -99,6 +135,7 @@ namespace KVA.Cinema.Controllers
             }
 
             ViewBag.LevelId = new SelectList(SubscriptionLevelService.ReadAll(), "Id", "Title");
+            ViewBag.VideoIds = new SelectList(VideoService.ReadAll(), "Id", nameof(VideoDisplayViewModel.Name));
 
             var subscriptionEditModel = new SubscriptionEditViewModel()
             {
@@ -109,7 +146,8 @@ namespace KVA.Cinema.Controllers
                 LevelId = subscription.LevelId,
                 ReleasedIn = subscription.ReleasedIn,
                 Duration = subscription.Duration,
-                AvailableUntil = subscription.AvailableUntil
+                AvailableUntil = subscription.AvailableUntil,
+                VideoIds = subscription.VideosInSubscription.Select(x => x.VideoId)
             };
 
             return View(subscriptionEditModel);
@@ -141,6 +179,7 @@ namespace KVA.Cinema.Controllers
             }
 
             ViewBag.LevelId = new SelectList(SubscriptionLevelService.ReadAll(), "Id", "Title");
+            ViewBag.VideoIds = new SelectList(VideoService.ReadAll(), "Id", nameof(VideoDisplayViewModel.Name));
 
             return View(subscriptionNewData);
         }

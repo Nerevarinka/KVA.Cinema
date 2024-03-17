@@ -17,6 +17,9 @@
     <thead>
         <tr>
             <th>
+
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Title)
             </th>
             <th>
@@ -44,6 +47,20 @@
         @foreach (var item in Model)
         {
             <tr>
+                <td>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        if (item.IsPurchasedByCurrentUser)
+                        {
+                            @Html.ActionLink("Cancel", "CancelSubscription", "Users", new { subscriptionId = item.Id }, new { @class = "btn btn-primary", @title = "Cancel subscription" })
+                            @Html.ActionLink("Buy", "", new { subscriptionId = item.Id }, new { @class = "btn btn-secondary disabled", @title = "You are already have this subscription" })
+                        }
+                        else
+                        {
+                            @Html.ActionLink("Buy", "BuySubscription", "Users", new { subscriptionId = item.Id }, new { @class = "btn btn-primary", @title = "Buy this subscription" })
+                        }
+                    }
+                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Title)
                 </td>
