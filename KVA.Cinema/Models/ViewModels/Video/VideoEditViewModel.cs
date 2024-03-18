@@ -55,9 +55,9 @@
 
         [Required(ErrorMessage = "Required field")]
         [Display(Name = "Genres (at least one)")]
-        public IEnumerable<Guid> GenresIds { get; set; }
+        public IEnumerable<Guid> GenreIds { get; set; }
 
         [Display(Name = "Tags (at least one)")]
-        public IEnumerable<Guid> TagsIds { get; set; }
+        public IEnumerable<Guid> TagIds { get; set; }
     }
 }

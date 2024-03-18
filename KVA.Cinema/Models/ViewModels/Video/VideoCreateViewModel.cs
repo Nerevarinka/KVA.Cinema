@@ -51,10 +51,10 @@
 
         [Required(ErrorMessage = "Required field")]
         [Display(Name = "Genres (at least one)")]
-        public IEnumerable<Entities.Genre> Genres { get; set; }
+        public IEnumerable<Guid> GenreIds { get; set; }
 
         [Display(Name = "Tags")]
-        public IEnumerable<Entities.Tag> Tags { get; set; }
+        public IEnumerable<Guid> TagIds { get; set; }
 
         [Display(Name = "Tags")]
         public IEnumerable<TagDisplayViewModel> TagsViewModels { get; set; }

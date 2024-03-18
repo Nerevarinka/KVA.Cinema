@@ -31,8 +31,8 @@
                     @Html.DisplayFor(model => model.CountryName, additionalViewData: new { @class = "form-control" })
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(model => model.GenresNames)
-                    @Html.DisplayFor(model => model.GenresNames, additionalViewData: new { @class = "form-control" })
+                    @Html.LabelFor(model => model.GenreNames)
+                    @Html.DisplayFor(model => model.GenreNames, additionalViewData: new { @class = "form-control" })
                 </div>
                 <div class="form-group">
                     @Html.LabelFor(model => model.DirectorName)
@@ -55,8 +55,8 @@
                     @Html.DisplayFor(model => model.Description, additionalViewData: new { @class = "form-control" })
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(model => model.TagsViewModels)
-                    @foreach (var tagDisplayViewModel in Model.TagsViewModels)
+                    @Html.LabelFor(model => model.TagViewModels)
+                    @foreach (var tagDisplayViewModel in Model.TagViewModels)
                     {
                         @Html.DisplayFor(model => tagDisplayViewModel, "_TagColor")
                     }
