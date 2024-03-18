@@ -36,6 +36,10 @@
         [Display(Name = "Available to buy until")]
         public DateTime AvailableUntil { get; set; }
 
+        [DataType(DataType.Date)]
+        [Display(Name = "Last until")]
+        public DateTime LastUntil { get; set; }
+
         public bool IsPurchasedByCurrentUser { get; set; }
 
         [Display(Name = "Videos")]
