@@ -54,18 +54,18 @@
         public string DirectorName { get; set; }
 
         [Display(Name = "Genres")]
-        public string GenresNames => string.Join(", ", Genres.Select(x => x.Title));
+        public string GenreNames => string.Join(", ", Genres.Select(x => x.Title));
 
         [Display(Name = "Genres")]
         public IEnumerable<Entities.Genre> Genres { get; set; }
 
         [Display(Name = "Tags")]
-        public string TagsNames => string.Join(", ", Tags.Select(x => x.Text));
+        public string TagNames => string.Join(", ", Tags.Select(x => x.Text));
 
         [Display(Name = "Tags")]
         public IEnumerable<Entities.Tag> Tags { get; set; }
 
         [Display(Name = "Tags")]
-        public IEnumerable<TagDisplayViewModel> TagsViewModels { get; set; }
+        public IEnumerable<TagDisplayViewModel> TagViewModels { get; set; }
     }
 }

@@ -42,9 +42,9 @@
                     @Html.HiddenFor(model => model.IsResetPreviewButtonClicked, new { id = "isResetClicked", value = false })
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(model => model.GenresIds)
-                    @Html.ListBoxFor(model => model.GenresIds, ViewBag.GenresIds as SelectList, new { multiple = "multiple", @id = "multiple-select-clear-field-genres", @name = "GenresId", @class = "form-select", @data_placeholder = "Genres" })
-                    @Html.ValidationMessageFor(model => model.GenresIds)
+                    @Html.LabelFor(model => model.GenreIds)
+                    @Html.ListBoxFor(model => model.GenreIds, ViewBag.GenreIds as SelectList, new { multiple = "multiple", @id = "multiple-select-clear-field-genres", @name = "GenresId", @class = "form-select", @data_placeholder = "Genres" })
+                    @Html.ValidationMessageFor(model => model.GenreIds)
                 </div>
                 <div class="form-group">
                     @Html.LabelFor(model => model.DirectorId)
@@ -72,9 +72,9 @@
                     @Html.ValidationMessageFor(model => model.Description)
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(model => model.TagsIds)
-                    @Html.ListBoxFor(model => model.TagsIds, ViewBag.TagsIds as SelectList, new { multiple = "multiple", @id = "multiple-select-clear-field-tags", @name = "TagsId", @class = "form-select", @data_placeholder = "Tags" })
-                    @Html.ValidationMessageFor(model => model.TagsIds)
+                    @Html.LabelFor(model => model.TagIds)
+                    @Html.ListBoxFor(model => model.TagIds, ViewBag.TagsIds as SelectList, new { multiple = "multiple", @id = "multiple-select-clear-field-tags", @name = "TagsId", @class = "form-select", @data_placeholder = "Tags" })
+                    @Html.ValidationMessageFor(model => model.TagIds)
                 </div>
             </div>
 

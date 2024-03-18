@@ -52,8 +52,8 @@
                 PegiId = x.PegiId,
                 LanguageId = x.LanguageId,
                 DirectorId = x.DirectorId,
-                Genres = x.Genres,
-                Tags = x.Tags,
+                GenreIds = x.Genres.Select(x => x.Id),
+                TagIds = x.Tags.Select(x => x.Id),
                 TagsViewModels = x.Tags.Select(x => new Models.ViewModels.Tag.TagDisplayViewModel() { Text = x.Text, Color = x.Color })
             });
         }
@@ -79,7 +79,7 @@
                 DirectorName = x.Director.Name,
                 Genres = x.Genres,
                 Tags = x.Tags,
-                TagsViewModels = x.Tags.Select(x => new Models.ViewModels.Tag.TagDisplayViewModel() { Text = x.Text, Color = x.Color })
+                TagViewModels = x.Tags.Select(x => new Models.ViewModels.Tag.TagDisplayViewModel() { Text = x.Text, Color = x.Color })
             }).ToList();
         }
 
@@ -92,7 +92,7 @@
                                                         videoData.PegiId,
                                                         videoData.LanguageId,
                                                         videoData.DirectorId,
-                                                        videoData.Genres))
+                                                        videoData.GenreIds))
             {
                 throw new ArgumentNullException("One or more required fields have no value");
             }
@@ -128,6 +128,15 @@
                 previewNewName = SaveFile(videoData.Preview, uploadsFolder);
             }
 
+            var genres = Context.Genres.Where(x => videoData.GenreIds.Contains(x.Id)).ToList();
+
+            var tags = new List<Tag>();
+
+            if (videoData.TagIds != null)
+            {
+                tags = Context.Tags.Where(x => videoData.TagIds.Contains(x.Id)).ToList();
+            }
+
             Video newVideo = new Video()
             {
                 Id = videoId,
@@ -141,8 +150,8 @@
                 PegiId = videoData.PegiId,
                 LanguageId = videoData.LanguageId,
                 DirectorId = videoData.DirectorId,
-                Genres = videoData.Genres.ToList(),
-                Tags = videoData.Tags?.ToList()
+                Genres = genres,
+                Tags = tags
             };
 
             Context.Videos.Add(newVideo);
@@ -187,7 +196,7 @@
                                                         newVideoData.PegiId,
                                                         newVideoData.LanguageId,
                                                         newVideoData.DirectorId,
-                                                        newVideoData.GenresIds))
+                                                        newVideoData.GenreIds))
             {
                 throw new ArgumentNullException("One or more required fields have no value");
             }
@@ -243,8 +252,44 @@
                 video.Preview = oldPreview;
             }
 
-            newVideoData.GenresIds ??= Enumerable.Empty<Guid>();
-            newVideoData.TagsIds ??= Enumerable.Empty<Guid>();
+            newVideoData.GenreIds ??= Enumerable.Empty<Guid>();
+            newVideoData.TagIds ??= Enumerable.Empty<Guid>();
+
+            List<Genre> genresOldList = video.Genres.ToList();
+
+            var contextGenreIds = genresOldList.Select(x => x.Id);
+            var genreRecordsToDelete = genresOldList.Where(x => !newVideoData.GenreIds.Contains(x.Id));
+            var genreIdsToAdd = newVideoData.GenreIds.Where(x => !contextGenreIds.Contains(x));
+
+            IEnumerable<Genre> genresToAdd = Context.Genres.Where(x => genreIdsToAdd.Contains(x.Id));
+
+            foreach (var record in genreRecordsToDelete)
+            {
+                video.Genres.Remove(record);
+            }
+
+            foreach (var genre in genresToAdd)
+            {
+                video.Genres.Add(genre);
+            }
+
+            List<Tag> tagsOldList = video.Tags.ToList();
+
+            var contextTagIds = tagsOldList.Select(x => x.Id);
+            var tagRecordsToDelete = tagsOldList.Where(x => !newVideoData.TagIds.Contains(x.Id));
+            var tagIdsToAdd = newVideoData.TagIds.Where(x => !contextTagIds.Contains(x));
+
+            IEnumerable<Tag> tagsToAdd = Context.Tags.Where(x => tagIdsToAdd.Contains(x.Id));
+
+            foreach (var record in tagRecordsToDelete)
+            {
+                video.Tags.Remove(record);
+            }
+
+            foreach (var tag in tagsToAdd)
+            {
+                video.Tags.Add(tag);
+            }
 
             video.Title = newVideoData.Name;
             video.Description = newVideoData.Description;
@@ -255,8 +300,6 @@
             video.PegiId = newVideoData.PegiId;
             video.LanguageId = newVideoData.LanguageId;
             video.DirectorId = newVideoData.DirectorId;
-            video.Genres = Context.Genres.Where(x => newVideoData.GenresIds.Contains(x.Id)).ToList();
-            video.Tags = Context.Tags.Where(x => newVideoData.TagsIds.Contains(x.Id)).ToList();
 
             Context.SaveChanges();
 

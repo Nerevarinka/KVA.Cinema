@@ -74,8 +74,8 @@ namespace KVA.Cinema.Controllers
             ViewBag.DirectorId = new SelectList(DirectorService.ReadAll(), "Id", "Name");
             ViewBag.LanguageId = new SelectList(LanguageService.ReadAll(), "Id", "Name");
             ViewBag.PegiId = new SelectList(PegiService.ReadAll(), "Id", "Type");
-            ViewBag.GenresIds = new SelectList(GenreService.ReadAll(), "Id", "Title");
-            ViewBag.TagsIds = new SelectList(TagService.ReadAll(), "Id", "Text");
+            ViewBag.GenreIds = new SelectList(GenreService.ReadAll(), "Id", "Title");
+            ViewBag.TagIds = new SelectList(TagService.ReadAll(), "Id", "Text");
             return View();
         }
 
@@ -106,8 +106,8 @@ namespace KVA.Cinema.Controllers
             ViewBag.DirectorId = new SelectList(DirectorService.ReadAll(), "Id", "Name");
             ViewBag.LanguageId = new SelectList(LanguageService.ReadAll(), "Id", "Name");
             ViewBag.PegiId = new SelectList(PegiService.ReadAll(), "Id", "Type");
-            ViewBag.GenresIds = new SelectList(GenreService.ReadAll(), "Id", "Title");
-            ViewBag.TagsIds = new SelectList(TagService.ReadAll(), "Id", "Text");
+            ViewBag.GenreIds = new SelectList(GenreService.ReadAll(), "Id", "Title");
+            ViewBag.TagIds = new SelectList(TagService.ReadAll(), "Id", "Text");
 
             return View(videoData);
         }
@@ -132,8 +132,8 @@ namespace KVA.Cinema.Controllers
             ViewBag.DirectorId = new SelectList(DirectorService.ReadAll(), "Id", "Name");
             ViewBag.LanguageId = new SelectList(LanguageService.ReadAll(), "Id", "Name");
             ViewBag.PegiId = new SelectList(PegiService.ReadAll(), "Id", "Type");
-            ViewBag.GenresIds = new SelectList(GenreService.ReadAll(), "Id", "Title");
-            ViewBag.TagsIds = new SelectList(TagService.ReadAll(), "Id", "Text");
+            ViewBag.GenreIds = new SelectList(GenreService.ReadAll(), "Id", "Title");
+            ViewBag.TagIds = new SelectList(TagService.ReadAll(), "Id", "Text");
 
             var videoEditModel = new VideoEditViewModel()
             {
@@ -149,8 +149,8 @@ namespace KVA.Cinema.Controllers
                 PegiId = video.PegiId,
                 LanguageId = video.LanguageId,
                 DirectorId = video.DirectorId,
-                GenresIds = video.Genres.Select(x => x.Id),
-                TagsIds = video.Tags.Select(x => x.Id)
+                GenreIds = video.Genres.Select(x => x.Id),
+                TagIds = video.Tags.Select(x => x.Id)
             };
 
             return View(videoEditModel);
@@ -187,8 +187,8 @@ namespace KVA.Cinema.Controllers
             ViewBag.DirectorId = new SelectList(DirectorService.ReadAll(), "Id", "Name");
             ViewBag.LanguageId = new SelectList(LanguageService.ReadAll(), "Id", "Name");
             ViewBag.PegiId = new SelectList(PegiService.ReadAll(), "Id", "Type");
-            ViewBag.GenresIds = new SelectList(GenreService.ReadAll(), "Id", "Title");
-            ViewBag.TagsIds = new SelectList(TagService.ReadAll(), "Id", "Text");
+            ViewBag.GenreIds = new SelectList(GenreService.ReadAll(), "Id", "Title");
+            ViewBag.TagIds = new SelectList(TagService.ReadAll(), "Id", "Text");
 
             return View(videoNewData);
         }
