@@ -237,6 +237,11 @@ namespace KVA.Cinema.Controllers    //TODO: replace NotFound()
                 return NotFound();
             }
 
+            var activatedOn = DateTime.UtcNow; //TODO: использовать часовой пояс пользователя
+            var lastUntil = activatedOn.Date.AddDays(subscription.Duration + 1);
+
+            subscription.LastUntil = lastUntil;
+
             return View(subscription);
         }
 

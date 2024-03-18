@@ -307,8 +307,8 @@
                 throw new DuplicatedEntityException("This subscription is already bought");
             }
 
-            var activatedOn = DateTime.UtcNow;
-            var lastUntil = activatedOn.Date.AddDays(++subscription.Duration);
+            var activatedOn = DateTime.UtcNow; //TODO: использовать часовой пояс пользователя
+            var lastUntil = activatedOn.Date.AddDays(subscription.Duration + 1);
 
             Context.UserSubscriptions.Add(new UserSubscription
             {
