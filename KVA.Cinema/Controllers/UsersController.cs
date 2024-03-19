@@ -43,13 +43,16 @@ namespace KVA.Cinema.Controllers    //TODO: replace NotFound()
                 return NotFound();
             }
 
-            var user = UserService.ReadAll()
-                .FirstOrDefault(m => m.Id == id);
+            var user = UserService.Read(id.Value);
 
             if (user == null)
             {
                 return NotFound();
             }
+
+            //user.SubscriptionNamesAndDates = user.Subscriptions.Count() == 0
+            //     ? Enumerable.Empty<string>()
+            //     : user.UserSubscriptions.Select(x => $"{x.Subscription.Title}: {x.LastUntil}").ToList();
 
             return View(user);
         }

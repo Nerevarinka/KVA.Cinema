@@ -14,30 +14,34 @@
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true)
 
-    <fieldset>
-        <legend>User</legend>
+<fieldset>
+    <legend>User</legend>
 
-        <div class="form-group">
-            @Html.DisplayNameFor(model => model.FirstName)
-            @Html.DisplayFor(model => model.FirstName, additionalViewData: new { @class = "form-control" })
-        </div>
-        <div class="form-group">
-            @Html.DisplayNameFor(model => model.LastName)
-            @Html.DisplayFor(model => model.LastName, additionalViewData: new { @class = "form-control" })
-        </div>
-        <div class="form-group">
-            @Html.DisplayNameFor(model => model.Nickname)
-            @Html.DisplayFor(model => model.Nickname, additionalViewData: new { @class = "form-control" })
-        </div>
-        <div class="form-group">
-            @Html.DisplayNameFor(model => model.BirthDate)
-            @Html.DisplayFor(model => model.BirthDate, additionalViewData: new { @class = "form-control" })
-        </div>
-        <div class="form-group">
-            @Html.DisplayNameFor(model => model.Email)
-            @Html.DisplayFor(model => model.Email, additionalViewData: new { @class = "form-control" })
-        </div>
-    </fieldset>
+    <div class="form-group">
+        @Html.DisplayNameFor(model => model.FirstName)
+        @Html.DisplayFor(model => model.FirstName, additionalViewData: new { @class = "form-control" })
+    </div>
+    <div class="form-group">
+        @Html.DisplayNameFor(model => model.LastName)
+        @Html.DisplayFor(model => model.LastName, additionalViewData: new { @class = "form-control" })
+    </div>
+    <div class="form-group">
+        @Html.DisplayNameFor(model => model.Nickname)
+        @Html.DisplayFor(model => model.Nickname, additionalViewData: new { @class = "form-control" })
+    </div>
+    <div class="form-group">
+        @Html.DisplayNameFor(model => model.BirthDate)
+        @Html.DisplayFor(model => model.BirthDate, additionalViewData: new { @class = "form-control" })
+    </div>
+    <div class="form-group">
+        @Html.DisplayNameFor(model => model.Email)
+        @Html.DisplayFor(model => model.Email, additionalViewData: new { @class = "form-control" })
+    </div>
+    <div class="form-group">
+        @Html.DisplayNameFor(model => model.SubscriptionNamesAndDatesInOneString)
+        @Html.DisplayFor(model => model.SubscriptionNamesAndDatesInOneString, additionalViewData: new { @class = "form-control" })
+    </div>
+</fieldset>
 
     <p>
         @Html.ActionLink("Edit", "Edit", "Users", new { Id = Model.Id }) | @Html.ActionLink("Back to List", "Index")

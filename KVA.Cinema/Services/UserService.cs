@@ -102,6 +102,31 @@
                 }).ToList();
         }
 
+        public UserDisplayViewModel Read(Guid userId)
+        {
+            var user = Context.Users.FirstOrDefault(x => x.Id == userId);
+
+            if (user == default)
+            {
+                throw new EntityNotFoundException($"User with id \"{userId}\" not found");
+            }
+
+            var subscriptionIds = user.UserSubscriptions.Select(x => x.SubscriptionId);
+            var subs = Context.Subscriptions.Where(x => subscriptionIds.Contains(x.Id));
+
+            return new UserDisplayViewModel()
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Nickname = user.Nickname,
+                BirthDate = user.BirthDate,
+                Email = user.Email,
+                Subscriptions = Context.Subscriptions.Where(x => subscriptionIds.Contains(x.Id)),
+                UserSubscriptions = user.UserSubscriptions,
+            };
+        }
+
         /// <summary>
         /// Creates new user
         /// </summary>

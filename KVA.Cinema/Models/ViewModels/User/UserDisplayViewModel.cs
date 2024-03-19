@@ -1,11 +1,14 @@
 ﻿namespace KVA.Cinema.Models.User
 {
+    using KVA.Cinema.Models.Entities;
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.Linq;
 
     /// <summary>
-    /// Person's data to display on console
+    /// Person's data to display
     /// </summary>
     public class UserDisplayViewModel
     {
@@ -29,5 +32,21 @@
         public string Email { get; set; }
 
         public IEnumerable<Guid> SubscriptionIds { get; set; }
+
+        [Display(Name = "Subscriptions")]
+        public IEnumerable<Entities.Subscription> Subscriptions { get; set; }
+
+        public ICollection<UserSubscription> UserSubscriptions { get; set; }
+
+        public IEnumerable<string> SubscriptionNamesAndDates =>
+            Subscriptions.Count() == 0
+                 ? Enumerable.Empty<string>()
+                 : UserSubscriptions.Select(x => $"{x.Subscription.Title} ({x.LastUntil.ToString("dd.MM.yyyy")})").ToList();
+
+        [Display(Name = "Subscriptions and their expiration dates")]
+        public string SubscriptionNamesAndDatesInOneString =>
+            Subscriptions.Count() == 0
+                ? string.Empty
+                : string.Join(", ", SubscriptionNamesAndDates);
     }
 }
